@@ -32,6 +32,7 @@ func main() {
 
 	//Routes
 	routes.PublicRoutes(app)
+	routes.ProtectedRoutes(app)
 	// Start server (with or without graceful shutdown)
 	if os.Getenv("STAGE_STATUS") == "dev" {
 		fmt.Println("Running in development mode")
