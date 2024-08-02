@@ -9,6 +9,7 @@ import (
 	"github.com/niladri2003/PaintingEcommerce/pkg/utils"
 	"github.com/niladri2003/PaintingEcommerce/platform/cache"
 	"github.com/niladri2003/PaintingEcommerce/platform/database"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -24,18 +25,21 @@ func UserSignUp(c *fiber.Ctx) error {
 			"error":   true,
 		})
 	}
-	fmt.Println(signUp)
-	//Create a new validator for User model.
-	validate := utils.NewValidator()
+	fmt.Printf("Parsed sign-up data: %+v\n", signUp)
 
-	//Validate sign up fields.
-	if err := validate.Struct(signUp); err != nil {
-		//Return if some fields are not valid
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   utils.ValidatorErrors(err),
-		})
-	}
+	////Create a new validator for User model.
+	//validate := utils.NewValidator()
+	//
+	////Validate sign up fields.
+	//if err := validate.Struct(signUp); err != nil {
+	//	// Log validation errors for debugging
+	//	fmt.Printf("Validation errors: %+v\n", utils.ValidatorErrors(err))
+	//	//Return if some fields are not valid
+	//	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	//		"error": true,
+	//		"msg":   utils.ValidatorErrors(err),
+	//	})
+	//}
 	//Create database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
@@ -57,6 +61,7 @@ func UserSignUp(c *fiber.Ctx) error {
 
 	//Set initialized default data for user:
 	user.ID = uuid.New()
+	user.Email = signUp.Email
 	user.CreatedAt = time.Now()
 	user.PasswordHash = utils.GeneratePassword(signUp.Password)
 	user.UserStatus = 1 // 0==Not verified, 1==Verified TODO do email otp verification for verified accouts
@@ -64,13 +69,13 @@ func UserSignUp(c *fiber.Ctx) error {
 
 	//validate user fields
 
-	if err := validate.Struct(user); err != nil {
-		//Return if some fields are not valid.
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   utils.ValidatorErrors(err),
-		})
-	}
+	//if err := validate.Struct(user); err != nil {
+	//	//Return if some fields are not valid.
+	//	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+	//		"error": true,
+	//		"msg":   utils.ValidatorErrors(err),
+	//	})
+	//}
 
 	// Create a new user with validated data.
 	if err := db.CreateUser(user); err != nil {
@@ -101,6 +106,7 @@ func UserSignIn(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
+	fmt.Printf("Parsed sign-in data: %+v\n", signIn)
 	//create a database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
@@ -111,6 +117,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	}
 	//Get user by email
 	foundedUser, err := db.GetUserByEmail(signIn.Email)
+	fmt.Println(foundedUser)
 	if err != nil {
 		// Return, if user not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -119,8 +126,9 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 	// Compare given user password with stored in found user.
-	compareUserPassword := utils.ComparePasswords(foundedUser.PasswordHash, signIn.Password)
-	if compareUserPassword {
+	//compareUserPassword := utils.ComparePasswords(foundedUser.PasswordHash, signIn.Password)
+	err = bcrypt.CompareHashAndPassword([]byte(foundedUser.PasswordHash), []byte(signIn.Password))
+	if err != nil {
 		//Return, if password is not incorrect
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,

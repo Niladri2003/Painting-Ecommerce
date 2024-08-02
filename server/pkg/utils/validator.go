@@ -5,26 +5,24 @@ import (
 	"github.com/google/uuid"
 )
 
-// NewValidator func for create a new validator for model fields.
+// NewValidator creates a new validator for model fields.
 func NewValidator() *validator.Validate {
-	// Create a new validator for a Book model.
 	validate := validator.New()
 
 	// Custom validation for uuid.UUID fields.
 	_ = validate.RegisterValidation("uuid", func(fl validator.FieldLevel) bool {
 		field := fl.Field().String()
 		if _, err := uuid.Parse(field); err != nil {
-			return true
+			return false // Return false if UUID parsing fails
 		}
-		return false
+		return true
 	})
 
 	return validate
 }
 
-// ValidatorErrors func for show validation errors for each invalid fields.
+// ValidatorErrors func for showing validation errors for each invalid field.
 func ValidatorErrors(err error) map[string]string {
-	// Define fields map.
 	fields := map[string]string{}
 
 	// Make error message for each invalid field.

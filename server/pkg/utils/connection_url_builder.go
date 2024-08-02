@@ -12,6 +12,18 @@ func ConnectionURLBuilder(n string) (string, error) {
 	var url string
 	//Switch given names.
 	switch n {
+	case "postgres":
+		// URL for PostgreSQL connection.
+		url = fmt.Sprintf(
+			"postgres://%s:%s@%s:%s/%s?sslmode=%s",
+			os.Getenv("DB_USER"),
+			os.Getenv("DB_PASSWORD"),
+			os.Getenv("DB_HOST"),
+			os.Getenv("DB_PORT"),
+			os.Getenv("DB_NAME"),
+			os.Getenv("DB_SSL_MODE"),
+		)
+
 	case "fiber":
 		//URL for fiber connection
 		url = fmt.Sprintf("%s:%s", os.Getenv("SERVER_HOST"), os.Getenv("SERVER_PORT"))

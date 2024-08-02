@@ -8,6 +8,7 @@ import (
 	"github.com/niladri2003/PaintingEcommerce/pkg/middleware"
 	"github.com/niladri2003/PaintingEcommerce/pkg/routes"
 	"github.com/niladri2003/PaintingEcommerce/pkg/utils"
+	"github.com/niladri2003/PaintingEcommerce/platform/migration"
 	"log"
 	"os"
 )
@@ -20,6 +21,8 @@ func main() {
 	}
 
 	config := configs.FiberConfig()
+	//migration
+	migration.RunMigration()
 
 	//Define a new fiber app with config.
 	app := fiber.New(config)
