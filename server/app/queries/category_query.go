@@ -12,7 +12,7 @@ type CategoryQueries struct {
 
 // CreateCategory creates a new product category with the given details
 func (q *CategoryQueries) CreateCategory(c *models.ProductCategory) error {
-	query := `INSERT INTO product_category (id, name, description) VALUES ($1, $2, $3)`
+	query := `INSERT INTO categories (id, name, description) VALUES ($1, $2, $3)`
 
 	_, err := q.Exec(
 		query,
@@ -26,7 +26,7 @@ func (q *CategoryQueries) CreateCategory(c *models.ProductCategory) error {
 
 // DeleteCategory deletes a product category by ID
 func (q *CategoryQueries) DeleteCategory(categoryID uuid.UUID) error {
-	query := `DELETE FROM product_category WHERE id = $1`
+	query := `DELETE FROM categories WHERE id = $1`
 
 	_, err := q.Exec(query, categoryID)
 	if err != nil {
@@ -37,7 +37,7 @@ func (q *CategoryQueries) DeleteCategory(categoryID uuid.UUID) error {
 
 // GetAllCategories retrieves all product categories
 func (q *CategoryQueries) GetAllCategories() ([]models.ProductCategory, error) {
-	query := `SELECT id, name, description FROM product_category`
+	query := `SELECT id, name, description FROM categories`
 
 	rows, err := q.Query(query)
 	if err != nil {
