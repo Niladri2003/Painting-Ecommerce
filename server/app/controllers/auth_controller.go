@@ -138,7 +138,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	// Get role credentials from founded user.
 	//userRole := foundedUser.UserRole.String()
 	// Generate a new pair of access and refresh tokens.
-	tokens, err := utils.GenerateNewTokens(foundedUser.ID.String())
+	tokens, err := utils.GenerateNewTokens(foundedUser.ID.String(), foundedUser.UserRole)
 	if err != nil {
 		// Return status 500 and token generation error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{

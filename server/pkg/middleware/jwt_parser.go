@@ -9,8 +9,9 @@ import (
 
 // TokenMetadata struct to describe metadata in JWT.
 type TokenMetadata struct {
-	UserID  uuid.UUID
-	Expires int64
+	UserID   uuid.UUID
+	UserRole string
+	Expires  int64
 }
 
 // ExtractTokenMetadata func to extract metadata from JWT.
@@ -28,6 +29,11 @@ func ExtractTokenMetadata(c *fiber.Ctx) (*TokenMetadata, error) {
 		if err != nil {
 			return nil, err
 		}
+		// User role.
+		userRole, ok := claims["role"].(string)
+		if !ok {
+			return nil, fiber.NewError(fiber.StatusBadRequest, "invalid role type")
+		}
 
 		// Expires time.
 		expires := int64(claims["expires"].(float64))
@@ -40,9 +46,9 @@ func ExtractTokenMetadata(c *fiber.Ctx) (*TokenMetadata, error) {
 		//}
 
 		return &TokenMetadata{
-			UserID: userID,
-			//Credentials: credentials,
-			Expires: expires,
+			UserID:   userID,
+			UserRole: userRole,
+			Expires:  expires,
 		}, nil
 	}
 

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -11,6 +10,11 @@ import (
 )
 
 func CreateCategory(c *fiber.Ctx) error {
+	type CategoryForm struct {
+		Name        string `json:"name" binding:"required"`
+		Description string `json:"description" binding:"required"`
+	}
+	var category CategoryForm
 	now := time.Now().Unix()
 
 	//Get claims from jwt
@@ -23,14 +27,14 @@ func CreateCategory(c *fiber.Ctx) error {
 	}
 	expires := claims.Expires
 
-	//Checking if now time is greater then expiration from jwt
+	//Checking if now time is greater than expiration from jwt
 	if now > expires {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error":   true,
 			"message": "token expired",
 		})
 	}
-	category := models.ProductCategory{}
+
 	if err := c.BodyParser(&category); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error":   true,
@@ -45,13 +49,66 @@ func CreateCategory(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
+	//create a new product category models struct
+	productCategory := &models.ProductCategory{}
 
-	category.ID = uuid.New()
-	_, err := db.Exec(context.Background(),
-		"INSERT INTO product_category (id, name, description) VALUES ($1, $2, $3)",
-		category.ID, category.Name, category.Description,
-	)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "Failed to create category"})
+	productCategory.ID = uuid.New()
+	productCategory.Name = category.Name
+	productCategory.Description = category.Description
+	// Create a new Category .
+	if err := db.CreateCategory(productCategory); err != nil {
+		// Return status 500 and create category process error.
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
 	}
+	return c.JSON(fiber.Map{
+		"error": false,
+		"msg":   nil,
+		"user":  productCategory,
+	})
+}
+func GetAllCategory(c *fiber.Ctx) error {
+	now := time.Now().Unix()
+
+	//Get claims from jwt
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error":   true,
+			"message": "token invalid",
+		})
+	}
+	expires := claims.Expires
+
+	//Checking if now time is greater than expiration from jwt
+	if now > expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error":   true,
+			"message": "token expired",
+		})
+	}
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+	// Retrieve all categories
+	categories, err := db.GetAllCategories()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Return the categories
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"error":      false,
+		"categories": categories,
+	})
+
 }
