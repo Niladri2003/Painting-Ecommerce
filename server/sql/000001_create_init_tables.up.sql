@@ -6,7 +6,7 @@ SET TIMEZONE="Asia/Kolkata";
 
 CREATE TABLE users (
                        id UUID DEFAULT uuid_generate_v4 () PRIMARY KEY,
-                       created_at TIMESTAMP WITH TIME ZONE NOW (),
+                       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
                        updated_at TIMESTAMP NOT NULL,
                        email VARCHAR(255) NOT NULL UNIQUE,
                        password_hash VARCHAR(255) NOT NULL,
