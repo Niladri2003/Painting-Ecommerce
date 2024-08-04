@@ -9,6 +9,8 @@ import (
 type Queries struct {
 	*queries.UserQueries
 	*queries.CategoryQueries
+	*queries.ProductQueries
+	*queries.ProductImageQueries
 }
 
 // OpenDbConnection  func for opening database connection
@@ -30,7 +32,9 @@ func OpenDbConnection() (*Queries, error) {
 		return nil, err
 	}
 	return &Queries{
-		UserQueries:     &queries.UserQueries{DB: db},
-		CategoryQueries: &queries.CategoryQueries{DB: db},
+		UserQueries:         &queries.UserQueries{DB: db},
+		CategoryQueries:     &queries.CategoryQueries{DB: db},
+		ProductQueries:      &queries.ProductQueries{DB: db},
+		ProductImageQueries: &queries.ProductImageQueries{DB: db},
 	}, nil
 }

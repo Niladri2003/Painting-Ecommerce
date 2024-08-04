@@ -11,8 +11,8 @@ import (
 
 func CreateCategory(c *fiber.Ctx) error {
 	type CategoryForm struct {
-		Name        string `json:"name" binding:"required"`
-		Description string `json:"description" binding:"required"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
 	}
 	var category CategoryForm
 	now := time.Now().Unix()
@@ -32,6 +32,12 @@ func CreateCategory(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error":   true,
 			"message": "token expired",
+		})
+	}
+	if claims.UserRole != "admin" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error":   true,
+			"message": "Only admin can create category",
 		})
 	}
 
@@ -70,25 +76,7 @@ func CreateCategory(c *fiber.Ctx) error {
 	})
 }
 func GetAllCategory(c *fiber.Ctx) error {
-	now := time.Now().Unix()
 
-	//Get claims from jwt
-	claims, err := middleware.ExtractTokenMetadata(c)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": "token invalid",
-		})
-	}
-	expires := claims.Expires
-
-	//Checking if now time is greater than expiration from jwt
-	if now > expires {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "token expired",
-		})
-	}
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
