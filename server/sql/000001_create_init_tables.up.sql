@@ -42,10 +42,25 @@ CREATE TABLE orders (
                         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE order_items (
-                             id UUID PRIMARY KEY,
-                             order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
-                             product_id UUID REFERENCES products(id) ON DELETE SET NULL,
-                             quantity INT NOT NULL,
-                             price DECIMAL(10, 2) NOT NULL, -- Price at the time of purchase
-                             created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                         id UUID PRIMARY KEY,
+                         order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+                         product_id UUID REFERENCES products(id) ON DELETE SET NULL,
+                         quantity INT NOT NULL,
+                         price DECIMAL(10, 2) NOT NULL, -- Price at the time of purchase
+                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- Create the contact_us table
+CREATE TABLE contacts (
+                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                        first_name VARCHAR(100) NOT NULL,
+                        last_name VARCHAR(100) NOT NULL,
+                        email VARCHAR(100) NOT NULL,
+                        phone VARCHAR(20) NOT NULL,
+                        subject VARCHAR(200) NOT NULL,
+                        message TEXT NOT NULL,
+                        submitted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        replied BOOLEAN NOT NULL DEFAULT FALSE
+);
+
