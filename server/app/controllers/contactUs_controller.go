@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -33,7 +32,7 @@ func CreateContactUs(c *fiber.Ctx) error {
 	}
 
 	// Print parsed contact data for debugging
-	fmt.Printf("Parsed contact data: %+v\n", contact)
+	// fmt.Printf("Parsed contact data: %+v\n", contact)
 
 	// Create database connection
 	db, err := database.OpenDbConnection()
@@ -55,7 +54,24 @@ func CreateContactUs(c *fiber.Ctx) error {
 	}
 
 	// Print the created contact ID for debugging
-	fmt.Printf("Created contact ID: %s\n", id.String())
+	// fmt.Printf("Created contact ID: %s\n", id.String())
+
+	// Send a confirmation email to the contact
+	recipientName :=  contact.FirstName + " " + contact.LastName
+	recipientEmail := contact.Email
+
+	// Launch a goroutine to send the email asynchronously
+	go func() {
+		err := utils.SendConfirmationEmail(recipientName, recipientEmail)
+		if err != nil {
+			fmt.Printf("Failed to send confirmation email: %v \n", err)
+		} else {
+			fmt.Println("Confirmation email sent successfully!")
+		}
+	}()
+
+	// Continue with other tasks
+	fmt.Println("Email is being sent asynchronously...")
 
 	// Return success response with the ID of the created contact
 	return c.JSON(fiber.Map{
