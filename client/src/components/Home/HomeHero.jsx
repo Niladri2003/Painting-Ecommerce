@@ -1,6 +1,6 @@
 import HeroImage from "../../assets/Home/3cf42f1fce41c05751aca8476095b529.png"
 
-const HomeHero = ({ title, showShopNowButton }) => {
+const HomeHero = ({ title, showShopNowButton = true }) => {
     return (
         <div className="w-screen h-[50%] flex flex-col items-center justify-center relative">
             <img src={HeroImage} alt="Hero" className="w-screen h-full object-cover" />
@@ -20,13 +20,13 @@ const HomeHero = ({ title, showShopNowButton }) => {
     )
 }
 
-HomeHero.defaultProps = {
-    title: (
-        <>
-            Write a Title Here. Click to Edit<br />and Add Your Own
-        </>
-    ),
-    showShopNowButton: true
-};
+// HomeHero.defaultProps = {
+//     title: (
+//         <>
+//             Write a Title Here. Click to Edit<br />and Add Your Own
+//         </>
+//     ),
+//     showShopNowButton: true
+// };
 
 export default HomeHero
