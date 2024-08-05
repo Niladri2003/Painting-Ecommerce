@@ -1,6 +1,7 @@
 
 # Painting-Ecommerce Backend
-Before doing anything rename .env.example -> .env
+- [Api Docs](https://documenter.getpostman.com/view/26905530/2sA3rxqD9b)
+### Before doing anything rename .env.example -> .env
 ## Run backend in single command
 ```bash
  docker-compose up --build
