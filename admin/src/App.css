@@ -1,0 +1,38 @@
+.rectangle {
+    position: absolute;
+    top: -632px;
+    left: 807.42px;
+    filter: blur(500px);
+    backdrop-filter: blur(4px);
+    background-color: #1a5f68;
+    width: 596.9px;
+    height: 2025.3px;
+    transform: rotate(44.1deg);
+    transform-origin: 0 0;
+}
+.ellipse1 {
+    position: absolute;
+    top: 1390.09px;
+    left: 876px;
+    filter: blur(500px);
+    backdrop-filter: blur(195.4px);
+    border-radius: 50%;
+    background-color: #1a5f68;
+    width: 783px;
+    height: 813px;
+    transform:  rotate(-17.2deg);
+    transform-origin: 0 0;
+}
+.ellipse2 {
+    position: absolute;
+    top: 2786.08px;
+    left: 348px;
+    filter: blur(512.3px);
+    backdrop-filter: blur(195.4px);
+    border-radius: 50%;
+    background-color: #1a5f68;
+    width: 600px;
+    height: 623px;
+    transform:   rotate(-17.2deg);
+    transform-origin: 0 0;
+}

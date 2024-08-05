@@ -1,0 +1,52 @@
+
+import {Route,Routes} from "react-router-dom";
+// import Home from "./Pages/Home.jsx";
+// import {Signup} from "./Pages/Signup.jsx";
+import {Login} from "./Pages/Login.jsx";
+
+import Dashboard from "./Pages/Dashboard.jsx";
+import AccountDashboard from "./component/Dashboard/AccountDashboard.jsx";
+import Notification from "./component/Dashboard/Notification.jsx";
+import GalleryCoverImages from "./component/Dashboard/GalleryCoverImages.jsx";
+import PrivateRoute from "./component/Auth/PrivateRoute.jsx";
+import ImageUploader from "./component/Dashboard/ImageUploader.jsx";
+import ContactUs from "./component/Dashboard/ContactUs.jsx";
+import PhotographyServices from "./component/Dashboard/PhotographyServices.jsx";
+import {Home} from "lucide-react";
+import NotFound from "./Pages/NotFound.jsx";
+
+
+
+function App() {
+
+
+
+  return (
+
+     <div className="flex min-h-screen  flex-col items-center  overflow-hidden ">
+         <Routes>
+             <Route path="/" element={<Login/>} />
+             <Route path="*" element={<NotFound/>} />
+             {/*<Route path="/signup" element={<Signup/>} />*/}
+             {/*<Route path="/login" element={<Login/>} />*/}
+            {/*Dashboard Links*/}
+             <Route element={
+                 <PrivateRoute>
+                 <Dashboard/>
+                 </PrivateRoute>
+             }>
+                 <Route path="dashboard/account-dashboard" element={<AccountDashboard />} />
+                 <Route path="dashboard/notification" element={<Notification/>} />
+                 <Route path="dashboard/gallery-cover-images" element={<GalleryCoverImages/>} />
+                 <Route path="dashboard/image-uploader" element={<ImageUploader/>} />
+                 <Route path="dashboard/service-uploader" element={<PhotographyServices/>} />
+                 <Route path="dashboard/contact-us" element={<ContactUs/>} />
+             </Route>
+         </Routes>
+     </div>
+
+
+  )
+}
+
+export default App
