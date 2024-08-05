@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import Contact from "./pages/Contact.jsx";
 import About from "./pages/About.jsx";
 import Shop from './pages/Shop.jsx'
+import ProductCheckout from "./pages/ProductCheckout.jsx";
 
 function App() {
 
@@ -16,6 +17,8 @@ function App() {
         <Route path="/contact" element={<Contact/>} />
         <Route path="/about" element={<About/>} />
         <Route path="/shop" element={<Shop/>} />
+        <Route path="/product/:id" element={<ProductCheckout />} />
+
       </Routes>
 
     </div>
