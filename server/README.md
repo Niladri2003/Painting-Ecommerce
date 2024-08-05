@@ -4,6 +4,8 @@ docker run --name cgapp-postgres -d   -e POSTGRES_USER=postgres   -e POSTGRES_PA
 
 ok ?
 
+docker exec -it cgapp-postgres psql -U postgres (for using psql in cmd)
+
 
 steps for creating a route
 1. create a model

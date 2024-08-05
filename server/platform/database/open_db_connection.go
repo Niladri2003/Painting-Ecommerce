@@ -11,6 +11,7 @@ type Queries struct {
 	*queries.CategoryQueries
 	*queries.ProductQueries
 	*queries.ProductImageQueries
+	*queries.ContactQueries // Add ContactQueries
 }
 
 // OpenDbConnection  func for opening database connection
@@ -36,5 +37,7 @@ func OpenDbConnection() (*Queries, error) {
 		CategoryQueries:     &queries.CategoryQueries{DB: db},
 		ProductQueries:      &queries.ProductQueries{DB: db},
 		ProductImageQueries: &queries.ProductImageQueries{DB: db},
+		ContactQueries:      &queries.ContactQueries{DB: db}, // Add ContactQueries
+		
 	}, nil
 }
