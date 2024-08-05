@@ -1,6 +1,6 @@
 module github.com/niladri2003/PaintingEcommerce
 
-go 1.22.2
+go 1.20
 
 require (
 	github.com/go-playground/validator/v10 v10.22.0
