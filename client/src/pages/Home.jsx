@@ -2,11 +2,12 @@ import HeroImage from "../assets/Home/3cf42f1fce41c05751aca8476095b529.png";
 import CardImg from "../assets/Home/cardImg.png";
 import { Link } from "react-router-dom";
 import HomeHero from "../components/Home/HomeHero.jsx";
+import Footer from "../components/footer/Footer.jsx";
 
 const Home = () => {
     return (
-        <div className="w-11/12 overflow-hidden">
-            <HomeHero/>
+        <div className="w-full overflow-hidden">
+            <HomeHero />
             <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
                 <div className=" md:px-6 grid gap-8">
                     <div className="text-start space-y-4">
@@ -170,7 +171,7 @@ const Home = () => {
                             </div>
                         </div>
                         <div className="w-full relative">
-                            <img src={HeroImage} alt="Hero" className="w-full h-full rounded-[10px]"/>
+                            <img src={HeroImage} alt="Hero" className="w-full h-full rounded-[10px]" />
                             <div className={"absolute top-[50%] left-[10%] right-[10%] flex flex-col items-center gap-5"} >
                                 <p className={"text-[36px] font-[700] text-center"} >
                                     Write a Title Here. Click to Edit and Add Your Own
@@ -195,7 +196,7 @@ const Home = () => {
             </div>
             <div className={"grid grid-cols-2 mt-[40px]"}>
                 <div>
-                    <img src={CardImg} alt="Hero" className="w-full h-full rounded-[10px]"/>
+                    <img src={CardImg} alt="Hero" className="w-full h-full rounded-[10px]" />
                 </div>
                 <div className={"w-full flex flex-col items-center justify-around p-10"}>
                     <div className={"flex flex-col items-start justify-center gap-4 p-10 max-w-2xl"}>
@@ -211,66 +212,48 @@ const Home = () => {
 
             </div>
 
-            <div className={"grid grid-cols-4  ml-[200px] mr-[200px] mt-[100px] mb-[100px]"}>
-
-                    <div className={"w-[276px] flex flex-col gap-4 items-center"}>
-                        <div className={"w-[40px] h-[40px]"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42"
-                                 fill="none">
-                                <path
-                                    d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z"
-                                    stroke="black" stroke-width="0.24375"/>
+            <div className="container mx-auto my-16 p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <div className="flex flex-col gap-4 items-center">
+                        <div className="w-10 h-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
                             </svg>
                         </div>
-                        <p className={"text-[16px] font-[400] leading-[25px] text-center"}>Title One</p>
-                        <p className={"text-[11px] font-[300] text-center max-w-md"}>Click to edit and add your own
-                            text. Change the font,
-                            size or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
+                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
                     </div>
-                    <div className={"w-[276px] flex flex-col gap-4 items-center"}>
-                        <div className={"w-[40px] h-[40px]"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42"
-                                 fill="none">
-                                <path
-                                    d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z"
-                                    stroke="black" stroke-width="0.24375"/>
+                    <div className="flex flex-col gap-4 items-center">
+                        <div className="w-10 h-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
                             </svg>
                         </div>
-                        <p className={"text-[16px] font-[400] leading-[25px] text-center"}>Title One</p>
-                        <p className={"text-[11px] font-[300] text-center max-w-md"}>Click to edit and add your own
-                            text. Change the font,
-                            size or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
+                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
                     </div>
-                    <div className={"w-[276px] flex flex-col gap-4 items-center"}>
-                        <div className={"w-[40px] h-[40px]"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42"
-                                 fill="none">
-                                <path
-                                    d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z"
-                                    stroke="black" stroke-width="0.24375"/>
+                    <div className="flex flex-col gap-4 items-center">
+                        <div className="w-10 h-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
                             </svg>
                         </div>
-                        <p className={"text-[16px] font-[400] leading-[25px] text-center"}>Title One</p>
-                        <p className={"text-[11px] font-[300] text-center max-w-md"}>Click to edit and add your own
-                            text. Change the font,
-                            size or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
+                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
                     </div>
-                    <div className={"w-[276px] flex flex-col gap-4 items-center"}>
-                        <div className={"w-[40px] h-[40px]"}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42"
-                                 fill="none">
-                                <path
-                                    d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z"
-                                    stroke="black" stroke-width="0.24375"/>
+                    <div className="flex flex-col gap-4 items-center">
+                        <div className="w-10 h-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
+                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
                             </svg>
                         </div>
-                        <p className={"text-[16px] font-[400] leading-[25px] text-center"}>Title One</p>
-                        <p className={"text-[11px] font-[300] text-center max-w-md"}>Click to edit and add your own
-                            text. Change the font,
-                            size or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
+                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
                     </div>
                 </div>
+            </div>
 
+            <Footer/>   
 
         </div>
     );
