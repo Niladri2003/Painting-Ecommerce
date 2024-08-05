@@ -1,25 +1,34 @@
-import { Route, Routes } from "react-router-dom";
-import Home from "./pages/Home.jsx";
-import Navbar from "./components/Navbar.jsx";
-import Contact from "./pages/Contact.jsx";
-import About from "./pages/About.jsx";
-import Shop from './pages/Shop.jsx'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import Category from "./pages/Category";
+import Cart from "./pages/Cart";
+import Login from "./pages/Login";
+import Product from "./pages/Product";
+import Footer from "./components/Footer";
+// import image 
+import bannermens from"./assets/bannermens.png"
+import bannerwomens from"./assets/bannerwomens.png"
+import bannerkids from"./assets/bannerkids.png"
 
-function App() {
-
-
+export default function App() {
   return (
-    <div className="flex min-h-screen  items-center flex-col overflow-hidden">
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/contact" element={<Contact/>} />
-        <Route path="/about" element={<About/>} />
-        <Route path="/shop" element={<Shop/>} />
-      </Routes>
-
-    </div>
+    <main className="bg-primary text-tertiary">
+      <BrowserRouter>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/mens" element={<Category category="men" banner={bannermens} />} />
+          <Route path="/womens" element={<Category category="women" banner={bannerwomens}/>} />
+          <Route path="/kids" element={<Category category="kid" banner={bannerkids}/>} />
+          <Route path="/product" element={<Product/>} >
+            <Route path=":productId" element={<Product/>}/>
+          </Route>
+          <Route path="/cart-page" element={<Cart/>} />
+          <Route path="/login" element={<Login/>} />
+        </Routes>
+        <Footer/>
+      </BrowserRouter>
+    </main>
   )
 }
-
-export default App
