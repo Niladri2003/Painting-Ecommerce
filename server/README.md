@@ -1,6 +1,6 @@
 
 # Painting-Ecommerce Backend
-- [Api Docs](https://documenter.getpostman.com/view/26905530/2sA3rxqD9b)
+- [ApiDocs](https://documenter.getpostman.com/view/26905530/2sA3rxqD9b)
 ### Before doing anything rename .env.example -> .env
 ## Run backend in single command
 ```bash
