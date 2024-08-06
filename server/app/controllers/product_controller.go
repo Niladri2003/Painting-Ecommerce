@@ -232,3 +232,41 @@ func GetProductDetails(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": productDetails, "images": productImage})
 
 }
+
+func GetAllProducts(c *fiber.Ctx) error {
+	// Create database connection
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	allProducts, err := db.GetProducts()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": allProducts})
+
+}
+func GetProductsByCategoryID(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	// Parse the ID as uuid.UUID
+	categoryId, err := uuid.Parse(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Invalid contact ID",
+		})
+	}
+
+	// Create database connection
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	allProducts, err := db.GetProductsByCategory(categoryId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": allProducts})
+
+}

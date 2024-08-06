@@ -170,10 +170,10 @@ func UserSignIn(c *fiber.Ctx) error {
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"error": false,
-		"msg":   nil,
+		"msg":   "login successful",
 		"tokens": fiber.Map{
-			"access":  tokens.Access,
-			"refresh": tokens.Refresh,
+			"access":       tokens.Access,
+			"refreshToken": tokens.Refresh,
 		},
 	})
 }

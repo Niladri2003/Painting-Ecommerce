@@ -11,15 +11,15 @@ import {
 
 
 export function Login() {
-    const [Username, setUsername] = useState('');
-    const [Password, setPassword] = useState('');
+    const [email, setemail] = useState('');
+    const [password, setpassword] = useState('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const toast=useToast({position: 'top',})
 
     const handleLogin = async () => {
         try {
-          const data = await dispatch(loginUser({Username, Password}));
+          const data = await dispatch(loginUser({email, password}));
            // console.log("Login Response",data);
             if (data.payload.error) {
                 toast({
@@ -86,8 +86,8 @@ export function Login() {
                                             type="email"
                                             placeholder="Email"
                                             id="email"
-                                            value={Username}
-                                            onChange={(e) => setUsername(e.target.value)}
+                                            value={email}
+                                            onChange={(e) => setemail(e.target.value)}
                                         ></input>
                                     </div>
                                 </div>
@@ -95,7 +95,7 @@ export function Login() {
                                     <div className="flex items-center justify-between">
                                         <label htmlFor="" className="text-base font-medium text-gray-900">
                                             {' '}
-                                            Password{' '}
+                                            password{' '}
                                         </label>
                                         {/*<a*/}
                                         {/*    href="#"*/}
@@ -110,10 +110,10 @@ export function Login() {
                                         <input
                                             className="flex h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50"
                                             type="password"
-                                            placeholder="Password"
+                                            placeholder="password"
                                             id="password"
-                                            value={Password}
-                                            onChange={(e) => setPassword(e.target.value)}
+                                            value={password}
+                                            onChange={(e) => setpassword(e.target.value)}
                                         ></input>
                                     </div>
                                 </div>

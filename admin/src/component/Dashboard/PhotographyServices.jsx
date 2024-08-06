@@ -1,79 +1,93 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-import {
-    Box,
-    Button,
-    Text,
-    useToast,
-    VStack,
-    HStack,
-    Progress,
-    Alert,
-    AlertIcon,
-    Image,
-    Icon,
-    Input,
-    Select,
-} from '@chakra-ui/react';
-import { FaCloudUploadAlt } from 'react-icons/fa';
+import { useToast, Input, Select } from '@chakra-ui/react';
 import { BASEAPI } from '../../utils/BASEAPI';
 
 const PhotographyServices = () => {
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [previewSrc, setPreviewSrc] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [category, setCategory] = useState([]);
+    const [previewSrc, setPreviewSrc] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState(null);
     const [selectedType, setSelectedType] = useState('');
-    const  token  = JSON.parse(localStorage.getItem("token"))
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [price, setPrice] = useState('');
+    const token = JSON.parse(localStorage.getItem('token'));
     const toast = useToast({ position: 'top' });
 
     const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            setSelectedFile(file);
-            setPreviewSrc(URL.createObjectURL(file));
-            setUploadError(null);
-        }
+        const files = Array.from(event.target.files);
+        setSelectedFiles(files);
+        const previewUrls = files.map(file => URL.createObjectURL(file));
+        setPreviewSrc(previewUrls);
+        setUploadError(null);
     };
 
     const handleTypeChange = (event) => {
         setSelectedType(event.target.value);
     };
 
-    const handleRemoveFile = () => {
-        setSelectedFile(null);
-        setPreviewSrc(null);
-        setSelectedType('');
+    const handleTitleChange = (event) => {
+        setTitle(event.target.value);
     };
 
-    const handleDrop = (event) => {
-        event.preventDefault();
-        const file = event.dataTransfer.files[0];
-        if (file) {
-            setSelectedFile(file);
-            setPreviewSrc(URL.createObjectURL(file));
-            setUploadError(null);
+    const handleDescriptionChange = (event) => {
+        setDescription(event.target.value);
+    };
+
+    const handlePriceChange = (event) => {
+        setPrice(event.target.value);
+    };
+
+    const getAllCategories = async () => {
+        try {
+            const response = await axios.get(`${BASEAPI}/v1/get-all-category`);
+            if (response.status !== 200) {
+                toast({
+                    title: 'Error fetching categories',
+                    description: response.message || 'An error occurred.',
+                    status: 'error',
+                    duration: 2000,
+                    isClosable: true,
+                });
+            }
+            setCategory(response.data.categories);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            toast({
+                title: 'Error fetching categories',
+                description: error.message || 'An error occurred.',
+                status: 'error',
+                duration: 2000,
+                isClosable: true,
+            });
         }
     };
 
-    const handleDragOver = (event) => {
+    const handleUpload = async (event) => {
         event.preventDefault();
-    };
-
-    const handleUpload = async () => {
-        if (!selectedFile) {
-            setUploadError('Please select a file.');
+        if (!selectedFiles.length) {
+            setUploadError('Please select at least one file.');
             return;
         }
         if (!selectedType) {
-            setUploadError('Please select a type.');
+            setUploadError('Please select a category.');
+            return;
+        }
+        if (!title || !description || !price) {
+            setUploadError('Please fill in all the fields.');
             return;
         }
 
         const formData = new FormData();
-        formData.append('file', selectedFile);
-        formData.append('type', selectedType);
+        selectedFiles.forEach(file => {
+            formData.append('images', file);
+        });
+        formData.append('category_id', selectedType);
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('price', price);
 
         try {
             setUploading(true);
@@ -84,15 +98,15 @@ const PhotographyServices = () => {
                 isClosable: true,
             });
 
-            const response = await axios.post(`${BASEAPI}/v2/service-upload`, formData, {
+            const response = await axios.post(`${BASEAPI}/v1/create-product`, formData, {
                 headers: {
                     Authorization: `${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
-            console.log("Service",response)
+            console.log(response)
             toast({
-                title: 'Cover Image Uploaded successfully.',
+                title: 'Product Uploaded successfully.',
                 status: 'success',
                 duration: 3000,
                 isClosable: true,
@@ -100,13 +114,14 @@ const PhotographyServices = () => {
 
             console.log('Upload success:', response);
             handleRemoveFile();
+            handleClearForm();
         } catch (error) {
-            console.error('Error uploading image:', error);
+            console.error('Error uploading product:', error);
 
             if (error.response && error.response.status === 413) {
                 toast({
                     title: 'Upload Failed',
-                    description: 'Image size is too large. Please upload a smaller image.',
+                    description: 'File size is too large. Please upload smaller files.',
                     status: 'error',
                     duration: 4000,
                     isClosable: true,
@@ -124,85 +139,141 @@ const PhotographyServices = () => {
             setUploading(false);
         }
     };
+    const handleClearForm = () => {
+        setSelectedFiles([]);
+        setPreviewSrc([]);
+        setUploadError(null);
+        setSelectedType('');
+        setTitle('');
+        setDescription('');
+        setPrice('');
+    };
+
+    const handleRemoveFile = () => {
+        setSelectedFiles([]);
+        setPreviewSrc([]);
+        setUploadError(null);
+    };
+
+    useEffect(() => {
+        getAllCategories();
+    }, []);
 
     return (
-        <div className={"w-full min-h-screen flex-1"}>
-        <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-2">
-            <div className={"rounded-lg flex flex-col gap-2 border p-5"}>
-                <Text fontSize="xl" fontWeight="bold">Upload Service Image</Text>
-                <Select placeholder="Select type" onChange={handleTypeChange} value={selectedType}>
-                    <option value="PreWeddingPhotography">Pre-Wedding Photography</option>
-                    <option value="WeddingPhotography">Wedding Photography</option>
-                    <option value="CandidPhotography">Candid Photography</option>
-                    <option value="MaternityPhotography">Maternity Photography</option>
-                    <option value="RiceCeremonyPhotography">Rice Ceremony Photography</option>
-                    <option value="BirthdayPhotography">Birthday Photography</option>
-
-                </Select>
-                <div className={"grid gap-4"}>
-                <Box
-                    border="2px dashed"
-                    borderColor="gray.300"
-                    borderRadius="md"
-                    p={4}
-                    width="full"
-                    textAlign="center"
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                    position="relative"
-                    cursor="pointer"
-                >
-                    <Input
-                        type="file"
-                        accept=".webp, .jpg, .png, .jpeg"
-                        onChange={handleFileChange}
-                        position="absolute"
-                        top="0"
-                        left="0"
-                        width="100%"
-                        height="100%"
-                        opacity="0"
-                        cursor="pointer"
-                    />
-                    {!previewSrc && (
-                        <VStack spacing={2}>
-                            <Icon as={FaCloudUploadAlt} boxSize={12} color="gray.500" />
-                            <Text color="gray.500">Drag and drop a file here, or click to select a file</Text>
-                        </VStack>
-                    )}
-                    {previewSrc && (
-                        <Box boxSize="w-full" position="relative">
-                            <Image src={previewSrc} alt="Preview" objectFit="cover" boxSize="full" borderRadius="md" />
-                        </Box>
-                    )}
-                </Box>
-                {uploadError && (
-                    <Alert status="error">
-                        <AlertIcon />
-                        {uploadError}
-                    </Alert>
-                )}
-                <HStack spacing={4}>
-                    <Button
-                        colorScheme="teal"
-                        onClick={handleUpload}
-                        isDisabled={!selectedFile || !selectedType || uploading}
-                        isLoading={uploading}
-                        loadingText="Uploading"
+        <div className="container mx-auto px-4 md:px-6 max-w-4xl py-12">
+            <h1 className="text-3xl font-bold mb-8">Upload New Product</h1>
+            <form className="grid gap-6" onSubmit={handleUpload}>
+                <div className="grid gap-2">
+                    <label
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        htmlFor="title"
                     >
-                        Upload
-                    </Button>
-                    {selectedFile && !uploading && (
-                        <Button colorScheme="red" onClick={handleRemoveFile}>
-                            Remove File
-                        </Button>
-                    )}
-                </HStack>
-                {uploading && <Progress size="xs" isIndeterminate width="full" />}
+                        Title
+                    </label>
+                    <input
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        id="title"
+                        placeholder="Enter product title"
+                        type="text"
+                        value={title}
+                        onChange={handleTitleChange}
+                    />
                 </div>
-            </div>
+                <div className="grid gap-2">
+                    <label
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        htmlFor="description"
+                    >
+                        Description
+                    </label>
+                    <textarea
+                        className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[120px]"
+                        id="description"
+                        placeholder="Enter product description"
+                        value={description}
+                        onChange={handleDescriptionChange}
+                    ></textarea>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="grid gap-2">
+                        <label
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            htmlFor="price"
+                        >
+                            Price
+                        </label>
+                        <input
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            id="price"
+                            step="0.01"
+                            placeholder="Enter product price"
+                            type="number"
+                            value={price}
+                            onChange={handlePriceChange}
+                        />
+                    </div>
+                    <div>
+                        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                            Category
+                        </label>
+                        <div className="mt-1">
+                            <select
+                                onChange={handleTypeChange}
+                                value={selectedType}
+                                id="category"
+                                name="category"
+                                className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            >
+                                {category.length === 0 ? (
+                                    <option>No categories found</option>
+                                ) : (
+                                    <>
+                                        <option>Select a category</option>
+                                        {category.map(cat => (
+                                            <option key={cat.id} value={cat.id}>
+                                                {cat.name}
+                                            </option>
+                                        ))}
+                                    </>
+                                )}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div className="grid gap-2">
+                    <label
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        htmlFor="images"
+                    >
+                        Images
+                    </label>
+                    <div>
+                        <Input
+                            onChange={handleFileChange}
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            id="images"
+                            multiple
+                            type="file"
+                        />
+                    </div>
+                </div>
+                <div className="flex justify-end gap-4">
+                    <button
+                        type="button"
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+                        onClick={handleRemoveFile}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                        type="submit"
+                    >
+                        Upload Product
+                    </button>
+                </div>
+            </form>
         </div>
-            </div>
     );
 };
 

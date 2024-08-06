@@ -14,6 +14,7 @@ import ContactUs from "./component/Dashboard/ContactUs.jsx";
 import PhotographyServices from "./component/Dashboard/PhotographyServices.jsx";
 import {Home} from "lucide-react";
 import NotFound from "./Pages/NotFound.jsx";
+import Products from "./component/Dashboard/Products.jsx";
 
 
 
@@ -41,6 +42,7 @@ function App() {
                  <Route path="dashboard/image-uploader" element={<ImageUploader/>} />
                  <Route path="dashboard/service-uploader" element={<PhotographyServices/>} />
                  <Route path="dashboard/contact-us" element={<ContactUs/>} />
+                 <Route path="dashboard/all-products" element={<Products/>} />
              </Route>
          </Routes>
      </div>

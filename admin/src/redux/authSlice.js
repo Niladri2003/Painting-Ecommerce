@@ -2,20 +2,20 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {BASEAPI} from "../utils/BASEAPI.js";
 
-export const loginUser = createAsyncThunk('auth/loginUser', async ({ Username, Password }) => {
-    const response = await fetch(`${BASEAPI}/v2/login`, {
+export const loginUser = createAsyncThunk('auth/loginUser', async ({ email, password }) => {
+    const response = await fetch(`${BASEAPI}/v1/user/sign-in`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ Username, Password }),
+        body: JSON.stringify({ email, password }),
     });
     console.log("Data",response)
     return await response.json();
 });
 
 export const signupUser = createAsyncThunk('auth/signupUser', async ({ Username, Password }) => {
-    const response = await fetch(`${BASEAPI}/v2/register`, {
+    const response = await fetch(`${BASEAPI}/v1/user/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -30,6 +30,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState: {
         token: null,
+        refreshToken: null,
         username: null,
         status: 'idle',
         error: null,
@@ -38,6 +39,7 @@ const authSlice = createSlice({
         logout: (state) => {
             state.token = null;
             state.username = null;
+            state.refreshToken = null;
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             localStorage.removeItem('userDetails');
@@ -51,13 +53,12 @@ const authSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(loginUser.fulfilled, (state, action) => {
-                console.log("Res",action.payload.user)
+                console.log("Res",action.payload)
                 state.status = 'succeeded';
-                state.token = action.payload;
-                state.username = action.payload.user.Username;
-                localStorage.setItem('token',JSON.stringify(action.payload.token));
-                localStorage.setItem('user',JSON.stringify(action.payload.user.ID));
-                localStorage.setItem('userDetails',JSON.stringify(action.payload));
+                state.token = action.payload.tokens.access;
+                state.refreshToken=action.payload.tokens.refreshToken;
+                localStorage.setItem('token',JSON.stringify(action.payload.tokens.access));
+                localStorage.setItem('refreshToken',JSON.stringify(action.payload.tokens.refreshToken));
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.status = 'failed';
