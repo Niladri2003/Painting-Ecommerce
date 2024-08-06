@@ -13,20 +13,19 @@ import {
     Text,
     useToast,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
-import {BASEAPI} from "../../utils/BASEAPI.js";
+import { BASEAPI } from "../../utils/BASEAPI.js";
 
 const ContactUs = () => {
-    const [contacts, setContacts] = useState([]);
+    const [contacts, setContacts] = useState([]); // Default to empty array
     const [total, setTotal] = useState(0);
     const toast = useToast({ position: "top" });
-    const  token  = JSON.parse(localStorage.getItem("token"))
+    const token = JSON.parse(localStorage.getItem("token"));
 
     const getAllContacts = async () => {
         try {
-            const response = await axios.get(`${BASEAPI}/v2/get-contact-form`, {
+            const response = await axios.get(`${BASEAPI}/v1/get-all-contact`, {
                 headers: {
-                    Authorization: `${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -48,8 +47,10 @@ const ContactUs = () => {
                 isClosable: true,
             });
 
-            setContacts(response.data.data);
-            setTotal(response.data.Total);
+            const fetchedContacts = response.data.contacts || []; // Ensure contacts is always an array
+            setContacts(fetchedContacts);
+            setTotal(fetchedContacts.length);
+
         } catch (error) {
             console.error('Error fetching contacts:', error);
             toast({
@@ -64,13 +65,12 @@ const ContactUs = () => {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`${BASEAPI}/v2/delete-contact`, {
+            const response = await axios.delete(`${BASEAPI}/v1/delete-contact/${id}`, {
                 headers: {
-                    Authorization: `${token}`,
+                    Authorization: `Bearer ${token}`,
                 },
                 data: { id },
             });
-
 
             if (response.status === 200) {
                 toast({
@@ -112,7 +112,7 @@ const ContactUs = () => {
                     Total Contacts: {total}
                 </Text>
             </Center>
-            {total === 0 ? (
+            {contacts.length === 0 ? (
                 <Center mt={8}>
                     <Text>No contacts found.</Text>
                 </Center>
@@ -124,7 +124,7 @@ const ContactUs = () => {
                             <Th>Name</Th>
                             <Th>Email</Th>
                             <Th>Phone</Th>
-                            <Th>Location</Th>
+                            <Th>Subject</Th>
                             <Th>Date</Th>
                             <Th>Message</Th>
                             <Th>Action</Th>
@@ -133,11 +133,11 @@ const ContactUs = () => {
                     <Tbody>
                         {contacts.map((contact) => (
                             <Tr key={contact.id}>
-                                <Td>{contact.name}</Td>
+                                <Td>{contact.first_name}</Td>
                                 <Td>{contact.email}</Td>
                                 <Td>{contact.phone}</Td>
-                                <Td>{contact.location}</Td>
-                                <Td>{new Date(contact.date).toLocaleDateString()}</Td>
+                                <Td>{contact.subject}</Td>
+                                <Td>{new Date(contact.submitted_at).toLocaleDateString()}</Td>
                                 <Td>{contact.message}</Td>
                                 <Td>
                                     <Button colorScheme="red" size="sm" onClick={() => handleDelete(contact.id)}>

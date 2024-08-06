@@ -62,7 +62,7 @@ export const dashboardLinks=[
     },
     {
         id:4,
-        name:"Create Product",
+        name:"Image",
         path:"dashboard/image-uploader",
         icon:`<svg
           xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ export const dashboardLinks=[
     },
     {
         id:5,
-        name:"Service",
+        name:"Create Product",
         path:"dashboard/service-uploader",
         icon:`<svg
           xmlns="http://www.w3.org/2000/svg"
