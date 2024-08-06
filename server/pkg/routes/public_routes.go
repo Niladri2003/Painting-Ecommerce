@@ -21,4 +21,7 @@ func PublicRoutes(a *fiber.App) {
 	route.Put("/update-reply-status/:id", controllers.UpdateContactReplyStatus) //Update the replied status
 	route.Delete("/delete-contact/:id", controllers.DeleteContact) //Delete a contact message by its ID
 
+	//Routes for address
+	route.Get("/get-all-addresses",  controllers.GetAllAddresses)
+
 }
