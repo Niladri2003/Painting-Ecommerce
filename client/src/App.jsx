@@ -5,7 +5,7 @@ import Contact from "./pages/Contact.jsx";
 import About from "./pages/About.jsx";
 import Shop from './pages/Shop.jsx'
 import ProductCheckout from "./pages/ProductCheckout.jsx";
-
+import SignUp from "./pages/SignUp.jsx"
 function App() {
 
 
@@ -18,7 +18,7 @@ function App() {
         <Route path="/about" element={<About/>} />
         <Route path="/shop" element={<Shop/>} />
         <Route path="/product/:id" element={<ProductCheckout />} />
-
+        <Route path="/signup" element={<SignUp/>} />
       </Routes>
 
     </div>
