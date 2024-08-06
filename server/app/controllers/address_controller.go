@@ -20,8 +20,8 @@ func CreateAddress(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": "token invalid",
+			"error": true,
+			"msg":   "token invalid",
 		})
 	}
 	expires := claims.Expires
@@ -29,22 +29,22 @@ func CreateAddress(c *fiber.Ctx) error {
 	// Check if token is expired
 	if now > expires {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "token expired",
+			"error": true,
+			"msg":   "token expired",
 		})
 	}
 	if claims.UserRole != "user" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "Only user can create address",
+			"error": true,
+			"msg":   "Only user can create address",
 		})
 	}
 
 	// Parse request body
 	if err := c.BodyParser(&address); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
-			"message": "invalid request body",
+			"error": true,
+			"msg":   "invalid request body",
 		})
 	}
 
@@ -52,8 +52,8 @@ func CreateAddress(c *fiber.Ctx) error {
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
@@ -79,15 +79,15 @@ func CreateAddress(c *fiber.Ctx) error {
 	id, err := db.CreateAddress(addressModel)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"error":   false,
-		"message": "Address created successfully",
-		"id":      id.String(),
+		"error": false,
+		"msg":   "Address created successfully",
+		"id":    id.String(),
 	})
 }
 
@@ -97,8 +97,8 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
@@ -108,14 +108,14 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 	now := time.Now().Unix()
 	if now > claims.Expires {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "Token expired",
+			"error": true,
+			"msg":   "Token expired",
 		})
 	}
 	if claims.UserRole != "user" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "Only users can update addresses",
+			"error": true,
+			"msg":   "Only users can update addresses",
 		})
 	}
 
@@ -123,16 +123,16 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 	var addressForm models.AddressForm
 	if err := c.BodyParser(&addressForm); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
-			"message": "Invalid request body",
+			"error": true,
+			"msg":   "Invalid request body",
 		})
 	}
 
 	// Ensure user ID from JWT matches the user ID in the request body
 	if addressForm.UserID != userId {
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error":   true,
-			"message": "User ID mismatch",
+			"error": true,
+			"msg":   "User ID mismatch",
 		})
 	}
 
@@ -180,7 +180,7 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"error":   false,
-		"message": "Address updated successfully",
+		"msg":     "Address updated successfully",
 		"address": updatedAddress,
 	})
 }
@@ -190,8 +190,8 @@ func GetAddressByUserID(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
@@ -201,8 +201,8 @@ func GetAddressByUserID(c *fiber.Ctx) error {
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
@@ -210,14 +210,14 @@ func GetAddressByUserID(c *fiber.Ctx) error {
 	address, err := db.GetAddressesByUserID(userId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
 	return c.JSON(fiber.Map{
 		"error":   false,
-		"message": "Address retrieved successfully",
+		"msg":     "Address retrieved successfully",
 		"address": address,
 	})
 }
@@ -228,8 +228,8 @@ func GetAllAddresses(c *fiber.Ctx) error {
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
@@ -237,14 +237,14 @@ func GetAllAddresses(c *fiber.Ctx) error {
 	addresses, err := db.GetAddresses()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"error":   false,
-		"message": "Addresses retrieved successfully",
+		"error":     false,
+		"msg":       "Addresses retrieved successfully",
 		"addresses": addresses,
 	})
 }
@@ -255,8 +255,8 @@ func DeleteAddressByUserID(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": "token invalid",
+			"error": true,
+			"msg":   "token invalid",
 		})
 	}
 
@@ -266,24 +266,23 @@ func DeleteAddressByUserID(c *fiber.Ctx) error {
 	now := time.Now().Unix()
 	if now > claims.Expires {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "Token expired",
+			"error": true,
+			"msg":   "Token expired",
 		})
 	}
 	if claims.UserRole != "user" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "Only users can delete addresses",
+			"error": true,
+			"msg":   "Only users can delete addresses",
 		})
 	}
-
 
 	// Create database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
@@ -291,35 +290,34 @@ func DeleteAddressByUserID(c *fiber.Ctx) error {
 	err = db.DeleteAddressByUserID(userID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"error":   false,
-		"message": "Address deleted successfully",
+		"error": false,
+		"msg":   "Address deleted successfully",
 	})
 }
 
 // DeleteAddress deletes an address by address ID.
 func DeleteAddressByAddressId(c *fiber.Ctx) error {
-	
+
 	addressId := c.Params("addressId")
 	parsedAddressId, err := uuid.Parse(addressId)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error":   true,
-			"message": "Invalid address ID",
+			"error": true,
+			"msg":   "Invalid address ID",
 		})
 	}
-
 
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": "Internal server error",
+			"error": true,
+			"msg":   "Internal server error",
 		})
 	}
 
@@ -327,19 +325,17 @@ func DeleteAddressByAddressId(c *fiber.Ctx) error {
 	now := time.Now().Unix()
 	if now > claims.Expires {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error":   true,
-			"message": "Token expired",
+			"error": true,
+			"msg":   "Token expired",
 		})
 	}
-	
-
 
 	// Create database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
@@ -348,13 +344,13 @@ func DeleteAddressByAddressId(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error":   true,
-			"message": err.Error(),
+			"error": true,
+			"msg":   err.Error(),
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"error":   false,
-		"message": "Address deleted successfully",
+		"error": false,
+		"msg":   "Address deleted successfully",
 	})
 }

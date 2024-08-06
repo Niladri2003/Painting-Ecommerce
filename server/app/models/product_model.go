@@ -15,3 +15,21 @@ type Product struct {
 	CreatedAt   time.Time `db:"created_at" json:"created_at"`
 	UpdatedAt   time.Time `db:"updated_at" json:"updated_at"`
 }
+type AllProduct struct {
+	ID          uuid.UUID       `db:"id" json:"id"`
+	Title       string          `db:"title" json:"title"`
+	Description string          `db:"description" json:"description"`
+	Price       float64         `db:"price" json:"price"`
+	CategoryID  uuid.UUID       `db:"category_id" json:"category_id"`
+	CreatedAt   time.Time       `db:"created_at" json:"created_at"`
+	UpdatedAt   time.Time       `db:"updated_at" json:"updated_at"`
+	Images      []ProductImage  `json:"images"`
+	Category    ProductCategory `json:"category"`
+}
+
+type ProductImg struct {
+	ID        uuid.UUID `db:"id" json:"id"`
+	ProductID uuid.UUID `db:"product_id" json:"product_id"`
+	ImageURL  string    `db:"image_url" json:"image_url"`
+	CreatedAt time.Time `db:"created_at" json:"created_at"`
+}

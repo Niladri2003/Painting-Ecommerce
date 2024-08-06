@@ -54,7 +54,7 @@ const Sidebar = ({isSidebarOpen,toggleSidebar,setIsSidebarOpen}) => {
                         <path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"></path>
                         <path d="M12 3v6"></path>
                     </svg>
-                    <span>ForeverKnots</span>
+                    <span>Trivart</span>
                 </a>
             </div>
             <nav className={"flex flex-1 flex-col space-y-1"}>
