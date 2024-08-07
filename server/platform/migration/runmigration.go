@@ -58,8 +58,15 @@ func loadSampleData(connURL string) {
 	if err != nil {
 		log.Fatalf("Failed to truncate tables: %v", err)
 	}
+	// Determine the file path based on the environment variable
+	filePath := os.Getenv("SAMPLE_DATA_PATH")
+	if filePath == "" {
+		// Default path for local development
+		filePath = "platform/migration/sample_data.sql"
+	}
+
 	// Get the absolute path
-	absPath, err := filepath.Abs("platform/migration/sample_data.sql")
+	absPath, err := filepath.Abs(filePath)
 	if err != nil {
 		log.Fatalf("Failed to get absolute path: %v", err)
 	}
