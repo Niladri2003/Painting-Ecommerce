@@ -7,3 +7,6 @@ DROP TABLE product_images;
 DROP TABLE products;
 DROP TABLE categories;
 DROP TABLE contacts;
+DROP TABLE addresses;
+DROP TABLE carts;
+DROP TABLE cart_items;

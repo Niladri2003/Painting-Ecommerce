@@ -83,3 +83,24 @@ CREATE TABLE addresses (
                         FOREIGN KEY (user_id) REFERENCES users(id)    
 );
 
+-- Create the carts table
+CREATE TABLE carts (
+                       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                       user_id UUID NOT NULL,
+                       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Create the cart_items table
+CREATE TABLE cart_items (
+                            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                            cart_id UUID NOT NULL,
+                            product_id UUID NOT NULL,
+                            quantity INT NOT NULL CHECK (quantity > 0),
+                            price DECIMAL(10, 2) NOT NULL, -- Price at the time of adding to cart
+                            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
+                            FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
+);

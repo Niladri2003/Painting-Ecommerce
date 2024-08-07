@@ -56,6 +56,7 @@ func UserSignUp(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
+	fmt.Println("HashPassword=>", utils.GeneratePassword(signUp.Password))
 	//Create a new user struct
 	user := &models.User{}
 
