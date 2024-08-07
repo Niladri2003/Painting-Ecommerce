@@ -1,6 +1,7 @@
 package queries
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -103,6 +104,7 @@ func (q *ProductQueries) GetProducts() ([]models.AllProduct, error) {
 	return products, nil
 }
 func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.AllProduct, error) {
+	fmt.Println("catid", categoryID)
 	// Define the query.
 	query := `
 	SELECT
@@ -197,6 +199,7 @@ func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.A
 
 // GetProduct method for getting one product by given ID.
 func (q *ProductQueries) GetProduct(id uuid.UUID) (models.Product, error) {
+	fmt.Println("Id=", id)
 	// Define product variable.
 	product := models.Product{}
 

@@ -17,12 +17,14 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   backend:
     build:
       context: .
     container_name: painting-ecommerce
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "5000:5000"
     environment:
@@ -32,6 +34,7 @@ services:
       - DB_PASSWORD=password
       - DB_NAME=postgres
       - DB_SSL_MODE=disable
+      - SAMPLE_DATA_PATH=/root/platform/migration/sample_data.sql
     networks:
       - my_network
 

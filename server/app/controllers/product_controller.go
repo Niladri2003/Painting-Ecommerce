@@ -201,21 +201,14 @@ func DeleteProduct(c *fiber.Ctx) error {
 }
 
 func GetProductDetails(c *fiber.Ctx) error {
-	type ProductRequest struct {
-		ID string `json:"id"`
-	}
-	var productRequest ProductRequest
-	if err := c.BodyParser(&productRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
-	}
+	id := c.Params("id")
 
 	// Validate the ID
-	productID := productRequest.ID
-	fmt.Println("productID:", productID)
-	productUUID, err := uuid.Parse(productID)
+	productUUID, err := uuid.Parse(id)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid product ID"})
 	}
+	fmt.Println(productUUID)
 	// Create database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {

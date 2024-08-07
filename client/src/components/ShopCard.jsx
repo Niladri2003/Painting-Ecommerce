@@ -15,13 +15,13 @@ const Card = ({ product }) => {
     >
       <div className="overflow-hidden rounded">
         <img
-          src={product.image}
+          src={product.images[0].image_url}
           alt={product.name}
           className="w-full h-56 object-cover transition-transform duration-300 hover:scale-110"
         />
       </div>
       <div className="mt-4">
-        <h2 className="text-xl font-bold text-gray-800">{product.name}</h2>
+        <h2 className="text-xl font-bold text-gray-800">{product.title}</h2>
         <p className="text-gray-700 mt-2">{product.description}</p>
         <div className="mt-4 flex justify-between items-center">
           <span className="text-xl font-bold text-gray-800">${product.price}</span>

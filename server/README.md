@@ -26,7 +26,7 @@ docker exec -i cgapp-postgres pg_restore -U postgres -d postgres < /docker-entry
 ```
 Run this to create a backup of your postgreSql database
 ```bash
-docker exec -t cgapp-postgres pg_dump -U postgres -F c postgres > /path/to/backup/dumpfile.dump
+docker exec -t cgapp-postgres pg_dump -U postgres -F c postgres > /postgresBackup/dumpfile.dump
 ```
 For using PSQL in CMD
 ```bash

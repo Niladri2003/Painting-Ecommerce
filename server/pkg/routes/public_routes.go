@@ -13,7 +13,7 @@ func PublicRoutes(a *fiber.App) {
 	route.Post("/user/sign-in", controllers.UserSignIn)
 	route.Get("/get-all-category", controllers.GetAllCategory)
 
-	route.Get("/get-product-details", controllers.GetProductDetails)
+	route.Get("/get-product-details/:id", controllers.GetProductDetails)
 	route.Get("/get-all-product", controllers.GetAllProducts)
 	route.Get("/get-products-by-category-id/:id", controllers.GetProductsByCategoryID)
 

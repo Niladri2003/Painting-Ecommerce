@@ -51,20 +51,51 @@
 
 // export default Shop;
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import Card from '../components/ShopCard';
 import products from '../../product'; // Assume you have a products array
 import Footer from '../components/footer/Footer';
 import HomeHero from '../components/Home/HomeHero';
+import axios from "axios";
+import {BASEAPI} from "../utils/BASE_API.js";
 
 const Shop = () => {
   const [sortType, setSortType] = useState('');
+  const [product, setProduct] = useState([]);
+
+  const getAllProducts = async () => {
+    try {
+      const response = await axios.get(`${BASEAPI}/get-all-product`);
+      // toast({
+      //   title: response.data.msg,
+      //   status: 'success',
+      //   duration: 3000,
+      //   isClosable: true,
+      // });
+      setProduct(response.data.data);
+      //setSortedProducts(response.data.data);
+      console.log(response.data);
+      console.log(product)
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      // toast({
+      //   title: 'Error fetching products',
+      //   description: error.message || 'An error occurred.',
+      //   status: 'error',
+      //   duration: 2000,
+      //   isClosable: true,
+      // });
+    }
+  };
+  useEffect(() => {
+    getAllProducts();
+  }, []);
 
   const handleSort = (e) => {
     setSortType(e.target.value);
   };
 
-  const sortedProducts = [...products].sort((a, b) => {
+  const sortedProducts = [...product].sort((a, b) => {
     if (sortType === 'price-low-high') {
       return a.price - b.price;
     }
@@ -94,7 +125,10 @@ const Shop = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-6 gap-6">
         {sortedProducts.map((product) => (
-          <Card key={product.id} product={product} />
+            <>
+
+              <Card key={product.id} product={product} />
+            </>
         ))}
       </div>
       <Footer />
