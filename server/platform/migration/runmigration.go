@@ -33,7 +33,7 @@ func RunMigration() {
 
 	log.Println("Database migrated successfully")
 	// Load sample data
-	loadSampleData(postgresConnURL)
+	//loadSampleData(postgresConnURL)
 }
 
 func tableExists(db *sql.DB, tableName string) (bool, error) {
