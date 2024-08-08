@@ -19,6 +19,7 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Deploy to EC2
+
       env:
         EC2_HOST: ${{ secrets.EC2_HOST }}
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
