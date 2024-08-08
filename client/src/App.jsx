@@ -6,6 +6,8 @@ import About from "./pages/About.jsx";
 import Shop from './pages/Shop.jsx'
 import ProductCheckout from "./pages/ProductCheckout.jsx";
 import SignUp from "./pages/SignUp.jsx"
+import SignIn from "./pages/SignIn.jsx";
+
 function App() {
 
 
@@ -19,6 +21,7 @@ function App() {
         <Route path="/shop" element={<Shop/>} />
         <Route path="/product/:id" element={<ProductCheckout />} />
         <Route path="/signup" element={<SignUp/>} />
+        <Route path="/signin" element={<SignIn/>} />
       </Routes>
 
     </div>
