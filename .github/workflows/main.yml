@@ -19,16 +19,19 @@ jobs:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Deploy to EC2
+      env:
+        EC2_HOST: ${{ secrets.EC2_HOST }}
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@ec2${{ secrets.EC2_HOST }} << 'EOF'
-          cd deploy/
-          if [ -d "backendservice" ]; then
-            cd backendservice
-            git pull origin development
-          else
+        ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST << 'EOF'
+          if [ ! -d "deploy/backendservice" ]; then
+            mkdir -p deploy
+            cd deploy
             git clone -b development https://github.com/Niladri2003/Painting-Ecommerce backendservice
-            cd backendservice
+          else
+            cd deploy/backendservice
+            git pull origin development
           fi
+          cd deploy/backendservice
           docker-compose up -d --build
           echo "Deployment complete."
         EOF
