@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/footer/Footer';
+import axios from 'axios'; // Import axios for making HTTP requests
 import { FcGoogle } from "react-icons/fc";
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
-        name: '',
+        //name: '', // Include name in the form data
         email: '',
         password: '',
         user_role: 'user' // Default role set to 'user'
@@ -19,15 +20,34 @@ const SignUp = () => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Log form data to see the submission, including the hidden role
-        console.log('Form submitted:', formData);
+        try {
+            const response = await axios.post('http://13.60.65.162:5000/api/v1/user/register', formData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.status === 201 || response.status === 200) {
+                alert('Registration successful!');
+                setFormData({
+                    //name: '',
+                    email: '',
+                    password: '',
+                    user_role: 'user'
+                });
+            } else {
+                alert('Registration failed');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred during registration');
+        }
     };
 
     return (
-        <div className='w-full '>
-            <section className="flex justify-center items-center min-h-screen ">
+        <div className='w-full'>
+            <section className="flex justify-center items-center min-h-screen">
                 <div className="bg-white rounded-lg shadow-lg p-8 max-w-sm w-full">
                     <h3 className="text-2xl font-bold mb-6 text-center">Sign Up</h3>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -61,8 +81,8 @@ const SignUp = () => {
                         {/* Hidden role input */}
                         <input
                             type="hidden"
-                            name="role"
-                            value={formData.role}
+                            name="user_role"
+                            value={formData.user_role}
                         />
                         <button
                             type="submit"
