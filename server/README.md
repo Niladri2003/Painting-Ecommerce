@@ -44,7 +44,7 @@ docker exec -it cgapp-postgres psql -U postgres
 5. create controllers
 6. create route
 
-For Creating Docker image 
+For Creating Docker image.
 ```bash
 docker build -t painting-ecommerce .
 ```
