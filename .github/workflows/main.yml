@@ -29,7 +29,10 @@ jobs:
           if [ -d ".git" ]; then
             git pull origin development
           else
-            git clone -b development https://$ACCESS_TOKEN:x-oauth-basic@github.com/Niladri2003/Painting-Ecommerce .
+            git init
+            git remote add origin https://$ACCESS_TOKEN:x-oauth-basic@github.com/Niladri2003/Painting-Ecommerce.git
+            git fetch
+            git checkout -t origin/development
           fi
           docker-compose up -d --build
           echo "Deployment complete."
