@@ -21,17 +21,16 @@ jobs:
     - name: Deploy to EC2
       env:
         EC2_HOST: ${{ secrets.EC2_HOST }}
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@$EC2_HOST << 'EOF'
-          if [ ! -d "deploy/backendservice" ]; then
-            mkdir -p deploy
-            cd deploy
-            git clone -b development https://github.com/Niladri2003/Painting-Ecommerce backendservice
-          else
-            cd deploy/backendservice
-            git pull origin development
-          fi
+          mkdir -p deploy/backendservice
           cd deploy/backendservice
+          if [ -d ".git" ]; then
+            git pull origin development
+          else
+            git clone -b development https://$ACCESS_TOKEN:x-oauth-basic@github.com/Niladri2003/Painting-Ecommerce .
+          fi
           docker-compose up -d --build
           echo "Deployment complete."
         EOF
