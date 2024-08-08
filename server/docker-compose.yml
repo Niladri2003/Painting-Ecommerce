@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: password  # Set the password for the 'postgres' user
       POSTGRES_DB: postgres  # Default database
     ports:
-      - "5432:5432"  # Map port 5432 on the host to port 5432 in the container
+      - "5432:5432"
     networks:
       - my_network
     healthcheck:
@@ -34,7 +34,7 @@ services:
       DB_PASSWORD: password
       DB_NAME: postgres
       DB_SSL_MODE: disable
-      SAMPLE_DATA_PATH: /root/platform/migration/sample_data.sql  # Path for sample data
+
     networks:
       - my_network
 
