@@ -8,6 +8,7 @@ import ProductCheckout from "./pages/ProductCheckout.jsx";
 import SignUp from "./pages/SignUp.jsx"
 import SignIn from "./pages/SignIn.jsx";
 import { Footer } from "flowbite-react";
+import ScrollTop from "./components/helper/ScrollTop.jsx";
 
 function App() {
 
@@ -15,6 +16,7 @@ function App() {
   return (
     <div className="flex min-h-screen  items-center flex-col overflow-hidden">
       <Navbar />
+      <ScrollTop/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/contact-us" element={<Contact/>} />
