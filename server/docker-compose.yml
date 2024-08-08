@@ -5,36 +5,36 @@ services:
     image: postgres:latest
     container_name: cgapp-postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=postgres
+      POSTGRES_USER: postgres  # Ensure the user is 'postgres'
+      POSTGRES_PASSWORD: password  # Set the password for the 'postgres' user
+      POSTGRES_DB: postgres  # Default database
     ports:
-      - "5432:5432"
+      - "5432:5432"  # Map port 5432 on the host to port 5432 in the container
     networks:
       - my_network
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]  # Check if PostgreSQL is ready
       interval: 10s
       timeout: 5s
       retries: 5
 
   backend:
     build:
-      context: .
+      context: .  # Build the backend service from the current directory
     container_name: painting-ecommerce
     depends_on:
       postgres:
-        condition: service_healthy
+        condition: service_healthy  # Wait for PostgreSQL to be healthy before starting the backend
     ports:
-      - "5000:5000"
+      - "5000:5000"  # Map port 5000 on the host to port 5000 in the container
     environment:
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=password
-      - DB_NAME=postgres
-      - DB_SSL_MODE=disable
-      - SAMPLE_DATA_PATH=/root/platform/migration/sample_data.sql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres  # Ensure the backend connects with the 'postgres' user
+      DB_PASSWORD: password
+      DB_NAME: postgres
+      DB_SSL_MODE: disable
+      SAMPLE_DATA_PATH: /root/platform/migration/sample_data.sql  # Path for sample data
     networks:
       - my_network
 

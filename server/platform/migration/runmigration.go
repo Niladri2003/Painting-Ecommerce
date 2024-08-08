@@ -13,7 +13,6 @@ import (
 )
 
 func RunMigration() {
-
 	postgresConnURL, err := utils.ConnectionURLBuilder("postgres")
 	fmt.Printf("Postgres connection URL: %s\n", postgresConnURL)
 	if err != nil {
@@ -36,28 +35,57 @@ func RunMigration() {
 	// Load sample data
 	loadSampleData(postgresConnURL)
 }
+
+func tableExists(db *sql.DB, tableName string) (bool, error) {
+	var exists bool
+	query := `SELECT EXISTS (
+		SELECT 1
+		FROM information_schema.tables
+		WHERE table_schema = 'public'
+		AND table_name = $1
+	);`
+	err := db.QueryRow(query, tableName).Scan(&exists)
+	return exists, err
+}
+
 func loadSampleData(connURL string) {
 	db, err := sql.Open("postgres", connURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer db.Close()
-	// Clear the tables
-	_, err = db.Exec(`
-        TRUNCATE TABLE users CASCADE;
-        TRUNCATE TABLE categories CASCADE;
-        TRUNCATE TABLE products CASCADE;
-        TRUNCATE TABLE product_images CASCADE;
-        TRUNCATE TABLE orders CASCADE; 
-        TRUNCATE TABLE order_items CASCADE;
-        TRUNCATE TABLE contacts CASCADE;
-        TRUNCATE TABLE addresses CASCADE;
-        TRUNCATE TABLE carts CASCADE;
-        TRUNCATE TABLE cart_items CASCADE;
-    `)
-	if err != nil {
-		log.Fatalf("Failed to truncate tables: %v", err)
+
+	// Tables to truncate
+	tables := []string{
+		"users",
+		"categories",
+		"products",
+		"product_images",
+		"orders",
+		"order_items",
+		"contacts",
+		"addresses",
+		"carts",
+		"cart_items",
 	}
+
+	// Truncate tables if they exist
+	for _, table := range tables {
+		exists, err := tableExists(db, table)
+		if err != nil {
+			log.Fatalf("Error checking if table exists: %v", err)
+		}
+		if exists {
+			_, err = db.Exec(fmt.Sprintf("TRUNCATE TABLE %s CASCADE;", table))
+			if err != nil {
+				log.Fatalf("Failed to truncate table %s: %v", table, err)
+			}
+			log.Printf("Table %s truncated successfully", table)
+		} else {
+			log.Printf("Table %s does not exist, skipping truncate", table)
+		}
+	}
+
 	// Determine the file path based on the environment variable
 	filePath := os.Getenv("SAMPLE_DATA_PATH")
 	if filePath == "" {
