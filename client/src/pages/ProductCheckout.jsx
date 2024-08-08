@@ -3,12 +3,29 @@ import { useParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { IoMdArrowDropdown } from 'react-icons/io'; // Importing the arrow icon from react-icons
 
+//cart 
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../slices/cartSlice';
+
+
 // Import images from local assets folder
 import Image1 from '../assets/checkout/productCheckout.jpg';
 import Image2 from '../assets/checkout/productCheckout2.jpg';
 import Footer from '../components/footer/Footer';
 
+const product = {
+  id: 1,
+  title: 'Product Title 03',
+  price: 4.99,
+  discount: 9.99,
+  image: Image1,
+  qty: 0,
+};
+
 const ProductCheckout = () => {
+
+  const dispatch = useDispatch();
+
   const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -48,6 +65,12 @@ const ProductCheckout = () => {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
+
+  const handleAddToCart = () => {
+    product.qty = quantity;
+    console.log(product);
+    dispatch(addToCart(product));
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -127,7 +150,9 @@ const ProductCheckout = () => {
 
           {/* Add to Cart and Buy Now Buttons */}
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
-            <button className="bg-black text-white px-6 py-2 w-full sm:w-auto">Add to Cart</button>
+            <button 
+            onClick={handleAddToCart}
+            className="bg-black text-white px-6 py-2 w-full sm:w-auto">Add to Cart</button>
             <button className="border border-black text-black px-6 py-2 w-full sm:w-auto">Buy Now</button>
           </div>
 

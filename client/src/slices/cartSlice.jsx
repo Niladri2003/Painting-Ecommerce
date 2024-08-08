@@ -28,7 +28,7 @@ const cartSlice = createSlice({
             }
             state.cart.push(product)
             state.totalItems++
-            state.total += product.price
+            state.total += product.price*product.qty
             console.log("cart", state.cart)
             localStorage.setItem("cart", JSON.stringify(state.cart))
             localStorage.setItem("total", JSON.stringify(state.total))
