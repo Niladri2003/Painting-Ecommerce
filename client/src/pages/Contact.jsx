@@ -4,6 +4,7 @@ import HomeHero from '../components/Home/HomeHero';
 import contactImg from "../assets/Contact/contactImg1.jpg";
 import overlyImg from "../assets/Contact/overlyImg.jpg";
 import Footer from '../components/footer/Footer';
+import { BASEAPI } from '../utils/BASE_API';
 
 export default function Contact() {
     // Update state keys to snake_case to match the backend's expected JSON structure
@@ -27,7 +28,7 @@ export default function Contact() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://13.60.65.162:5000/api/v1/contact-us', formData, {
+            const response = await axios.post(`${BASEAPI}/contact-us`, formData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

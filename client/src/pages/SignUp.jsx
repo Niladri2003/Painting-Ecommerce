@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/footer/Footer';
 import axios from 'axios'; // Import axios for making HTTP requests
 import { FcGoogle } from "react-icons/fc";
+import { BASEAPI } from '../utils/BASE_API';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -55,7 +56,7 @@ const SignUp = () => {
         }
 
         try {
-            const response = await axios.post('http://13.60.65.162:5000/api/v1/user/register', {
+            const response = await axios.post(`${BASE_API}/user/register`, {
                 name: trimmedName,
                 email: trimmedEmail,
                 password: trimmedPassword,

@@ -5,6 +5,7 @@ import Footer from '../components/footer/Footer';
 import axios from 'axios';
 import { FcGoogle } from "react-icons/fc";
 import { useToast } from '@chakra-ui/toast'; 
+import { BASEAPI } from '../utils/BASE_API';
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -39,7 +40,7 @@ const SignIn = () => {
         }
 
         try {
-            const response = await axios.post('http://13.60.65.162:5000/api/v1/user/sign-in', formData, {
+            const response = await axios.post(`${BASE_API}/user/sign-in`, formData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
