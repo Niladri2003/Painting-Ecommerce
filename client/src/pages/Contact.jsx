@@ -1,16 +1,17 @@
-import React from 'react'
-import HomeHero from '../components/Home/HomeHero'
-import contactImg from "../assets/Contact/contactImg1.jpg"
-import overlyImg from "../assets/Contact/overlyImg.jpg"
-import Footer from '../components/footer/Footer'
-import { useState } from 'react'
+import React, { useState } from 'react';
+import axios from 'axios';
+import HomeHero from '../components/Home/HomeHero';
+import contactImg from "../assets/Contact/contactImg1.jpg";
+import overlyImg from "../assets/Contact/overlyImg.jpg";
+import Footer from '../components/footer/Footer';
 
 export default function Contact() {
+    // Update state keys to snake_case to match the backend's expected JSON structure
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
+        first_name: '',
+        last_name: '',
         email: '',
-        contact: '',
+        phone: '',
         subject: '',
         message: ''
     });
@@ -20,26 +21,24 @@ export default function Contact() {
             ...formData,
             [e.target.name]: e.target.value
         });
-        console.log(formData)
+        console.log(formData);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('.../contact', {
-                method: 'POST',
+            const response = await axios.post('http://13.60.65.162:5000/api/v1/contact-us', formData, {
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
+                }
             });
-            if (response.ok) {
+            if (response.status === 200) {
                 alert('Message sent successfully');
                 setFormData({
-                    firstName: '',
-                    lastName: '',
+                    first_name: '',
+                    last_name: '',
                     email: '',
-                    contact: '',
+                    phone: '',
                     subject: '',
                     message: ''
                 });
@@ -61,20 +60,20 @@ export default function Contact() {
                     <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
-                            <label htmlFor="firstName" className="block text-sm font-medium">First Name</label>
-                            <input type="text" id="firstName" name="firstName" className="mt-1 p-2 w-full border rounded" value={formData.firstName} onChange={handleChange} required />
+                            <label htmlFor="first_name" className="block text-sm font-medium">First Name</label>
+                            <input type="text" id="first_name" name="first_name" className="mt-1 p-2 w-full border rounded" value={formData.first_name} onChange={handleChange} required />
                         </div>
                         <div className="mb-4">
-                            <label htmlFor="lastName" className="block text-sm font-medium">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" className="mt-1 p-2 w-full border rounded" value={formData.lastName} onChange={handleChange} required />
+                            <label htmlFor="last_name" className="block text-sm font-medium">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" className="mt-1 p-2 w-full border rounded" value={formData.last_name} onChange={handleChange} required />
                         </div>
                         <div className="mb-4">
                             <label htmlFor="email" className="block text-sm font-medium">Email</label>
                             <input type="email" id="email" name="email" className="mt-1 p-2 w-full border rounded" value={formData.email} onChange={handleChange} required />
                         </div>
                         <div className="mb-4">
-                            <label htmlFor="contact" className="block text-sm font-medium">Contact</label>
-                            <input type="text" id="contact" name="contact" className="mt-1 p-2 w-full border rounded" value={formData.contact} onChange={handleChange} required />
+                            <label htmlFor="phone" className="block text-sm font-medium">Phone</label>
+                            <input type="text" id="phone" name="phone" className="mt-1 p-2 w-full border rounded" value={formData.phone} onChange={handleChange} required />
                         </div>
                         <div className="mb-4">
                             <label htmlFor="subject" className="block text-sm font-medium">Subject</label>
@@ -107,7 +106,7 @@ export default function Contact() {
                     </div>
                 </div>
             </div>
-            <Footer/>
+            <Footer />
         </div>
-    )
+    );
 }
