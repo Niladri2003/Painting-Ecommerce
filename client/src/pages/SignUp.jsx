@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '@chakra-ui/toast'; // Import useToast from Chakra UI
 import Navbar from '../components/Navbar';
 import Footer from '../components/footer/Footer';
 import axios from 'axios'; // Import axios for making HTTP requests
@@ -6,12 +7,13 @@ import { FcGoogle } from "react-icons/fc";
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
-        //name: '', // Include name in the form data
+        //name: '',
         email: '',
         password: '',
-        user_role: 'user' // Default role set to 'user'
+        user_role: 'user' 
     });
 
+    const toast = useToast(); 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -22,14 +24,55 @@ const SignUp = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const trimmedName = formData.name.trim();
+        const trimmedEmail = formData.email.trim();
+        const trimmedPassword = formData.password.trim();
+
+        // Basic validation for missing fields and spaces-only input
+        if (!trimmedName || !trimmedEmail || !trimmedPassword) {
+            toast({
+                title: "Invalid Information",
+                description: "Please provide valid name, email, and password.",
+                status: "warning",
+                duration: 2500,
+                isClosable: true,
+            });
+            return;
+        }
+
+        // Password validation: at least 6 characters long and contains at least one digit
+        const passwordRegex = /^(?=.*\d).{6,}$/;
+        if (!passwordRegex.test(trimmedPassword)) {
+            toast({
+                title: "Invalid Password",
+                description: "Password must be at least 6 characters long and contain at least one digit.",
+                status: "warning",
+                duration: 2500,
+                isClosable: true,
+            });
+            return;
+        }
+
         try {
-            const response = await axios.post('http://13.60.65.162:5000/api/v1/user/register', formData, {
+            const response = await axios.post('http://13.60.65.162:5000/api/v1/user/register', {
+                name: trimmedName,
+                email: trimmedEmail,
+                password: trimmedPassword,
+                user_role: formData.user_role,
+            }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             if (response.status === 201 || response.status === 200) {
-                alert('Registration successful!');
+                toast({
+                    title: "Registration successful!",
+                    description: "You have successfully registered.",
+                    status: "success",
+                    duration: 2500,
+                    isClosable: true,
+                });
                 setFormData({
                     name: '',
                     email: '',
@@ -37,11 +80,23 @@ const SignUp = () => {
                     user_role: 'user'
                 });
             } else {
-                alert('Registration failed');
+                toast({
+                    title: "Registration failed",
+                    description: "Please try again later.",
+                    status: "error",
+                    duration: 2500,
+                    isClosable: true,
+                });
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred during registration');
+            toast({
+                title: "An error occurred",
+                description: "Something went wrong during the registration process.",
+                status: "error",
+                duration: 2500,
+                isClosable: true,
+            });
         }
     };
 

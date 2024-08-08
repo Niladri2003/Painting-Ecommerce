@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/footer/Footer';
 import axios from 'axios';
 import { FcGoogle } from "react-icons/fc";
+import { useToast } from '@chakra-ui/toast'; 
 
 const SignIn = () => {
     const [formData, setFormData] = useState({
@@ -11,7 +12,8 @@ const SignIn = () => {
         password: '',
     });
 
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
+    const toast = useToast(); 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,6 +25,19 @@ const SignIn = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Basic validation for missing fields
+        if (!formData.email|| formData.email === " " || !formData.password || formData.password === " ") {
+            toast({
+                title: "Missing Information",
+                description: "Please fill in both email and password fields.",
+                status: "warning",
+                duration: 2500,
+                isClosable: true,
+            });
+            return;
+        }
+
         try {
             const response = await axios.post('http://13.60.65.162:5000/api/v1/user/sign-in', formData, {
                 headers: {
@@ -30,19 +45,36 @@ const SignIn = () => {
                 }
             });
             if (response.status === 201 || response.status === 200) {
-                alert('Login successful!');
+                toast({
+                    title: "Login successful!",
+                    description: "You have successfully logged in.",
+                    status: "success",
+                    duration: 2500,
+                    isClosable: true,
+                });
                 setFormData({
                     email: '',
                     password: '',
                 });
-                // Redirect to home or dashboard after successful login
-                navigate('/');
+                navigate('/'); 
             } else {
-                alert('Login failed');
+                toast({
+                    title: "Login failed",
+                    description: "Please check your credentials and try again.",
+                    status: "error",
+                    duration: 2500,
+                    isClosable: true,
+                });
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred during login');
+            toast({
+                title: "",
+                description: "User doesn't exist.",
+                status: "error",
+                duration: 2500,
+                isClosable: true,
+            });
         }
     };
 
@@ -87,7 +119,7 @@ const SignIn = () => {
                     <p className="text-center mt-6 text-gray-700">
                         Don't have an account?{' '}
                         <span
-                            onClick={() => navigate('/signup')} // Navigate to the signup page on click
+                            onClick={() => navigate('/signup')}
                             className="text-orange-600 hover:text-orange-800 cursor-pointer"
                         >
                             Sign Up
