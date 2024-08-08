@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import { IoMdArrowDropdown } from 'react-icons/io'; // Importing the arrow icon from react-icons
-
-// Import images from local assets folder
-import Image1 from '../assets/checkout/productCheckout.jpg';
-import Image2 from '../assets/checkout/productCheckout2.jpg';
+import axios from 'axios';
 import Footer from '../components/footer/Footer';
+import { BASEAPI } from '../utils/BASE_API';
+import { IoMdArrowDropdown } from 'react-icons/io';
 
 const ProductCheckout = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Extract the product ID from the URL
+  const [product, setProduct] = useState(null); // State to hold the product details
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [sections, setSections] = useState({
@@ -19,12 +17,35 @@ const ProductCheckout = () => {
   });
   const [selectedOption, setSelectedOption] = useState('Select');
 
-  // Use imported images in the productImages array
-  const productImages = [Image1, Image2];
+  const getProductDetails = async () => {
+    try {
+      console.log('Requesting product details for ID:', id);
+      const response = await axios.get(`${BASEAPI}/get-product-details/${id}`)
+      console.log('API Response:', response.data);
+      console.log(id);
+      setProduct(response.data.data);
+    } catch (error) {
+      console.error('Error fetching product details:', error.message);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error setting up the request:', error.message);
+      }
+    }
+  };
+
+
+  useEffect(() => {
+    getProductDetails();
+  }, [id]);
 
   const handleNextImage = () => {
     setSelectedImageIndex((prevIndex) =>
-      prevIndex < productImages.length - 1 ? prevIndex + 1 : prevIndex
+      prevIndex < product.images.length - 1 ? prevIndex + 1 : prevIndex
     );
   };
 
@@ -49,6 +70,10 @@ const ProductCheckout = () => {
     setSelectedOption(event.target.value);
   };
 
+  if (!product) {
+    return <div>Loading...</div>; // Show a loading state until product is fetched
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex flex-col lg:flex-row items-center lg:items-start mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl mx-auto">
@@ -56,32 +81,36 @@ const ProductCheckout = () => {
         <div className="w-full lg:w-1/2 relative">
           <div className="mb-4">
             <img
-              src={productImages[selectedImageIndex]}
-              alt="Product"
+              src={product.images[selectedImageIndex]} // Use the product images
+              alt={product.title} // Use the product title as alt text
               className="w-full h-auto object-cover rounded-lg"
             />
           </div>
-          <button
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-            onClick={handlePreviousImage}
-            disabled={selectedImageIndex === 0}
-          >
-            &lt;
-          </button>
-          <button
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-            onClick={handleNextImage}
-            disabled={selectedImageIndex === productImages.length - 1}
-          >
-            &gt;
-          </button>
+          {product.images.length > 1 && ( // Only show buttons if there is more than 1 image
+            <>
+              <button
+                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                onClick={handlePreviousImage}
+                disabled={selectedImageIndex === 0}
+              >
+                &lt;
+              </button>
+              <button
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                onClick={handleNextImage}
+                disabled={selectedImageIndex === product.images.length - 1}
+              >
+                &gt;
+              </button>
+            </>
+          )}
         </div>
 
         {/* Right Side: Product Details */}
         <div className="w-full lg:w-1/2 lg:pl-8 mt-8 lg:mt-0">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Product Title 03</h1>
-          <p className="text-lg text-gray-500 line-through">₹9.99</p>
-          <p className="text-xl md:text-2xl text-red-600">₹4.99</p>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">{product.title}</h1>
+          <p className="text-lg text-gray-500 line-through">₹{product.originalPrice}</p>
+          <p className="text-xl md:text-2xl text-red-600">₹{product.discountedPrice}</p>
 
           {/* Dropdown for Size/Option Selection */}
           <div className="mt-4">
@@ -142,7 +171,7 @@ const ProductCheckout = () => {
             </button>
             {sections.productInfo && (
               <p className="text-gray-600 mt-2">
-                I'm a product detail. I'm a great place to add more information about your product such as sizing, materials, care and cleaning instructions.
+                {product.description}
               </p>
             )}
           </div>
