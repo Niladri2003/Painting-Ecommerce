@@ -1,15 +1,12 @@
-import Footer from "../components/footer/Footer.jsx";
-
+import React from "react";
+import HomeHero from "../components/Home/HomeHero";
 
 const Cart = () => {
-    return ( 
-        <div className="w-full ">
-            <h1>Cart</h1>
-        
-        </div>
+  return (
+    <div className="">
+      <HomeHero title="Cart" showShopNowButton={false} />
+    </div>
+  );
+};
 
-        
-     );
-}
- 
 export default Cart;
