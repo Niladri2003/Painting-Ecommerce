@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import Footer from '../components/footer/Footer';
 import axios from 'axios';
 import { FcGoogle } from "react-icons/fc";
+import { useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/toast'; 
 import { BASEAPI } from '../utils/BASE_API';
 
 const SignIn = () => {
+    const dispatch = useDispatch(); 
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -50,7 +50,7 @@ const SignIn = () => {
 
                 const { tokens } = response.data;
                 const { access } = tokens;
-                localStorage.setItem('authToken', access);
+                dispatch(setToken(access));
 
                 toast({
                     title: "Login successful!",
