@@ -25,7 +25,7 @@ const Home = () => {
                                     width={400}
                                     height={300}
                                     alt="Product 1"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
+                                    className="object-cover w-[300px] h-[400px] group-hover:opacity-50 transition-opacity"
                                 />
                                 <div className="p-4 bg-background">
                                     <h3 className="text-lg font-semibold">Stylish Sunglasses</h3>
@@ -42,7 +42,7 @@ const Home = () => {
                                     width={400}
                                     height={300}
                                     alt="Product 2"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
+                                    className="object-cover w-[300px] h-[400px] group-hover:opacity-50 transition-opacity"
                                 />
                                 <div className="p-4 bg-background">
                                     <h3 className="text-lg font-semibold">Leather Crossbody Bag</h3>
@@ -59,7 +59,7 @@ const Home = () => {
                                     width={400}
                                     height={300}
                                     alt="Product 3"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
+                                    className="object-cover w-[300px] h-[400px] group-hover:opacity-50 transition-opacity"
                                 />
                                 <div className="p-4 bg-background">
                                     <h3 className="text-lg font-semibold">Wireless Headphones</h3>
@@ -73,10 +73,11 @@ const Home = () => {
                                 </Link>
                                 <img
                                     src={CardImg}
-                                    width={400}
-                                    height={300}
+
+                                    width={300}
+                                    height={400}
                                     alt="Product 4"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
+                                    className="object-cover w-[300px] h-[400px] group-hover:opacity-50 transition-opacity"
                                 />
                                 <div className="p-4 bg-background">
                                     <h3 className="text-lg font-semibold">Classic Wristwatch</h3>
@@ -93,7 +94,7 @@ const Home = () => {
                                     width={400}
                                     height={300}
                                     alt="Product 4"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
+                                    className="object-cover w-[300px] h-[400px] group-hover:opacity-50 transition-opacity"
                                 />
                                 <div className="p-4 bg-background">
                                     <h3 className="text-lg font-semibold">Classic Wristwatch</h3>
@@ -110,58 +111,7 @@ const Home = () => {
                                     width={400}
                                     height={300}
                                     alt="Product 4"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
-                                />
-                                <div className="p-4 bg-background">
-                                    <h3 className="text-lg font-semibold">Classic Wristwatch</h3>
-                                    <p className="text-sm text-muted-foreground">Timeless design</p>
-                                    <h4 className="text-base font-semibold">$59.99</h4>
-                                </div>
-                            </div>
-                            <div className="relative overflow-hidden rounded-lg group">
-                                <Link to="#" className="absolute inset-0 z-10">
-                                    <span className="sr-only">View Product</span>
-                                </Link>
-                                <img
-                                    src={CardImg}
-                                    width={400}
-                                    height={300}
-                                    alt="Product 4"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
-                                />
-                                <div className="p-4 bg-background">
-                                    <h3 className="text-lg font-semibold">Classic Wristwatch</h3>
-                                    <p className="text-sm text-muted-foreground">Timeless design</p>
-                                    <h4 className="text-base font-semibold">$59.99</h4>
-                                </div>
-                            </div>
-                            <div className="relative overflow-hidden rounded-lg group">
-                                <Link to="#" className="absolute inset-0 z-10">
-                                    <span className="sr-only">View Product</span>
-                                </Link>
-                                <img
-                                    src={CardImg}
-                                    width={400}
-                                    height={300}
-                                    alt="Product 4"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
-                                />
-                                <div className="p-4 bg-background">
-                                    <h3 className="text-lg font-semibold">Classic Wristwatch</h3>
-                                    <p className="text-sm text-muted-foreground">Timeless design</p>
-                                    <h4 className="text-base font-semibold">$59.99</h4>
-                                </div>
-                            </div>
-                            <div className="relative overflow-hidden rounded-lg group">
-                                <Link to="#" className="absolute inset-0 z-10">
-                                    <span className="sr-only">View Product</span>
-                                </Link>
-                                <img
-                                    src={CardImg}
-                                    width={400}
-                                    height={300}
-                                    alt="Product 4"
-                                    className="object-cover w-full h-60 group-hover:opacity-50 transition-opacity"
+                                    className="object-cover w-[300px] h-[400px] group-hover:opacity-50 transition-opacity"
                                 />
                                 <div className="p-4 bg-background">
                                     <h3 className="text-lg font-semibold">Classic Wristwatch</h3>
