@@ -1,13 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import { IoMdArrowDropdown } from 'react-icons/io'; // Importing the arrow icon from react-icons
+
+//cart 
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../slices/cartSlice';
+
+
+// Import images from local assets folder
+import Image1 from '../assets/checkout/productCheckout.jpg';
+import Image2 from '../assets/checkout/productCheckout2.jpg';
 import axios from 'axios';
 import Footer from '../components/footer/Footer';
 import { BASEAPI } from '../utils/BASE_API';
 import { IoMdArrowDropdown } from 'react-icons/io';
 
+const product = {
+  id: 1,
+  title: 'Product Title 03',
+  price: 4.99,
+  discount: 9.99,
+  image: Image1,
+  qty: 0,
+};
+
 const ProductCheckout = () => {
-  const { id } = useParams(); // Extract the product ID from the URL
-  const [product, setProduct] = useState(null); // State to hold the product details
+
+  const dispatch = useDispatch();
+
+  const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [sections, setSections] = useState({
@@ -64,6 +86,12 @@ const ProductCheckout = () => {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
+
+  const handleAddToCart = () => {
+    product.qty = quantity;
+    console.log(product);
+    dispatch(addToCart(product));
+  }
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading state until product is fetched
@@ -167,7 +195,9 @@ const ProductCheckout = () => {
 
           {/* Add to Cart and Buy Now Buttons */}
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
-            <button className="bg-black text-white px-6 py-2 w-full sm:w-auto">Add to Cart</button>
+            <button 
+            onClick={handleAddToCart}
+            className="bg-black text-white px-6 py-2 w-full sm:w-auto">Add to Cart</button>
             <button className="border border-black text-black px-6 py-2 w-full sm:w-auto">Buy Now</button>
           </div>
 

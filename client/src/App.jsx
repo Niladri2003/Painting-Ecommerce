@@ -7,6 +7,7 @@ import Shop from './pages/Shop.jsx'
 import ProductCheckout from "./pages/ProductCheckout.jsx";
 import SignUp from "./pages/SignUp.jsx"
 import SignIn from "./pages/SignIn.jsx";
+import Cart from "./pages/Cart.jsx";
 import { Footer } from "flowbite-react";
 import ScrollTop from "./components/helper/ScrollTop.jsx";
 
@@ -25,6 +26,7 @@ function App() {
         <Route path="/product/:id" element={<ProductCheckout />} />
         <Route path="/signup" element={<SignUp/>} />
         <Route path="/signin" element={<SignIn/>} />
+        <Route path="/cart" element={<Cart/>} />
       </Routes>
       <Footer/>
     </div>

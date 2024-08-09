@@ -2,9 +2,20 @@ import { useEffect, useState } from "react";
 import { Link } from 'react-router-dom';
 import { FaShoppingCart, FaBars, FaTimes } from 'react-icons/fa';
 
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import { useSelector } from "react-redux";
+
 const Navbar = () => {
+    const user = true;
+
+    const { totalItems } = useSelector((state) => state.cart);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [cartCount, setCartCount] = useState(totalItems);
+
+    useEffect(() => {
+        setCartCount(totalItems);
+    }, [totalItems]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -51,7 +62,18 @@ const Navbar = () => {
                             <Link to="/contact-us" onClick={handleNavItemClick} className={`${isScrolled ? 'text-white' : 'text-black'} hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center`}>
                                 <span>Contact Us</span>
                             </Link>
-                            <FaShoppingCart className={`${isScrolled ? 'text-white' : 'text-black'} ml-3 cursor-pointer`} />
+                            <div className="hidden md:flex items-center gap-x-4 ">
+                                {user && (
+                                    <Link to="/cart" className="relative">
+                                        <AiOutlineShoppingCart className={`text-2xl ${isScrolled ? 'text-white' : 'text-black'}`} />
+                                        {cartCount > 0 && (
+                                            <span className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${isScrolled ? 'bg-white text-black' : 'bg-black text-white'}`}>
+                                                {cartCount}
+                                            </span>
+                                        )}
+                                    </Link>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
