@@ -5,6 +5,7 @@ import { IoMdArrowDropdown } from "react-icons/io"; // Importing the arrow icon 
 
 //cart
 import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { addToCart } from "../slices/cartSlice";
 
 // Import images from local assets folder
@@ -17,6 +18,7 @@ import { BASEAPI } from "../utils/BASE_API";
 
 const ProductCheckout = () => {
   const dispatch = useDispatch();
+  const {cart} = useSelector((state) => state.cart);
 
   const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -84,6 +86,14 @@ const ProductCheckout = () => {
     product.data.quantity = quantity;
     dispatch(addToCart(product));
   };
+  const presentInCart = () => {
+    if (cart) {
+      const index = cart.findIndex((item) => item.data.id === product.data.id);
+      return index >= 0;
+    }
+    return false;
+  };
+
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading state until product is fetched
@@ -202,7 +212,7 @@ const ProductCheckout = () => {
               onClick={handleAddToCart}
               className="bg-black text-white px-6 py-2 w-full sm:w-auto"
             >
-              Add to Cart
+              {presentInCart() ? "Go to Cart" : "Add to Cart"}
             </button>
             <button className="border border-black text-black px-6 py-2 w-full sm:w-auto">
               Buy Now
