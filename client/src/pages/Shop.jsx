@@ -60,7 +60,7 @@ const Shop = () => {
           <option value="price-high-low">Price: High to Low</option>
         </select>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-6 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-6 gap-6 lg:p-5">
         {sortedProducts.map((product) => (
           <div key={product.id} onClick={() => handleCardClick(product.id)}>
             <Card product={product} />
