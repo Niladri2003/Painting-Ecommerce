@@ -14,14 +14,6 @@ import axios from "axios";
 import Footer from "../components/footer/Footer";
 import { BASEAPI } from "../utils/BASE_API";
 
-const product = {
-  id: 1,
-  title: "Product Title 03",
-  price: 4.99,
-  discount: 9.99,
-  image: Image1,
-  qty: 0,
-};
 
 const ProductCheckout = () => {
   const dispatch = useDispatch();
@@ -88,8 +80,8 @@ const ProductCheckout = () => {
   };
 
   const handleAddToCart = () => {
-    product.qty = quantity;
-    console.log(product);
+    delete product.msg;
+    product.data.quantity = quantity;
     dispatch(addToCart(product));
   };
 

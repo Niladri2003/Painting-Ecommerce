@@ -20,7 +20,8 @@ const cartSlice = createSlice({
     reducers: {
         addToCart: (state, action) => {
             const product = action.payload
-            const index = state.cart.findIndex((item) => item._id === product._id)
+            console.log("product", product)
+            const index = state.cart.findIndex((item) => item.data.id === product.data.id)
 
             if (index >= 0) {
                 // toast.error("Item already in cart")
@@ -28,7 +29,7 @@ const cartSlice = createSlice({
             }
             state.cart.push(product)
             state.totalItems++
-            state.total += product.price*product.qty
+            state.total += product.data.price*product.data.quantity
             console.log("cart", state.cart)
             localStorage.setItem("cart", JSON.stringify(state.cart))
             localStorage.setItem("total", JSON.stringify(state.total))
@@ -38,11 +39,11 @@ const cartSlice = createSlice({
         },
         removeFromCart: (state, action) => {
             const productId = action.payload
-            const index = state.cart.findIndex((item) => item._id === productId)
+            const index = state.cart.findIndex((item) => item.data.id === productId)
 
             if (index >= 0) {
                 state.totalItems--
-                state.total -= state.cart[index].price
+                state.total -= state.cart[index].data.price*state.cart[index].data.quantity
                 state.cart.splice(index, 1)
                 // Update to localstorage
                 localStorage.setItem("cart", JSON.stringify(state.cart))
