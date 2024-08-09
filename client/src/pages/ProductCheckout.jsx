@@ -117,9 +117,9 @@ const ProductCheckout = () => {
 
         {/* Right Side: Product Details */}
         <div className="w-full lg:w-1/2 lg:pl-8 mt-8 lg:mt-0">
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">{product.title}</h1>
-          <p className="text-lg text-gray-500 line-through">₹{product.originalPrice}</p>
-          <p className="text-xl md:text-2xl text-red-600">₹{product.discountedPrice}</p>
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">{product.data.title}</h1>
+          <p className="text-lg text-gray-500 line-through">₹{product.data.price}</p>
+          <p className="text-xl md:text-2xl text-red-600">₹{product.data.price}</p>
 
           {/* Dropdown for Size/Option Selection */}
           <div className="mt-4">
@@ -183,7 +183,7 @@ const ProductCheckout = () => {
             </button>
             {sections.productInfo && (
               <p className="text-gray-600 mt-2">
-                {product.description}
+                {product.data.description}
               </p>
             )}
           </div>
