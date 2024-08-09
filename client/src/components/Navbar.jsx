@@ -64,7 +64,7 @@ const Navbar = () => {
                             </Link>
                             <div className="hidden md:flex items-center gap-x-4 ">
                                 {user && (
-                                    <Link to="/dashboard/cart" className="relative">
+                                    <Link to="/cart" className="relative">
                                         <AiOutlineShoppingCart className={`text-2xl ${isScrolled ? 'text-white' : 'text-black'}`} />
                                         {cartCount > 0 && (
                                             <span className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${isScrolled ? 'bg-white text-black' : 'bg-black text-white'}`}>
