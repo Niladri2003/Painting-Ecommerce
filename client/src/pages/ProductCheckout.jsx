@@ -14,7 +14,7 @@ import Image2 from '../assets/checkout/productCheckout2.jpg';
 import axios from 'axios';
 import Footer from '../components/footer/Footer';
 import { BASEAPI } from '../utils/BASE_API';
-import { IoMdArrowDropdown } from 'react-icons/io';
+
 
 const product = {
   id: 1,
