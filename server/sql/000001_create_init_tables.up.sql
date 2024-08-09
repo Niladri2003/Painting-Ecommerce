@@ -92,6 +92,9 @@ CREATE TABLE carts (
                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+
+
+
 -- Create the cart_items table
 CREATE TABLE cart_items (
                             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

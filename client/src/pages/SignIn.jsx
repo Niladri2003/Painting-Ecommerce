@@ -117,7 +117,7 @@ const SignIn = () => {
                         </button>
                         <button
                             type="button"
-                            className="block w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition duration-300 flex justify-center items-center"
+                            className=" w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition duration-300 flex justify-center items-center"
                         >
                             <FcGoogle className="w-6 h-6 inline-block mr-2" />
                             <span>Sign in with Google</span>
@@ -148,7 +148,7 @@ const SignIn = () => {
                     </div>
                 </div>
             </section>
-            <Footer />
+
         </div>
     );
 };

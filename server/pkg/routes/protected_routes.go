@@ -24,5 +24,15 @@ func ProtectedRoutes(a *fiber.App) {
 
 	route.Get("/delete-address/:addressId", middleware.Protected(), controllers.DeleteAddressByAddressId)
 	route.Get("/delete-all-addresses", middleware.Protected(), controllers.DeleteAddressByUserID)
+
+
+	// Routes for cart
+	route.Post("/create-cart", middleware.Protected(), controllers.CreateCart)
+	route.Get("/get-cart", middleware.Protected(), controllers.GetCartByUserID)
+	route.Post("/add-item", middleware.Protected(), controllers.AddItemToCart)
+	route.Put("/update-item", middleware.Protected(), controllers.UpdateCartItem)
+	route.Delete("/remove-item/:itemId", middleware.Protected(), controllers.RemoveItemFromCart)
+	route.Delete("/delete-cart", middleware.Protected(), controllers.DeleteCart) 
+	
 	
 }

@@ -67,7 +67,7 @@ const Shop = () => {
           </div>
         ))}
       </div>
-      <Footer />
+  
     </div>
   );
 };
