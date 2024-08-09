@@ -107,7 +107,7 @@ const ProductCheckout = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex flex-col lg:flex-row items-center lg:items-start mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl mx-auto">
+      <div className="flex flex-col lg:flex-row items-center md:flex-col lg:items-start mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl  lg:gap-6 mx-auto">
         {/* Left Side: Image Viewer with Next/Previous Arrows */}
         <div className="w-full lg:w-1/2 relative">
           <div className="mb-4">
@@ -276,3 +276,4 @@ const ProductCheckout = () => {
 };
 
 export default ProductCheckout;
+  
