@@ -18,7 +18,7 @@ const Cart = () => {
   return (
     <div className="w-full h-">
       {/* <div className="h-16 border "></div> */}
-      <div className="w-11/12 mx-auto flex flex-col mt-36 mb-24">
+      <div className="w-11/12 mx-auto flex flex-col mt-36 mb-12">
         <div className="flex w-full justify-between text-lg font-bold ">
           <div className="w-[70%] border-b-2 pb-3">My Cart</div>
           <div className="w-[25%] border-b-2 pb-3">Order Summary</div>
