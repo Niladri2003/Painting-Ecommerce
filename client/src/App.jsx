@@ -7,9 +7,9 @@ import Shop from './pages/Shop.jsx'
 import ProductCheckout from "./pages/ProductCheckout.jsx";
 import SignUp from "./pages/SignUp.jsx"
 import SignIn from "./pages/SignIn.jsx";
-import Cart from "./pages/Cart.jsx";
 import { Footer } from "flowbite-react";
 import ScrollTop from "./components/helper/ScrollTop.jsx";
+import Cart from "./pages/CartPage.jsx";
 
 function App() {
 
