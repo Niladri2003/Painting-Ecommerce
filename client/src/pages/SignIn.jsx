@@ -5,6 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/toast'; 
 import { BASEAPI } from '../utils/BASE_API';
+import { setToken } from '../slices/authSlice';
 
 const SignIn = () => {
     const dispatch = useDispatch(); 

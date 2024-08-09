@@ -396,10 +396,10 @@ const Navbar = () => {
                                 ) : (
                                     // If the user is not logged in, show Sign In/Sign Up buttons
                                     <>
-                                        <Link to="/sign-in" className={`${isScrolled ? 'text-white' : 'text-black'} hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>
+                                        <Link to="/signin" className={`${isScrolled ? 'text-white' : 'text-black'} hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>
                                             Sign In
                                         </Link>
-                                        <Link to="/sign-up" className={`${isScrolled ? 'text-white' : 'text-black'} hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>
+                                        <Link to="/signup" className={`${isScrolled ? 'text-white' : 'text-black'} hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}>
                                             Sign Up
                                         </Link>
                                     </>
