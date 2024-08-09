@@ -18,7 +18,7 @@ docker run --name cgapp-postgres -d   -e POSTGRES_USER=postgres   -e POSTGRES_PA
 ```
 Storing backup locally(Replace this path with your desired one -/path/to/backup)
 ```bash
-docker run --name cgapp-postgres -d  -e POSTGRES_USER=postgres  -e POSTGRES_PASSWORD=password -e POSTGRES_DB=postgres -v /path/to/backup:/docker-entrypoint-initdb.d  -p 5432:5432 postgres
+docker run --name cgapp-postgres --network test_network -d  -e POSTGRES_USER=postgres  -e POSTGRES_PASSWORD=password -e POSTGRES_DB=postgres -v /home/ec2-user/postgresBackup:/docker-entrypoint-initdb.d  -p 5432:5432 postgres
 ```
 Restoring the backup
 ```bash
@@ -52,4 +52,23 @@ docker build -t painting-ecommerce .
 For running the container
 ```bash
 docker run -p 5000:5000 --env-file .env painting-ecommerce
+```
+```bash
+docker run -d --name painting-ecommerce   --network test_network   -e DB_HOST=cgapp-postgres   -e DB_PORT=5432   -e DB_USER=postgres   -e DB_PASSWORD=password   -e DB_NAME=postgres   -e DB_SSL_MODE=disable   -e SAMPLE_DATA_PATH=/root/platform/migration/sample_data.sql   -p 5000:5000   painting-ecommerce
+```
+Creating Backup inside postgres container
+```bash
+POSTGRES_PASSWORD=postgres pg_dump -U postgres -d postgres -f /backup/dump_date`date +%Y-%m-%d_%H_%M_%S`.sql
+```
+Copy backup from container to local
+```bash
+docker cp dump_date2024-08-09_06_59_56.sql 19e924fd823c:/backup/dump_date2024-08-09_06_59_56.sql
+```
+Copy backup from local to container
+```bash
+docker cp dump_date2024-08-09_06_59_56.sql 19e924fd823c:/backup/dump_date2024-08-09_06_59_56.sql
+```
+Restore Backup inside the contaienr
+```bash
+psql -U postgres postgres < /backup/dump_date2024-08-09_06_59_56.sql 
 ```
