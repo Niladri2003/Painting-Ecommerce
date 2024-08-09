@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useToast } from '@chakra-ui/toast'; // Import useToast from Chakra UI
-import Navbar from '../components/Navbar';
 import Footer from '../components/footer/Footer';
 import axios from 'axios'; // Import axios for making HTTP requests
 import { FcGoogle } from "react-icons/fc";
 import { BASEAPI } from '../utils/BASE_API';
+import { Link } from 'react-router-dom';
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -56,7 +56,7 @@ const SignUp = () => {
         }
 
         try {
-            const response = await axios.post(`${BASE_API}/user/register`, {
+            const response = await axios.post(`${BASEAPI}/user/register`, {
                 name: trimmedName,
                 email: trimmedEmail,
                 password: trimmedPassword,
@@ -156,9 +156,9 @@ const SignUp = () => {
                     </form>
                     <p className="text-center mt-6 text-gray-700">
                         Already have an account?{' '}
-                        <a href="#" className="text-orange-600 hover:text-orange-800">
+                        <Link to="/signin" className="text-orange-600 hover:text-orange-800">
                             Login
-                        </a>
+                        </Link>
                     </p>
                     <div className="flex items-center justify-center mt-6">
                         <input type="checkbox" id="terms" className="mr-2" required />

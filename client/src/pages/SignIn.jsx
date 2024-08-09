@@ -40,12 +40,18 @@ const SignIn = () => {
         }
 
         try {
-            const response = await axios.post(`${BASE_API}/user/sign-in`, formData, {
+            const response = await axios.post(`${BASEAPI}/user/sign-in`, formData, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
+            console.log(response.data);
             if (response.status === 201 || response.status === 200) {
+
+                const { tokens } = response.data;
+                const { access } = tokens;
+                localStorage.setItem('authToken', access);
+
                 toast({
                     title: "Login successful!",
                     description: "You have successfully logged in.",
