@@ -269,10 +269,8 @@ const ProductCheckout = () => {
           </div>
         </div>
       </div>
-      {/* Ensure the footer is full width */}
-      <div className="w-full mt-auto">
-        <Footer />
-      </div>
+    
+
     </div>
   );
 };

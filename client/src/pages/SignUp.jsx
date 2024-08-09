@@ -176,7 +176,6 @@ const SignUp = () => {
                     </div>
                 </div>
             </section>
-            <Footer />
         </div>
     );
 };
