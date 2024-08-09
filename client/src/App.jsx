@@ -10,6 +10,7 @@ import SignIn from "./pages/SignIn.jsx";
 import ScrollTop from "./components/helper/ScrollTop.jsx";
 import Cart from "./pages/CartPage.jsx";
 import Footer from "./components/footer/Footer.jsx";
+import Profile from "./pages/Profile.jsx";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/signup" element={<SignUp/>} />
         <Route path="/signin" element={<SignIn/>} />
         <Route path="/cart" element={<Cart/>} />
+        <Route path="/profile" element={<Profile/>}/>
       </Routes>
       <Footer/>
     </div>
