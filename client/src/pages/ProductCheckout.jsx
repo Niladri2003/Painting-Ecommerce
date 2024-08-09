@@ -16,28 +16,23 @@ const ProductCheckout = () => {
     shippingInfo: false,
   });
   const [selectedOption, setSelectedOption] = useState('Select');
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
   const getProductDetails = async () => {
     try {
-      console.log('Requesting product details for ID:', id);
-      const response = await axios.get(`${BASEAPI}/get-product-details/${id}`)
-      console.log('API Response:', response.data);
-      console.log(id);
-      setProduct(response.data.data);
+      setLoading(true);
+      console.log('Requesting product details for ID:', id); // Log request
+      const { data } = await axios.get(`${BASEAPI}/get-product-details/${id}`);
+      console.log('API Response:', data); // Log response
+      setProduct(data);
     } catch (error) {
+      setError(error.message);
       console.error('Error fetching product details:', error.message);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
-        console.error('Response headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('No response received:', error.request);
-      } else {
-        console.error('Error setting up the request:', error.message);
-      }
+    } finally {
+      setLoading(false);
     }
   };
-
 
   useEffect(() => {
     getProductDetails();
@@ -45,7 +40,7 @@ const ProductCheckout = () => {
 
   const handleNextImage = () => {
     setSelectedImageIndex((prevIndex) =>
-      prevIndex < product.images.length - 1 ? prevIndex + 1 : prevIndex
+      product.images && prevIndex < product.images.length - 1 ? prevIndex + 1 : prevIndex
     );
   };
 
@@ -70,8 +65,16 @@ const ProductCheckout = () => {
     setSelectedOption(event.target.value);
   };
 
-  if (!product) {
+  if (loading) {
     return <div>Loading...</div>; // Show a loading state until product is fetched
+  }
+
+  if (error) {
+    return <div>Error loading product details: {error}</div>; // Show an error message if there was a problem
+  }
+
+  if (!product) {
+    return <div>No product found.</div>; // Handle case where no product is found
   }
 
   return (
@@ -80,18 +83,23 @@ const ProductCheckout = () => {
         {/* Left Side: Image Viewer with Next/Previous Arrows */}
         <div className="w-full lg:w-1/2 relative">
           <div className="mb-4">
-            <img
-              src={product.images[selectedImageIndex]} // Use the product images
-              alt={product.title} // Use the product title as alt text
-              className="w-full h-auto object-cover rounded-lg"
-            />
+            {product.images && product.images.length > 0 ? (
+              <img
+                src={product.images[selectedImageIndex].image_url} // Use the product images
+                alt={product.title || 'Product image'} // Use a fallback alt text
+                className="w-full h-auto object-cover rounded-lg"
+              />
+            ) : (
+              <div>No images available</div> // Fallback content
+            )}
           </div>
-          {product.images.length > 1 && ( // Only show buttons if there is more than 1 image
+          {product.images && product.images.length > 1 && ( // Only show buttons if there is more than 1 image
             <>
               <button
                 className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
                 onClick={handlePreviousImage}
                 disabled={selectedImageIndex === 0}
+                aria-label="Previous image"
               >
                 &lt;
               </button>
@@ -99,6 +107,7 @@ const ProductCheckout = () => {
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
                 onClick={handleNextImage}
                 disabled={selectedImageIndex === product.images.length - 1}
+                aria-label="Next image"
               >
                 &gt;
               </button>
@@ -141,6 +150,7 @@ const ProductCheckout = () => {
               <button
                 className="border px-4 py-2 text-gray-600"
                 onClick={() => handleQuantityChange(-1)}
+                aria-label="Decrease quantity"
               >
                 -
               </button>
@@ -148,6 +158,7 @@ const ProductCheckout = () => {
               <button
                 className="border px-4 py-2 text-gray-600"
                 onClick={() => handleQuantityChange(1)}
+                aria-label="Increase quantity"
               >
                 +
               </button>
@@ -165,6 +176,7 @@ const ProductCheckout = () => {
             <button
               className="flex justify-between items-center w-full py-3 text-left text-lg font-medium border-b border-gray-300"
               onClick={() => toggleSection('productInfo')}
+              aria-expanded={sections.productInfo}
             >
               Product Info
               <span>{sections.productInfo ? '-' : '+'}</span>
@@ -181,6 +193,7 @@ const ProductCheckout = () => {
             <button
               className="flex justify-between items-center w-full py-3 text-left text-lg font-medium border-b border-gray-300"
               onClick={() => toggleSection('returnPolicy')}
+              aria-expanded={sections.returnPolicy}
             >
               Return & Refund Policy
               <span>{sections.returnPolicy ? '-' : '+'}</span>
@@ -197,6 +210,7 @@ const ProductCheckout = () => {
             <button
               className="flex justify-between items-center w-full py-3 text-left text-lg font-medium border-b border-gray-300"
               onClick={() => toggleSection('shippingInfo')}
+              aria-expanded={sections.shippingInfo}
             >
               Shipping Info
               <span>{sections.shippingInfo ? '-' : '+'}</span>
