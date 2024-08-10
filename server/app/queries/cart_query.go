@@ -165,9 +165,9 @@ func (q *CartQueries) CreateCart(cart *models.Cart) error {
 // AddItemToCart inserts a new item into the cart_items table.
 func (q *CartQueries) AddItemToCart(item *models.CartItem) error {
 	query := `
-		INSERT INTO cart_items (id, cart_id, product_id, quantity, price, created_at, updated_at)
+		INSERT INTO cart_items (id, cart_id, product_id, quantity, total_price, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.Quantity, item.Price, item.CreatedAt, item.UpdatedAt)
+	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.Quantity, item.TotalPrice, item.CreatedAt, item.UpdatedAt)
 	return err
 }
 
@@ -175,9 +175,9 @@ func (q *CartQueries) AddItemToCart(item *models.CartItem) error {
 func (q *CartQueries) UpdateCartItem(item *models.CartItem) error {
 	query := `
 		UPDATE cart_items
-		SET quantity = $1, price = $2, updated_at = $3
+		SET quantity = $1, total_price = $2, updated_at = $3
 		WHERE id = $4`
-	_, err := q.Exec(query, item.Quantity, item.Price, item.UpdatedAt, item.ID)
+	_, err := q.Exec(query, item.Quantity, item.TotalPrice, item.UpdatedAt, item.ID)
 	return err
 }
 
@@ -218,6 +218,6 @@ func (q *CartQueries) DeleteCart(userID uuid.UUID) error {
 	}
 
 	// Delete the cart
-	_, err = q.Exec(`DELETE FROM carts WHERE user_id = $1`, userID)
+	// _, err = q.Exec(`DELETE FROM carts WHERE user_id = $1`, userID)
 	return err
 }
