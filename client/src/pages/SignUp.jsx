@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
-import { useToast } from '@chakra-ui/toast'; // Import useToast from Chakra UI
+import { useToast } from '@chakra-ui/react'; // Import useToast from Chakra UI
 import Footer from '../components/footer/Footer';
 import axios from 'axios'; // Import axios for making HTTP requests
 import { FcGoogle } from "react-icons/fc";
 import { BASEAPI } from '../utils/BASE_API';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
-        //name: '',
+        name: '',
         email: '',
         password: '',
-        user_role: 'user' 
+        user_role: 'user'
     });
 
     const toast = useToast(); 
+    const navigate = useNavigate(); // Initialize useNavigate
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -30,7 +32,6 @@ const SignUp = () => {
         const trimmedEmail = formData.email.trim();
         const trimmedPassword = formData.password.trim();
 
-        // Basic validation for missing fields and spaces-only input
         if (!trimmedName || !trimmedEmail || !trimmedPassword) {
             toast({
                 title: "Invalid Information",
@@ -42,7 +43,6 @@ const SignUp = () => {
             return;
         }
 
-        // Password validation: at least 6 characters long and contains at least one digit
         const passwordRegex = /^(?=.*\d).{6,}$/;
         if (!passwordRegex.test(trimmedPassword)) {
             toast({
@@ -80,6 +80,7 @@ const SignUp = () => {
                     password: '',
                     user_role: 'user'
                 });
+                navigate('/signin'); // Redirect to the sign-in page
             } else {
                 toast({
                     title: "Registration failed",
@@ -134,7 +135,6 @@ const SignUp = () => {
                             onChange={handleChange}
                             required
                         />
-                        {/* Hidden role input */}
                         <input
                             type="hidden"
                             name="user_role"
