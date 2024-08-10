@@ -286,13 +286,13 @@ const Navbar = () => {
               >
                 Sign In
               </Link>
-              <Link
+              {/* <Link
                 to="/signup"
                 onClick={handleNavItemClick}
                 className="hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
                 Sign Up
-              </Link>
+              </Link> */}
             </>
           )}
           <Link
