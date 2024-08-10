@@ -129,16 +129,16 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 	}
 
 	// Ensure user ID from JWT matches the user ID in the request body
-	if addressForm.UserID != userId {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
-			"error": true,
-			"msg":   "User ID mismatch",
-		})
-	}
+	// if addressForm.UserID != userId {
+	// 	return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+	// 		"error": true,
+	// 		"msg":   "User ID mismatch",
+	// 	})
+	// }
 
 	// Convert AddressForm to Address
 	address := models.Address{
-		UserID:        addressForm.UserID,
+		UserID:        claims.UserID,
 		FirstName:     addressForm.FirstName,
 		LastName:      addressForm.LastName,
 		Country:       addressForm.Country,
