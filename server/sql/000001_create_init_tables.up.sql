@@ -24,22 +24,24 @@ CREATE TABLE products (
                           description TEXT,
                           price DECIMAL(10, 2) NOT NULL, -- Adjust precision and scale as needed
                           category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
-                          created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                          updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                          created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE product_images (
                                 id UUID PRIMARY KEY,
                                 product_id UUID REFERENCES products(id) ON DELETE CASCADE,
                                 image_url TEXT NOT NULL,
-                                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE orders (
                         id UUID PRIMARY KEY,
                         user_id UUID REFERENCES users(id) ON DELETE SET NULL,
                         total DECIMAL(10, 2) NOT NULL,
                         status VARCHAR(50) NOT NULL, -- e.g., 'pending', 'completed', 'shipped'
-                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                        address_id UUID REFERENCES addresses(id) ON DELETE SET NULL,
+                        invoice_url TEXT NOT NULL,
+                        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE order_items (
                          id UUID PRIMARY KEY,
@@ -47,7 +49,9 @@ CREATE TABLE order_items (
                          product_id UUID REFERENCES products(id) ON DELETE SET NULL,
                          quantity INT NOT NULL,
                          price DECIMAL(10, 2) NOT NULL, -- Price at the time of purchase
-                         created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                         status VARCHAR(50) NOT NULL, -- e.g., 'approved', 'canceled'
+                         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                         updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -77,9 +81,10 @@ CREATE TABLE addresses (
                         pin_code VARCHAR(20) NOT NULL,                 
                         mobile_number VARCHAR(20) NOT NULL,         
                         email VARCHAR(255) NOT NULL,                   
-                        order_notes TEXT,                             
-                        created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,       
-                        updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,        
+                        order_notes TEXT,
+                        set_as_default BOOLEAN NOT NULL DEFAULT FALSE
+                        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         FOREIGN KEY (user_id) REFERENCES users(id)    
 );
 
@@ -87,8 +92,8 @@ CREATE TABLE addresses (
 CREATE TABLE carts (
                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                        user_id UUID NOT NULL,
-                       created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -102,8 +107,8 @@ CREATE TABLE cart_items (
                             product_id UUID NOT NULL,
                             quantity INT NOT NULL CHECK (quantity > 0),
                             total_price DECIMAL(10, 2) NOT NULL, -- Price at the time of adding to cart
-                            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                            updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
                             FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 );

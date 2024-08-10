@@ -47,6 +47,12 @@ func CreateAddress(c *fiber.Ctx) error {
 			"msg":   "invalid request body",
 		})
 	}
+	// Convert SetAsDefault from string to bool
+	var setAsDefault *bool
+	if address.SetAsDefault != nil {
+		defaultVal := *address.SetAsDefault == "true"
+		setAsDefault = &defaultVal
+	}
 
 	// Create database connection
 	db, err := database.OpenDbConnection()
@@ -56,7 +62,6 @@ func CreateAddress(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-
 	// Create a new address model
 	addressModel := &models.Address{
 		ID:            uuid.New(),
@@ -71,6 +76,7 @@ func CreateAddress(c *fiber.Ctx) error {
 		MobileNumber:  address.MobileNumber,
 		Email:         address.Email,
 		OrderNotes:    address.OrderNotes, // Handle as optional
+		SetAsDefault:  setAsDefault,
 		CreatedAt:     time.Now().Format(time.RFC3339),
 		UpdatedAt:     time.Now().Format(time.RFC3339),
 	}
@@ -135,7 +141,12 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 			"msg":   "User ID mismatch",
 		})
 	}
-
+	// Convert SetAsDefault from string to bool
+	var setAsDefault *bool
+	if addressForm.SetAsDefault != nil {
+		defaultVal := *addressForm.SetAsDefault == "true"
+		setAsDefault = &defaultVal
+	}
 	// Convert AddressForm to Address
 	address := models.Address{
 		UserID:        addressForm.UserID,
@@ -149,6 +160,7 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		MobileNumber:  addressForm.MobileNumber,
 		Email:         addressForm.Email,
 		OrderNotes:    addressForm.OrderNotes,
+		SetAsDefault:  setAsDefault,
 		UpdatedAt:     time.Now().Format(time.RFC3339),
 	}
 

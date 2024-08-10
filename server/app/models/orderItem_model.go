@@ -12,5 +12,7 @@ type OrderItem struct {
 	ProductID uuid.UUID `db:"product_id" json:"product_id"`
 	Quantity  int       `db:"quantity" json:"quantity"`
 	Price     float64   `db:"price" json:"price"`
+	Status    string    `db:"status" json:"status"` //cancel or approve
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
+	UpdatedAt time.Time `db:"updated_at" json:"updated_at"`
 }
