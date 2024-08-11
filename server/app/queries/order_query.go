@@ -87,6 +87,102 @@ func (q *OrderQueries) CancelOrder(id uuid.UUID) error {
 	return nil
 }
 
+// ShippedOrder order from order table as well as change status to shipped in orderItems table
+func (q *OrderQueries) ShippedOrder(id uuid.UUID) error {
+	// Begin a transaction
+	tx, err := q.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	// Rollback the transaction if there's any error
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+
+	// Update the status of order items to 'canceled'
+	updateOrderItemsQuery := `
+		UPDATE order_items 
+		SET status = 'shipped', updated_at = CURRENT_TIMESTAMP 
+		WHERE order_id = $1
+	`
+	_, err = tx.Exec(updateOrderItemsQuery, id)
+	if err != nil {
+		return err
+	}
+
+	// Update the status of the order to 'canceled'
+	updateOrderQuery := `
+		UPDATE orders 
+		SET status = 'shipped', updated_at = CURRENT_TIMESTAMP 
+		WHERE id = $1
+	`
+	_, err = tx.Exec(updateOrderQuery, id)
+	if err != nil {
+		return err
+	}
+
+	// Commit the transaction if everything is successful
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Deliverd order from order table as well as change status to shipped in orderItems table
+func (q *OrderQueries) DeliveredOrder(id uuid.UUID) error {
+	// Begin a transaction
+	tx, err := q.DB.Begin()
+	if err != nil {
+		return err
+	}
+
+	// Rollback the transaction if there's any error
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		} else {
+			tx.Commit()
+		}
+	}()
+
+	// Update the status of order items to 'canceled'
+	updateOrderItemsQuery := `
+		UPDATE order_items 
+		SET status = 'delivered', updated_at = CURRENT_TIMESTAMP 
+		WHERE order_id = $1
+	`
+	_, err = tx.Exec(updateOrderItemsQuery, id)
+	if err != nil {
+		return err
+	}
+
+	// Update the status of the order to 'canceled'
+	updateOrderQuery := `
+		UPDATE orders 
+		SET status = 'delivered', updated_at = CURRENT_TIMESTAMP 
+		WHERE id = $1
+	`
+	_, err = tx.Exec(updateOrderQuery, id)
+	if err != nil {
+		return err
+	}
+
+	// Commit the transaction if everything is successful
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Get Order Of a User
 func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithItems, error) {
 	// Define the SQL query

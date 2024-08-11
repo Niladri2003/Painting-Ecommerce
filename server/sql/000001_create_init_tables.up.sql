@@ -8,6 +8,8 @@ CREATE TABLE users (
                        id UUID DEFAULT uuid_generate_v4 () PRIMARY KEY,
                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
                        updated_at TIMESTAMP NOT NULL,
+                       first_name VARCHAR(100) NOT NULL,
+                       last_name VARCHAR(100) NOT NULL,
                        email VARCHAR(255) NOT NULL UNIQUE,
                        password_hash VARCHAR(255) NOT NULL,
                        user_status INT NOT NULL,
