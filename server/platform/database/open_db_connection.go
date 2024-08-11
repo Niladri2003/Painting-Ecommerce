@@ -13,8 +13,9 @@ type Queries struct {
 	*queries.ProductImageQueries
 	*queries.ContactQueries // Add ContactQueries
 	*queries.AddressQueries // Add AddressQueries
-	*queries.CartQueries	// Add CartQueries
-
+	*queries.CartQueries    // Add CartQueries
+	*queries.OrderQueries
+	*queries.OrderItemsQuery
 }
 
 // OpenDbConnection  func for opening database connection
@@ -42,7 +43,8 @@ func OpenDbConnection() (*Queries, error) {
 		ProductImageQueries: &queries.ProductImageQueries{DB: db},
 		ContactQueries:      &queries.ContactQueries{DB: db}, // Add ContactQueries
 		AddressQueries:      &queries.AddressQueries{DB: db}, // Add AddressQueries
-		CartQueries:         &queries.CartQueries{DB: db},	// Add CartQueries
-		
+		CartQueries:         &queries.CartQueries{DB: db},
+		OrderQueries:        &queries.OrderQueries{DB: db},
+		OrderItemsQuery:     &queries.OrderItemsQuery{DB: db},
 	}, nil
 }

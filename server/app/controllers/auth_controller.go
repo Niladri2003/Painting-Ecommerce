@@ -64,6 +64,8 @@ func UserSignUp(c *fiber.Ctx) error {
 
 	//Set initialized default data for user:
 	user.ID = uuid.New()
+	user.FirstName = signUp.FirstName
+	user.LastName = signUp.LastName
 	user.Email = signUp.Email
 	user.CreatedAt = time.Now()
 	user.PasswordHash = utils.GeneratePassword(signUp.Password)
