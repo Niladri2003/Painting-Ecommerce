@@ -1,6 +1,8 @@
 package queries
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -59,3 +61,18 @@ func (q *UserQueries) CreateUser(u *models.User) error {
 	}
 	return nil
 }
+
+// UpdateUserPassword updates the user's password in the database.
+func (q *UserQueries) UpdateUserPassword(id uuid.UUID, newPassword string) error {
+    query := `UPDATE users SET password_hash = $1, updated_at = $2 WHERE id = $3`
+    _, err := q.Exec(query, newPassword, time.Now(), id)
+    return err
+}
+
+// DeleteUserByID deletes a user from the database by their ID.
+func (q *UserQueries) DeleteUserByID(id uuid.UUID) error {
+    query := `DELETE FROM users WHERE id = $1`
+    _, err := q.Exec(query, id)
+    return err
+}
+
