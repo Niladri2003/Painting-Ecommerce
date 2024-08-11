@@ -9,6 +9,11 @@ import (
 func ProtectedRoutes(a *fiber.App) {
 	route := a.Group("/api/v1")
 
+	
+	//Routes for user
+	route.Post("/reset-password",middleware.Protected(), controllers.ResetPassword)
+	route.Delete("/delete-account",middleware.Protected(), controllers.DeleteAccount)
+
 	//Routes for POST method
 	route.Post("/test", middleware.Protected(), controllers.Test)
 	route.Post("/create-category", middleware.Protected(), controllers.CreateCategory)
