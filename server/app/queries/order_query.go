@@ -1,9 +1,12 @@
 package queries
 
 import (
+	"database/sql"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
+	"time"
 )
 
 type OrderQueries struct {
@@ -232,6 +235,7 @@ func (q *OrderQueries) DeliveredOrder(id uuid.UUID) error {
 }
 
 // Get Order Of a User
+
 func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithItems, error) {
 	// Define the SQL query
 	query := `
@@ -245,9 +249,9 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			o.updated_at AS order_updated_at,
 			oi.id AS order_item_id,
 			oi.product_id,
-			oi.quantity,
-			oi.price,
-			oi.status AS order_item_status,
+			COALESCE(oi.quantity, 0) AS quantity,  -- Handle NULL values for quantity
+			COALESCE(oi.price, 0.0) AS price,       -- Handle NULL values for price
+			COALESCE(oi.status, '') AS order_item_status, -- Handle NULL values for status
 			oi.created_at AS order_item_created_at,
 			a.id AS address_id,
 			a.user_id AS address_user_id,
@@ -275,9 +279,11 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			o.created_at DESC, o.id ASC
 	`
 
+	fmt.Println("UserId", userID)
 	// Execute the query
 	rows, err := q.DB.Query(query, userID)
 	if err != nil {
+		fmt.Println("Error while fetching All Orders", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -290,6 +296,12 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 		var orderWithItems models.OrderWithItems
 		var orderItem models.OrderItem
 		var address models.Address
+		var orderItemQuantity sql.NullInt64
+		var orderItemPrice sql.NullFloat64
+		var orderItemStatus sql.NullString
+		var orderItemCreatedAt sql.NullTime
+		var addressID sql.NullString
+
 		err := rows.Scan(
 			&orderWithItems.OrderID,
 			&orderWithItems.UserID,
@@ -300,11 +312,11 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			&orderWithItems.OrderUpdatedAt,
 			&orderItem.ID,
 			&orderItem.ProductID,
-			&orderItem.Quantity,
-			&orderItem.Price,
-			&orderItem.Status,
-			&orderItem.CreatedAt,
-			&address.ID,
+			&orderItemQuantity,  // Handle NULLs for quantity
+			&orderItemPrice,     // Handle NULLs for price
+			&orderItemStatus,    // Handle NULLs for status
+			&orderItemCreatedAt, // Handle NULLs for created_at
+			&addressID,          // Check if address is present
 			&address.UserID,
 			&address.FirstName,
 			&address.LastName,
@@ -320,6 +332,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			&address.UpdatedAt,
 		)
 		if err != nil {
+			fmt.Println("Error while fetching Order Items", err)
 			return nil, err
 		}
 
@@ -338,9 +351,43 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			}
 		}
 
+		// Assign the quantity, handling NULLs
+		if orderItemQuantity.Valid {
+			orderItem.Quantity = int(orderItemQuantity.Int64)
+		} else {
+			orderItem.Quantity = 0 // Default value for NULLs
+		}
+
+		// Assign the price, handling NULLs
+		if orderItemPrice.Valid {
+			orderItem.Price = orderItemPrice.Float64
+		} else {
+			orderItem.Price = 0.0 // Default value for NULLs
+		}
+
+		// Assign the status, handling NULLs
+		if orderItemStatus.Valid {
+			orderItem.Status = orderItemStatus.String
+		} else {
+			orderItem.Status = "" // Default value for NULLs
+		}
+
+		// Assign the created_at, handling NULLs
+		if orderItemCreatedAt.Valid {
+			orderItem.CreatedAt = orderItemCreatedAt.Time
+		} else {
+			orderItem.CreatedAt = time.Time{} // Default value for NULLs
+		}
+
 		// Add the order item to the corresponding order
 		if orderItem.ID != uuid.Nil {
 			orderMap[orderWithItems.OrderID].OrderItems = append(orderMap[orderWithItems.OrderID].OrderItems, orderItem)
+		}
+
+		// Add the address to the order if it's not already present and if the address exists
+		if addressID.Valid {
+			address.ID = uuid.MustParse(addressID.String)
+			orderMap[orderWithItems.OrderID].Address = append(orderMap[orderWithItems.OrderID].Address, address)
 		}
 	}
 
@@ -360,7 +407,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 
 // Get All Orders
 func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
-	// Define the SQL query with address details
+	// Define the SQL query with address and order item details
 	query := `
 		SELECT 
 			o.id AS order_id,
@@ -383,9 +430,9 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 			o.updated_at AS order_updated_at,
 			oi.id AS order_item_id,
 			oi.product_id,
-			oi.quantity,
-			oi.price,
-			oi.status AS order_item_status,
+			COALESCE(oi.quantity, 0) AS quantity,  -- Handle NULL values for quantity
+			COALESCE(oi.price, 0.0) AS price,       -- Handle NULL values for price
+			COALESCE(oi.status, '') AS order_item_status, -- Handle NULL values for status
 			oi.created_at AS order_item_created_at,
 			oi.updated_at AS order_item_updated_at
 		FROM 
@@ -397,7 +444,7 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 		ORDER BY 
 			o.created_at DESC, o.id ASC;
 	`
-
+	fmt.Println(query)
 	// Execute the query
 	rows, err := q.DB.Query(query)
 	if err != nil {
@@ -413,6 +460,10 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 		var orderWithItems models.OrderWithItems
 		var orderItem models.OrderItem
 		var address models.Address
+		var orderItemQuantity sql.NullInt64
+		var orderItemPrice sql.NullFloat64
+		var orderItemStatus sql.NullString
+
 		err := rows.Scan(
 			&orderWithItems.OrderID,
 			&orderWithItems.UserID,
@@ -434,9 +485,9 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 			&orderWithItems.OrderUpdatedAt,
 			&orderItem.ID,
 			&orderItem.ProductID,
-			&orderItem.Quantity,
-			&orderItem.Price,
-			&orderItem.Status,
+			&orderItemQuantity, // Handle NULLs for quantity
+			&orderItemPrice,    // Handle NULLs for price
+			&orderItemStatus,   // Handle NULLs for status
 			&orderItem.CreatedAt,
 			&orderItem.UpdatedAt,
 		)
@@ -457,6 +508,25 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 				Address:        []models.Address{},   // Initialize address slice
 				OrderItems:     []models.OrderItem{}, // Initialize order items slice
 			}
+		}
+
+		// Handle NULL values for order item fields
+		if orderItemQuantity.Valid {
+			orderItem.Quantity = int(orderItemQuantity.Int64)
+		} else {
+			orderItem.Quantity = 0 // Default value for NULLs
+		}
+
+		if orderItemPrice.Valid {
+			orderItem.Price = orderItemPrice.Float64
+		} else {
+			orderItem.Price = 0.0 // Default value for NULLs
+		}
+
+		if orderItemStatus.Valid {
+			orderItem.Status = orderItemStatus.String
+		} else {
+			orderItem.Status = "" // Default value for NULLs
 		}
 
 		// Add the address to the corresponding order if present

@@ -1,6 +1,7 @@
 package queries
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -16,11 +17,12 @@ type OrderItemsQuery struct {
 
 // create OrderItem
 func (q *OrderItemsQuery) CreateOrderItem(order *models.OrderItem) error {
-	query := `INSERT INTO order_items (id, order_id, product_id, quantity,price,status,created_at) VALUES ($1, $2, $3, $4,$5,$6)`
+	query := `INSERT INTO order_items (id, order_id, product_id, quantity,price,status,created_at,updated_at) VALUES ($1, $2, $3, $4,$5,$6,$7,$8)`
 
 	// Send query to database.
-	_, err := q.Exec(query, order.ID, order.OrderID, order.ProductID, order.Quantity, order.Price, order.Status, order.CreatedAt)
+	_, err := q.Exec(query, order.ID, order.OrderID, order.ProductID, order.Quantity, order.Price, order.Status, order.CreatedAt, order.UpdatedAt)
 	if err != nil {
+		fmt.Println("Error while creating order ITem", err)
 		return err
 	}
 
