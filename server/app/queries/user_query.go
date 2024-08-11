@@ -5,6 +5,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
+	"strings"
 )
 
 type UserQueries struct {
@@ -31,19 +32,22 @@ func (q *UserQueries) GetUserByID(id uuid.UUID) (models.User, error) {
 // GetUserByEmail query for getting one User by given Email.
 func (q *UserQueries) GetUserByEmail(email string) (models.User, error) {
 	fmt.Println("Email inside Query-", email)
+	email = strings.TrimSpace(email)
 	// Define User variable.
 	user := models.User{}
 
 	// Define query string.
 	query := `SELECT * FROM users WHERE email = $1`
-
+	fmt.Println("Executing query:", query, "with email:", email)
 	// Send query to database.
 	err := q.Get(&user, query, email)
+	fmt.Println(user)
 	if err != nil {
 		// Return empty object and error.
+		fmt.Println("ErrorExecutiong query ", err)
 		return user, err
 	}
-	fmt.Println(user)
+
 	// Return query result.
 	return user, nil
 }
