@@ -26,6 +26,7 @@ func UserSignUp(c *fiber.Ctx) error {
 		})
 	}
 	fmt.Printf("Parsed sign-up data: %+v\n", signUp)
+	fmt.Println("Email=>", signUp.Email)
 
 	////Create a new validator for User model.
 	//validate := utils.NewValidator()
@@ -119,6 +120,8 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 	//Get user by email
+	fmt.Printf("Email", signIn.Email)
+
 	foundedUser, err := db.GetUserByEmail(signIn.Email)
 	fmt.Println(foundedUser)
 	if err != nil {

@@ -10,6 +10,14 @@ import (
 	"time"
 )
 
+//All Handler
+// 1->CreateOrder
+// 2->CancelOrder
+// 3->UploadOrderStatusToShipped
+// 4->UploadOrderStatusToDelivered
+// 5->UploadOrderStatus to Payment Failed (If approved Then Payment Verified)
+// 5->GetAllOrdersByUserId
+
 func CreateOrder(c *fiber.Ctx) error {
 	type CartId struct {
 		Id string `json:"id"`
@@ -80,6 +88,7 @@ func CreateOrder(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": order})
 }
 
+// Cancel Order For(User & Admin)
 func CancelOrder(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
@@ -103,12 +112,6 @@ func CancelOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "database connection error"})
 	}
-	defer func(db *database.Queries) {
-		err := db.Close()
-		if err != nil {
-
-		}
-	}(db)
 
 	err = db.CancelOrder(orderID)
 	if err != nil {
@@ -116,6 +119,8 @@ func CancelOrder(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "data": orderID, "msg": "Successfully cancelled order"})
 }
+
+// Status to Shipped For (Admin Only)
 func UploadOrderStatusToShipped(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
@@ -139,12 +144,7 @@ func UploadOrderStatusToShipped(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "database connection error"})
 	}
-	defer func(db *database.Queries) {
-		err := db.Close()
-		if err != nil {
 
-		}
-	}(db)
 	err = db.ShippedOrder(orderID)
 	if err != nil {
 		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Failed to set status to shipped for  order"})
@@ -152,6 +152,8 @@ func UploadOrderStatusToShipped(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "data": orderID, "msg": "Successfully shipped order"})
 
 }
+
+// Status to Delivered For (Admin Only)
 func UploadOrderStatusToDelivered(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
@@ -175,12 +177,7 @@ func UploadOrderStatusToDelivered(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "database connection error"})
 	}
-	defer func(db *database.Queries) {
-		err := db.Close()
-		if err != nil {
 
-		}
-	}(db)
 	err = db.DeliveredOrder(orderID)
 	if err != nil {
 		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Failed to set status to delivered for  order"})
@@ -189,6 +186,40 @@ func UploadOrderStatusToDelivered(c *fiber.Ctx) error {
 
 }
 
+// Status to Delivered For (Admin Only)
+func UploadOrderStatusToPaymentFailed(c *fiber.Ctx) error {
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
+	}
+
+	if time.Now().Unix() > claims.Expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	}
+
+	if claims.UserRole != "user" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only  user can set paymentFailed order"})
+	}
+	// Get the order ID from the URL parameters
+	orderIDParam := c.Params("orderID")
+	orderID, err := uuid.Parse(orderIDParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Invalid order ID"})
+	}
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "database connection error"})
+	}
+
+	err = db.PaymentFailedOrder(orderID)
+	if err != nil {
+		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Failed to set status to payment Failed for  order"})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "data": orderID, "msg": "Successfully payment Failed order"})
+
+}
+
+// Get All Orders For (User only)
 func GetAllOrdersByUserId(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
@@ -231,12 +262,6 @@ func GetAllOrders(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "database connection error"})
 	}
-	defer func(db *database.Queries) {
-		err := db.Close()
-		if err != nil {
-
-		}
-	}(db)
 
 	// Get all orders using the GetOrders query
 	orders, err := db.GetOrders()

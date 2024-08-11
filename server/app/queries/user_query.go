@@ -1,6 +1,7 @@
 package queries
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -29,6 +30,7 @@ func (q *UserQueries) GetUserByID(id uuid.UUID) (models.User, error) {
 
 // GetUserByEmail query for getting one User by given Email.
 func (q *UserQueries) GetUserByEmail(email string) (models.User, error) {
+	fmt.Println("Email inside Query-", email)
 	// Define User variable.
 	user := models.User{}
 
@@ -41,7 +43,7 @@ func (q *UserQueries) GetUserByEmail(email string) (models.User, error) {
 		// Return empty object and error.
 		return user, err
 	}
-
+	fmt.Println(user)
 	// Return query result.
 	return user, nil
 }
