@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/toast'; 
 import { BASEAPI } from '../utils/BASE_API';
 import { setToken } from '../slices/authSlice';
+import { restoreCart } from '../slices/cartSlice';
 
 const SignIn = () => {
     const dispatch = useDispatch(); 
@@ -28,8 +29,7 @@ const SignIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Basic validation for missing fields
-        if (!formData.email|| formData.email === " " || !formData.password || formData.password === " ") {
+        if (!formData.email || !formData.password) {
             toast({
                 title: "Missing Information",
                 description: "Please fill in both email and password fields.",
@@ -46,20 +46,31 @@ const SignIn = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            console.log(response.data);
             if (response.status === 201 || response.status === 200) {
-
                 const { tokens } = response.data;
                 const { access } = tokens;
                 dispatch(setToken(access));
 
+                // Restore cart from localStorage after login
+                const savedCart = localStorage.getItem("cart");
+                const savedTotal = localStorage.getItem("total");
+                const savedTotalItems = localStorage.getItem("totalItems");
+
+                if (savedCart && savedTotal && savedTotalItems) {
+                    dispatch(restoreCart({
+                        cart: JSON.parse(savedCart),
+                        total: JSON.parse(savedTotal),
+                        totalItems: JSON.parse(savedTotalItems),
+                    }));
+                }
+
                 toast({
                     title: "Login successful!",
-                    description: "You have successfully logged in.",
                     status: "success",
                     duration: 2500,
                     isClosable: true,
                 });
+
                 setFormData({
                     email: '',
                     password: '',
@@ -77,7 +88,7 @@ const SignIn = () => {
         } catch (error) {
             console.error('Error:', error);
             toast({
-                title: "",
+                title: "Error",
                 description: "User doesn't exist.",
                 status: "error",
                 duration: 2500,
@@ -149,7 +160,6 @@ const SignIn = () => {
                     </div>
                 </div>
             </section>
-
         </div>
     );
 };

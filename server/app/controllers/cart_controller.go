@@ -354,6 +354,7 @@ func CreateCart(c *fiber.Ctx) error {
 func AddItemToCart(c *fiber.Ctx) error {
 	var item models.CartItem
 
+	// Extract token metadata
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
@@ -363,20 +364,30 @@ func AddItemToCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
 	}
 
+	// Parse request body
 	if err := c.BodyParser(&item); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "invalid request body"})
 	}
 
-	item.ID = uuid.New()
-	item.CreatedAt = time.Now()
-	item.UpdatedAt = time.Now()
-
+	// Open database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
-	
+	// Fetch product price from database
+	product, err := db.GetProduct(item.ProductID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+
+	// Calculate the total price
+	item.TotalPrice = product.Price * float64(item.Quantity)
+	item.ID = uuid.New()
+	item.CreatedAt = time.Now()
+	item.UpdatedAt = time.Now()
+
+	// Add item to cart
 	if err := db.AddItemToCart(&item); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
@@ -384,10 +395,13 @@ func AddItemToCart(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"error": false, "msg": "Item added to cart successfully"})
 }
 
-// UpdateCartItem handles updating an item in the cart.
+
+
+// UpdateCartItem updates an existing item in the cart.
 func UpdateCartItem(c *fiber.Ctx) error {
 	var item models.CartItem
 
+	// Extract token metadata
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
@@ -397,24 +411,40 @@ func UpdateCartItem(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
 	}
 
+	// Parse request body
 	if err := c.BodyParser(&item); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "invalid request body"})
 	}
 
-	item.UpdatedAt = time.Now()
+	// Validate that the item belongs to the specified cart
+	cartID, itemID := item.CartID, item.ID
+	if cartID == uuid.Nil || itemID == uuid.Nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "cart ID and item ID are required"})
+	}
 
+	// Fetch product details to get the price
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
-	
+	product, err := db.GetProduct(item.ProductID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+
+	// Calculate the total price
+	item.TotalPrice = product.Price * float64(item.Quantity)
+	item.UpdatedAt = time.Now()
+
+	// Update the cart item
 	if err := db.UpdateCartItem(&item); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
 	return c.JSON(fiber.Map{"error": false, "msg": "Cart item updated successfully"})
 }
+
 
 // RemoveItemFromCart handles removing an item from a cart.
 func RemoveItemFromCart(c *fiber.Ctx) error {

@@ -233,7 +233,7 @@ const ProductCheckout = () => {
               <p className="text-gray-600 mt-2">{product.data.description}</p>
             )}
           </div>
-
+          
           {/* Return & Refund Policy */}
           <div>
             <button

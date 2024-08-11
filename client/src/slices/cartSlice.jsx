@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     cartId: null,
@@ -13,41 +13,42 @@ const initialState = {
         : 0,
         loading: false,
 }
+
 const cartSlice = createSlice({
     name: 'cart',
     initialState: initialState,
     reducers: {
+        restoreCart: (state, action) => {
+            console.log(action.payload)
+            state.cart = action.payload.cart;
+            state.total = action.payload.total;
+            state.totalItems = action.payload.totalItems;
+        },
         addToCart: (state, action) => {
-            const product = action.payload
-            const index = state.cart.findIndex((item) => item.data.id === product.data.id)
+            const product = action.payload;
+            const index = state.cart.findIndex((item) => item.data.id === product.data.id);
 
             if (index >= 0) {
-                // toast.error("Item already in cart")
-                return
+                return;
             }
-            state.cart.push(product)
-            state.totalItems++
-            state.total += product.data.price*product.data.quantity
-            localStorage.setItem("cart", JSON.stringify(state.cart))
-            localStorage.setItem("total", JSON.stringify(state.total))
-            localStorage.setItem("totalItems", JSON.stringify(state.totalItems))
-            // show toast
-            // toast.success("Course added to cart")
+            state.cart.push(product);
+            state.totalItems += product.data.quantity;
+            state.total += product.data.price * product.data.quantity;
+            localStorage.setItem("cart", JSON.stringify(state.cart));
+            localStorage.setItem("total", JSON.stringify(state.total));
+            localStorage.setItem("totalItems", JSON.stringify(state.totalItems));
         },
         removeFromCart: (state, action) => {
-            const productId = action.payload
-            const index = state.cart.findIndex((item) => item.data.id === productId)
+            const productId = action.payload;
+            const index = state.cart.findIndex((item) => item.data.id === productId);
 
             if (index >= 0) {
-                state.totalItems--
-                state.total -= state.cart[index].data.price*state.cart[index].data.quantity
-                state.cart.splice(index, 1)
-                // Update to localstorage
-                localStorage.setItem("cart", JSON.stringify(state.cart))
-                localStorage.setItem("total", JSON.stringify(state.total))
-                localStorage.setItem("totalItems", JSON.stringify(state.totalItems))
-                // show toast
-                // toast.success("Course removed from cart")
+                state.totalItems -= state.cart[index].data.quantity;
+                state.total -= state.cart[index].data.price * state.cart[index].data.quantity;
+                state.cart.splice(index, 1);
+                localStorage.setItem("cart", JSON.stringify(state.cart));
+                localStorage.setItem("total", JSON.stringify(state.total));
+                localStorage.setItem("totalItems", JSON.stringify(state.totalItems));
             }
         },
         resetCart: (state) => {
