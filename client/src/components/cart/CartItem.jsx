@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch } from "react-redux";
-import { updateCart } from "../../slices/cartSlice";
+import { updateCart, removeFromCart } from "../../slices/cartSlice";
 
 export const CartItem = ({ item }) => {
     const { data, images } = item
@@ -13,6 +13,9 @@ export const CartItem = ({ item }) => {
     const handleQuantityChange = (amount) => {
         setQuantity((prev) => Math.max(1, prev + amount));
     };
+    const handleItemDelete = () => {
+        dispatch(removeFromCart(data.id))
+    }
     useEffect(() => {
         const updatedData = { ...data, quantity: quantity }
         dispatch(updateCart(updatedData))
@@ -51,7 +54,9 @@ export const CartItem = ({ item }) => {
                     </button>
                 </div>
                 <p className="text-lg font-semibold mr-8">₹{(data.price * data.quantity)}</p>
-                <button className="text-red-500 text-xl"><RiDeleteBin6Line /></button>
+                <button 
+                onClick={handleItemDelete}
+                className="text-red-500 text-xl"><RiDeleteBin6Line /></button>
             </div>
         </div>
     )

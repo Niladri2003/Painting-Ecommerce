@@ -37,7 +37,7 @@ const cartSlice = createSlice({
             const index = state.cart.findIndex((item) => item.data.id === productId);
 
             if (index >= 0) {
-                state.totalItems -= state.cart[index].data.quantity;
+                state.totalItems -= 1//state.cart[index].data.quantity;
                 state.total -= state.cart[index].data.price * state.cart[index].data.quantity;
                 state.cart.splice(index, 1);
                 localStorage.setItem("cart", JSON.stringify(state.cart));
