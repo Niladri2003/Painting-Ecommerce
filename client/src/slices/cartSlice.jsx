@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
+    cartId: null,
     cart: localStorage.getItem("cart")
         ? JSON.parse(localStorage.getItem("cart"))
         : [],
@@ -10,6 +11,7 @@ const initialState = {
     totalItems: localStorage.getItem("totalItems")
         ? JSON.parse(localStorage.getItem("totalItems"))
         : 0,
+        loading: false,
 }
 const cartSlice = createSlice({
     name: 'cart',
@@ -57,8 +59,25 @@ const cartSlice = createSlice({
             localStorage.removeItem("total")
             localStorage.removeItem("totalItems")
         },
+        setLoading: (state, action) => {
+            state.loading = action.payload
+        },
+        setCartId: (state, action) => {
+            state.cartId = action.payload
+        },
+        updateCart: (state, action) => {
+            const updatedData = action.payload
+            // console.log(action.payload)
+            const index = state.cart.findIndex((cartItem) => cartItem.data.id === updatedData.id)
+            if (index >= 0) {
+                state.cart[index].data=updatedData
+                state.total = state.cart.reduce((acc, item) => acc + updatedData.price*updatedData.quantity, 0)
+                localStorage.setItem("cart", JSON.stringify(state.cart))
+                localStorage.setItem("total", JSON.stringify(state.total))
+            }
+        }
     }
 })
 
-export const { addToCart, removeFromCart, resetCart } = cartSlice.actions;
+export const { addToCart, removeFromCart, resetCart, setLoading, setCartId, updateCart } = cartSlice.actions;
 export default cartSlice.reducer;
