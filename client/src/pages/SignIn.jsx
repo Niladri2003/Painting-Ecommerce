@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/toast'; 
 import { BASEAPI } from '../utils/BASE_API';
 import { setToken } from '../slices/authSlice';
-import { restoreCart } from '../slices/cartSlice';
+// import { restoreCart } from '../slices/cartSlice';
 
 const SignIn = () => {
     const dispatch = useDispatch(); 
