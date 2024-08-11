@@ -15,6 +15,25 @@ CREATE TABLE users (
                        user_status INT NOT NULL,
                        user_role VARCHAR(25) NOT NULL
 );
+-- Create the addresses table
+CREATE TABLE addresses (
+                           id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+                           user_id UUID NOT NULL,
+                           first_name VARCHAR(100) NOT NULL,
+                           last_name VARCHAR(100) NOT NULL,
+                           country VARCHAR(100) NOT NULL,
+                           street_address VARCHAR(255) NOT NULL,
+                           town_city VARCHAR(100) NOT NULL,
+                           state VARCHAR(100) NOT NULL,
+                           pin_code VARCHAR(20) NOT NULL,
+                           mobile_number VARCHAR(20) NOT NULL,
+                           email VARCHAR(255) NOT NULL,
+                           order_notes TEXT,
+                           set_as_default BOOLEAN NOT NULL DEFAULT FALSE,
+                           created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                           updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                           FOREIGN KEY (user_id) REFERENCES users(id)
+);
 CREATE TABLE categories (
                             id UUID PRIMARY KEY,
                             name VARCHAR(255) NOT NULL UNIQUE,
@@ -70,25 +89,7 @@ CREATE TABLE contacts (
                         replied BOOLEAN NOT NULL DEFAULT FALSE
 );
 
--- Create the addresses table
-CREATE TABLE addresses (
-                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(), 
-                        user_id UUID NOT NULL,                        
-                        first_name VARCHAR(100) NOT NULL,           
-                        last_name VARCHAR(100) NOT NULL,               
-                        country VARCHAR(100) NOT NULL,                 
-                        street_address VARCHAR(255) NOT NULL,        
-                        town_city VARCHAR(100) NOT NULL,             
-                        state VARCHAR(100) NOT NULL,                
-                        pin_code VARCHAR(20) NOT NULL,                 
-                        mobile_number VARCHAR(20) NOT NULL,         
-                        email VARCHAR(255) NOT NULL,                   
-                        order_notes TEXT,
-                        set_as_default BOOLEAN NOT NULL DEFAULT FALSE
-                        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        FOREIGN KEY (user_id) REFERENCES users(id)    
-);
+
 
 -- Create the carts table
 CREATE TABLE carts (
