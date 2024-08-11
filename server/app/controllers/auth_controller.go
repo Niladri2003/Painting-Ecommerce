@@ -3,14 +3,16 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
+	"github.com/niladri2003/PaintingEcommerce/pkg/middleware"
 	"github.com/niladri2003/PaintingEcommerce/pkg/utils"
 	"github.com/niladri2003/PaintingEcommerce/platform/cache"
 	"github.com/niladri2003/PaintingEcommerce/platform/database"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 )
 
 func UserSignUp(c *fiber.Ctx) error {
@@ -215,4 +217,106 @@ func UserSignOut(c *fiber.Ctx) error {
 
 	// Return status 204 no content.
 	return c.SendStatus(fiber.StatusNoContent)
+}
+
+func ResetPassword(c *fiber.Ctx) error {
+
+	// Extract token metadata to identify the user.
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "unauthorized",
+		})
+	}
+
+	// Parse the request body to get the new password.
+	type PasswordResetRequest struct {
+		NewPassword string `json:"new_password" validate:"required,min=6"`
+	}
+	req := new(PasswordResetRequest)
+	if err := c.BodyParser(req); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Create a database connection.
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Fetch the user using the ID from claims.
+	userID := claims.UserID
+	user, err := db.GetUserByID(userID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": true,
+			"msg":   "user not found",
+		})
+	}
+
+	// Hash the new password.
+	hashedPassword := utils.GeneratePassword(req.NewPassword)
+
+	// Update the user's password in the database.
+	if err := db.UpdateUserPassword(user.ID, hashedPassword); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "failed to update the password",
+		})
+	}
+
+	// Return success response with updated timestamp.
+	return c.JSON(fiber.Map{
+		"error": false,
+		"msg":   "password reset successful",
+	})
+}
+
+func DeleteAccount(c *fiber.Ctx) error {
+	// Extract the user ID from the JWT claims.
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "unauthorized",
+		})
+	}
+
+	// Create a database connection.
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Delete the user from the database.
+	if err := db.DeleteUserByID(claims.UserID); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "failed to delete the user",
+		})
+	}
+
+	userId := claims.UserID.String()
+
+	// Remove the user's session token from Redis (optional, if using session tokens).
+	connRedis, err := cache.RedisConnection()
+	if err == nil {
+		_ = connRedis.Del(context.Background(), userId).Err()
+	}
+
+	// Return success response.
+	return c.JSON(fiber.Map{
+		"error": false,
+		"msg":   "account deleted successfully",
+	})
 }
