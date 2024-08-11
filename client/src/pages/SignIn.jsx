@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/toast'; 
 import { BASEAPI } from '../utils/BASE_API';
 import { setToken } from '../slices/authSlice';
-// import { restoreCart } from '../slices/cartSlice';
+import { restoreCart } from '../slices/cartSlice';
 
 const SignIn = () => {
     const dispatch = useDispatch(); 
@@ -49,20 +49,20 @@ const SignIn = () => {
             if (response.status === 201 || response.status === 200) {
                 const { tokens } = response.data;
                 const { access } = tokens;
-                // dispatch(setToken(access));
+                dispatch(setToken(access));
 
-                // // Restore cart from localStorage after login
-                // const savedCart = localStorage.getItem("cart");
-                // const savedTotal = localStorage.getItem("total");
-                // const savedTotalItems = localStorage.getItem("totalItems");
+                // Restore cart from localStorage after login
+                const savedCart = localStorage.getItem("cart");
+                const savedTotal = localStorage.getItem("total");
+                const savedTotalItems = localStorage.getItem("totalItems");
 
-                // if (savedCart && savedTotal && savedTotalItems) {
-                //     dispatch(restoreCart({
-                //         cart: JSON.parse(savedCart),
-                //         total: JSON.parse(savedTotal),
-                //         totalItems: JSON.parse(savedTotalItems),
-                //     }));
-                // }
+                if (savedCart && savedTotal && savedTotalItems) {
+                    dispatch(restoreCart({
+                        cart: JSON.parse(savedCart),
+                        total: JSON.parse(savedTotal),
+                        totalItems: JSON.parse(savedTotalItems),
+                    }));
+                }
 
                 toast({
                     title: "Login successful!",
