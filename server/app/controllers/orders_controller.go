@@ -85,6 +85,11 @@ func CreateOrder(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to create order item"})
 		}
 	}
+	err = db.DeleteCart(claims.UserID)
+	if err != nil {
+		c.Status(500).JSON(fiber.Map{"error": true, "msg": "Failed to Clear cart"})
+	}
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": order})
 }
 
@@ -99,9 +104,6 @@ func CancelOrder(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
 	}
 
-	if claims.UserRole != "user" || claims.UserRole != "admin" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only users and admin can cancel order"})
-	}
 	// Get the order ID from the URL parameters
 	orderIDParam := c.Params("orderID")
 	orderID, err := uuid.Parse(orderIDParam)
@@ -237,11 +239,11 @@ func GetAllOrdersByUserId(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "database connection error"})
 	}
-	orders, err := db.GetAddressesByUserID(claims.UserID)
+	orders, err := db.GetOrdersByUserID(claims.UserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get all orders"})
 	}
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": orders})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "data": orders, "msg": "All orders Fetched succesfully"})
 }
 
 // Handler for get all orders (Admin)
