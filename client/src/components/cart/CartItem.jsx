@@ -22,7 +22,7 @@ export const CartItem = ({ item }) => {
     }, [quantity]);
 
     return (
-        <div className="w-full flex flex-col md:flex-row justify-between items-center p-5 border-b-2">
+        <div className="w-full flex flex-col md:flex-row justify-between items-center p-5 border-b-2 max-sm:flex-row">
             <div className="flex items-center w-full md:w-auto">
                 <img
                     src={images[0].image_url}
@@ -35,7 +35,7 @@ export const CartItem = ({ item }) => {
                     <button className="text-blue-500 hover:underline mt-2 md:mt-0">More Details</button>
                 </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center w-full md:w-auto mt-4 md:mt-0">
+            <div className="max-sm:gap-3 flex flex-col md:flex-row items-center w-full md:w-auto mt-4 md:mt-0">
                 <div className="flex items-center mb-4 md:mb-0 mr-0 md:mr-8">
                     <button
                         onClick={() => handleQuantityChange(-1)}
