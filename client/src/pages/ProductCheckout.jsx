@@ -18,7 +18,7 @@ import { BASEAPI } from "../utils/BASE_API";
 
 const ProductCheckout = () => {
   const dispatch = useDispatch();
-  const {cart} = useSelector((state) => state.cart);
+  const { cart } = useSelector((state) => state.cart);
 
   const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -86,6 +86,7 @@ const ProductCheckout = () => {
     product.data.quantity = quantity;
     dispatch(addToCart(product));
   };
+
   const presentInCart = () => {
     if (cart) {
       const index = cart.findIndex((item) => item.data.id === product.data.id);
@@ -93,7 +94,6 @@ const ProductCheckout = () => {
     }
     return false;
   };
-
 
   if (loading) {
     return <div>Loading...</div>; // Show a loading state until product is fetched
@@ -108,8 +108,8 @@ const ProductCheckout = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <div className="flex flex-col lg:flex-row items-center md:flex-col lg:items-start mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl  lg:gap-6 mx-auto">
+    <div className="min-h-screen flex flex-col w-full ">
+      <div className="flex flex-col lg:flex-row items-center md:flex-col lg:items-start mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl lg:gap-6 mx-auto">
         {/* Left Side: Image Viewer with Next/Previous Arrows */}
         <div className="w-full lg:w-1/2 relative">
           <div className="mb-4">
@@ -117,7 +117,7 @@ const ProductCheckout = () => {
               <img
                 src={product.images[selectedImageIndex].image_url} // Use the product images
                 alt={product.title || "Product image"} // Use a fallback alt text
-                className="w-full h-auto object-cover rounded-lg"
+                className="w-full h-auto max-h-[500px] object-cover rounded-lg" // Set max-height and object-fit
               />
             ) : (
               <div>No images available</div> // Fallback content
@@ -271,11 +271,8 @@ const ProductCheckout = () => {
           </div>
         </div>
       </div>
-    
-
     </div>
   );
 };
 
 export default ProductCheckout;
-  
