@@ -54,7 +54,7 @@ For running the container
 docker run -p 5000:5000 --env-file .env painting-ecommerce
 ```
 ```bash
-docker run -d --name painting-ecommerce   --network test_network   -e DB_HOST=cgapp-postgres   -e DB_PORT=5432   -e DB_USER=postgres   -e DB_PASSWORD=password   -e DB_NAME=postgres   -e DB_SSL_MODE=disable   -e SAMPLE_DATA_PATH=/root/platform/migration/sample_data.sql   -p 5000:5000   painting-ecommerce
+docker run -d --name painting-ecommerce   --network server_my_network   -e DB_HOST=cgapp-postgres   -e DB_PORT=5432   -e DB_USER=postgres   -e DB_PASSWORD=password   -e DB_NAME=postgres   -e DB_SSL_MODE=disable   -p 5000:5000   painting-ecommerce
 ```
 Creating Backup inside postgres container
 ```bash
@@ -62,7 +62,7 @@ POSTGRES_PASSWORD=postgres pg_dump -U postgres -d postgres -f /backup/dump_date`
 ```
 Copy backup from container to local
 ```bash
-docker cp dump_date2024-08-09_06_59_56.sql 19e924fd823c:/backup/dump_date2024-08-09_06_59_56.sql
+docker cp e51efef85b4d:/dump_date2024-08-12_07_55_58.sql dump_date2024-08-12_07_55_58.sql
 ```
 Copy backup from local to container
 ```bash
