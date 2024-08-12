@@ -17,10 +17,10 @@ type OrderItemsQuery struct {
 
 // create OrderItem
 func (q *OrderItemsQuery) CreateOrderItem(order *models.OrderItem) error {
-	query := `INSERT INTO order_items (id, order_id, product_id, quantity,price,status,created_at,updated_at) VALUES ($1, $2, $3, $4,$5,$6,$7,$8)`
+	query := `INSERT INTO order_items (id, order_id, product_id,product_name, quantity,price,status,created_at,updated_at) VALUES ($1, $2, $3, $4,$5,$6,$7,$8,$9)`
 
 	// Send query to database.
-	_, err := q.Exec(query, order.ID, order.OrderID, order.ProductID, order.Quantity, order.Price, order.Status, order.CreatedAt, order.UpdatedAt)
+	_, err := q.Exec(query, order.ID, order.OrderID, order.ProductID, order.ProductName, order.Quantity, order.Price, order.Status, order.CreatedAt, order.UpdatedAt)
 	if err != nil {
 		fmt.Println("Error while creating order ITem", err)
 		return err

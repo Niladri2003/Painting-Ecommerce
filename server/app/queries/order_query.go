@@ -249,8 +249,9 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			o.updated_at AS order_updated_at,
 			oi.id AS order_item_id,
 			oi.product_id,
-			COALESCE(oi.quantity, 0) AS quantity,  -- Handle NULL values for quantity
-			COALESCE(oi.price, 0.0) AS price,       -- Handle NULL values for price
+			COALESCE(oi.product_name, '') AS product_name, -- Handle NULL values for product_name
+			COALESCE(oi.quantity, 0) AS quantity,         -- Handle NULL values for quantity
+			COALESCE(oi.price, 0.0) AS price,             -- Handle NULL values for price
 			COALESCE(oi.status, '') AS order_item_status, -- Handle NULL values for status
 			oi.created_at AS order_item_created_at,
 			a.id AS address_id,
@@ -279,14 +280,18 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			o.created_at DESC, o.id ASC
 	`
 
-	fmt.Println("UserId", userID)
+	fmt.Println("UserID:", userID)
+
 	// Execute the query
 	rows, err := q.DB.Query(query, userID)
 	if err != nil {
-		fmt.Println("Error while fetching All Orders", err)
-		return nil, err
+		return nil, fmt.Errorf("error querying database for orders by userID %s: %w", userID, err)
 	}
-	defer rows.Close()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil {
+			fmt.Println("Error closing rows:", closeErr)
+		}
+	}()
 
 	// Initialize a map to group orders and their items
 	orderMap := make(map[uuid.UUID]*models.OrderWithItems)
@@ -312,6 +317,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			&orderWithItems.OrderUpdatedAt,
 			&orderItem.ID,
 			&orderItem.ProductID,
+			&orderItem.ProductName,
 			&orderItemQuantity,  // Handle NULLs for quantity
 			&orderItemPrice,     // Handle NULLs for price
 			&orderItemStatus,    // Handle NULLs for status
@@ -332,8 +338,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			&address.UpdatedAt,
 		)
 		if err != nil {
-			fmt.Println("Error while fetching Order Items", err)
-			return nil, err
+			return nil, fmt.Errorf("error scanning row into structs: %w", err)
 		}
 
 		// Add order to the map if not already present
@@ -391,15 +396,15 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 		}
 	}
 
+	// Check for errors after iterating over rows
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating over rows: %w", err)
+	}
+
 	// Convert the map to a slice
 	var orders []models.OrderWithItems
 	for _, order := range orderMap {
 		orders = append(orders, *order)
-	}
-
-	// Check for errors from iterating over rows
-	if err = rows.Err(); err != nil {
-		return nil, err
 	}
 
 	return orders, nil
@@ -430,9 +435,10 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 			o.updated_at AS order_updated_at,
 			oi.id AS order_item_id,
 			oi.product_id,
-			COALESCE(oi.quantity, 0) AS quantity,  -- Handle NULL values for quantity
-			COALESCE(oi.price, 0.0) AS price,       -- Handle NULL values for price
-			COALESCE(oi.status, '') AS order_item_status, -- Handle NULL values for status
+			COALESCE(oi.product_name, '') AS product_name, -- Handle NULL values for product_name
+			COALESCE(oi.quantity, 0) AS quantity,          -- Handle NULL values for quantity
+			COALESCE(oi.price, 0.0) AS price,              -- Handle NULL values for price
+			COALESCE(oi.status, '') AS order_item_status,  -- Handle NULL values for status
 			oi.created_at AS order_item_created_at,
 			oi.updated_at AS order_item_updated_at
 		FROM 
@@ -445,12 +451,17 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 			o.created_at DESC, o.id ASC;
 	`
 	fmt.Println(query)
+
 	// Execute the query
 	rows, err := q.DB.Query(query)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error querying database for orders: %w", err)
 	}
-	defer rows.Close()
+	defer func() {
+		if closeErr := rows.Close(); closeErr != nil {
+			fmt.Println("Error closing rows:", closeErr)
+		}
+	}()
 
 	// Initialize a map to group orders and their items
 	orderMap := make(map[uuid.UUID]*models.OrderWithItems)
@@ -485,14 +496,15 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 			&orderWithItems.OrderUpdatedAt,
 			&orderItem.ID,
 			&orderItem.ProductID,
-			&orderItemQuantity, // Handle NULLs for quantity
-			&orderItemPrice,    // Handle NULLs for price
-			&orderItemStatus,   // Handle NULLs for status
+			&orderItem.ProductName, // Handle product_name field
+			&orderItemQuantity,     // Handle NULLs for quantity
+			&orderItemPrice,        // Handle NULLs for price
+			&orderItemStatus,       // Handle NULLs for status
 			&orderItem.CreatedAt,
 			&orderItem.UpdatedAt,
 		)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("error scanning row into structs: %w", err)
 		}
 
 		// Add order to the map if not already present
@@ -557,7 +569,7 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 
 	// Check for errors from iterating over rows
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error iterating over rows: %w", err)
 	}
 
 	return orders, nil
