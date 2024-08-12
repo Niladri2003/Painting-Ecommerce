@@ -373,7 +373,7 @@ const AccountPage = () => {
         pin_code: '',
         mobile_number: '',
         email: '',
-        set_as_default: true
+        set_as_default: "true"
     });
 
     const toast = useToast();
@@ -413,10 +413,36 @@ const AccountPage = () => {
 
             const method = editAddress ? 'put' : 'post';
 
+            // Only keep the necessary fields for creating/updating an address
+            const {
+                first_name,
+                last_name,
+                street_address,
+                town_city,
+                state,
+                country,
+                pin_code,
+                mobile_number,
+                email,
+            } = formData;
+
+            const data = {
+                first_name,
+                last_name,
+                street_address,
+                town_city,
+                state,
+                country,
+                pin_code,
+                mobile_number,
+                email,
+                set_as_default: "true", // Hardcoded to true
+            };
+
             await axios({
                 method: method,
                 url: endpoint,
-                data: formData,
+                data: data,
                 headers: {
                     Authorization: `${token}`,
                 },
@@ -442,6 +468,7 @@ const AccountPage = () => {
             });
         }
     };
+
 
     const resetFormData = () => {
         setFormData({
