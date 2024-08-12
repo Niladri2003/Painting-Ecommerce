@@ -68,6 +68,7 @@ CREATE TABLE order_items (
                          id UUID PRIMARY KEY,
                          order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
                          product_id UUID REFERENCES products(id) ON DELETE SET NULL,
+                         product_name VARCHAR(255) NOT NULL,
                          quantity INT NOT NULL,
                          price DECIMAL(10, 2) NOT NULL, -- Price at the time of purchase
                          status VARCHAR(50) NOT NULL, -- e.g., 'approved', 'canceled'

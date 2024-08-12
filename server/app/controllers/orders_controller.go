@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -19,10 +20,6 @@ import (
 // 5->GetAllOrdersByUserId
 
 func CreateOrder(c *fiber.Ctx) error {
-	type CartId struct {
-		Id string `json:"id"`
-	}
-	var cartId CartId
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
@@ -36,9 +33,6 @@ func CreateOrder(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only users can create order"})
 	}
 
-	if err := c.BodyParser(&cartId); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "invalid cart id"})
-	}
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "database connection error"})
@@ -70,15 +64,17 @@ func CreateOrder(c *fiber.Ctx) error {
 	}
 	//Create Order Items
 	for _, item := range cart.Items {
+		fmt.Println(item.ProductName)
 		orderItem := models.OrderItem{
-			ID:        uuid.New(), // Generate a new UUID for the order item
-			OrderID:   orderId,
-			ProductID: item.ProductID,
-			Quantity:  item.Quantity,
-			Price:     item.TotalPrice,
-			Status:    "approved", // or any other default status
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+			ID:          uuid.New(), // Generate a new UUID for the order item
+			OrderID:     orderId,
+			ProductID:   item.ProductID,
+			ProductName: item.ProductName,
+			Quantity:    item.Quantity,
+			Price:       item.TotalPrice,
+			Status:      "approved", // or any other default status
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
 		}
 
 		if err := db.CreateOrderItem(&orderItem); err != nil {

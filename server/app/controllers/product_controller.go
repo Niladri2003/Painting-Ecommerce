@@ -222,7 +222,11 @@ func GetProductDetails(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": productDetails, "images": productImage})
+	allProducts, err := db.GetProductsByCategory(productDetails.CategoryID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": productDetails, "images": productImage, "related_products": allProducts})
 
 }
 
