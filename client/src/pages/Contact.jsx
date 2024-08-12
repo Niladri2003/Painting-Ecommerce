@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import HomeHero from '../components/Home/HomeHero';
-import contactImg from "../assets/Contact/contactImg1.jpg";
+import girl from "../assets/Contact/girl.jpg";
 import overlyImg from "../assets/Contact/overlyImg.jpg";
 import Footer from '../components/footer/Footer';
 import { BASEAPI } from '../utils/BASE_API';
+import AOS from 'aos';
+import 'aos/dist/aos.css';  // Import AOS styles
 
 export default function Contact() {
-    // Update state keys to snake_case to match the backend's expected JSON structure
+    // Initialize AOS
+    useEffect(() => {
+        AOS.init({
+            duration: 1000,  // Duration of the animation
+            easing: 'ease-in-out',  // Easing function for animation
+            once: false,  // Whether animation should happen only once
+        });
+    }, []);
+
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -57,7 +67,7 @@ export default function Contact() {
             <HomeHero title='Contact Us' showShopNowButton={false} />
             <div className="flex flex-col md:flex-row justify-between p-6 max-w-screen-xl mx-auto">
                 {/* Left Section: Contact Form */}
-                <div className="w-full md:w-1/3 p-4">
+                <div className="w-full md:w-1/3 p-4" data-aos="fade-right">
                     <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-4">
@@ -89,7 +99,7 @@ export default function Contact() {
                 </div>
 
                 {/* Middle Section: Company Location and Hours */}
-                <div className="w-full md:w-1/3 p-4">
+                <div className="w-full md:w-1/3 p-4" data-aos="fade-up">
                     <h2 className="text-2xl font-semibold mb-4">Our Location & Hours</h2>
                     <p className="mb-2"><strong>Address:</strong> 123 Main St, Anytown, USA</p>
                     <p className="mb-2"><strong>Phone:</strong> (123) 456-7890</p>
@@ -100,14 +110,12 @@ export default function Contact() {
                 </div>
 
                 {/* Right Section: Image */}
-                <div className="relative w-full md:w-1/3 p-4">
+                <div className="relative w-full md:w-1/3 p-4" data-aos="fade-left">
                     <div className="relative w-full">
-                        <img src={contactImg} alt="Contact Us" className="w-full h-auto rounded-lg" />
-                        <img src={overlyImg} alt="Overlay" className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-30 h-40 bg-transparent" />
+                        <img src={girl} alt="Contact Us" className="w-full h-auto rounded-lg" />
                     </div>
                 </div>
             </div>
-      
         </div>
     );
 }
