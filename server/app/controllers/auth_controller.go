@@ -182,6 +182,7 @@ func UserSignIn(c *fiber.Ctx) error {
 		"tokens": fiber.Map{
 			"access":       tokens.Access,
 			"refreshToken": tokens.Refresh,
+			"user_details": foundedUser,
 		},
 	})
 }
