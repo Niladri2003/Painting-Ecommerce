@@ -122,7 +122,7 @@ func UserSignIn(c *fiber.Ctx) error {
 		})
 	}
 	//Get user by email
-	fmt.Printf("Email", signIn.Email)
+	// fmt.Printf("Email", signIn.Email)
 
 	foundedUser, err := db.GetUserByEmail(signIn.Email)
 	fmt.Println(foundedUser)

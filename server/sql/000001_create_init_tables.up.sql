@@ -108,6 +108,7 @@ CREATE TABLE cart_items (
                             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                             cart_id UUID NOT NULL,
                             product_id UUID NOT NULL,
+                            product_name VARCHAR(255) NOT NULL,
                             quantity INT NOT NULL CHECK (quantity > 0),
                             total_price DECIMAL(10, 2) NOT NULL, -- Price at the time of adding to cart
                             created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,

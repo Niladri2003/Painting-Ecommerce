@@ -40,6 +40,7 @@ type CartItem struct {
 	ID        uuid.UUID `json:"id" db:"id"`
 	CartID    uuid.UUID `json:"cart_id" db:"cart_id"`
 	ProductID uuid.UUID `json:"product_id" db:"product_id"`
+	ProductName string  `json:"product_name" db:"product_name"`
 	Quantity  int       `json:"quantity" db:"quantity"`
 	TotalPrice     float64   `json:"price" db:"total_price"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`

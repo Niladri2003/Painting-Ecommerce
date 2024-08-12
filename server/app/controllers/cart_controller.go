@@ -77,6 +77,7 @@ func AddItemToCart(c *fiber.Ctx) error {
 	// Calculate the total price
 	item.TotalPrice = product.Price * float64(item.Quantity)
 	item.ID = uuid.New()
+	item.ProductName = product.Title	
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
 

@@ -24,9 +24,9 @@ func (q *CartQueries) CreateCart(cart *models.Cart) error {
 // AddItemToCart inserts a new item into the cart_items table.
 func (q *CartQueries) AddItemToCart(item *models.CartItem) error {
 	query := `
-		INSERT INTO cart_items (id, cart_id, product_id, quantity, total_price, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.Quantity, item.TotalPrice, item.CreatedAt, item.UpdatedAt)
+		INSERT INTO cart_items (id, cart_id, product_id, product_name, quantity, total_price, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7,$8)`
+	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.ProductName, item.Quantity, item.TotalPrice, item.CreatedAt, item.UpdatedAt)
 	return err
 }
 
