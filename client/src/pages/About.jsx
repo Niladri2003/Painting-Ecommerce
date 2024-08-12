@@ -65,13 +65,13 @@ const AboutUs = () => {
         <div className="relative z-10 w-full max-w-7xl mx-auto p-6 md:p-16 flex justify-center items-center">
           <div className="bg-  bg-opacity-90 p-6 md:p-12 rounded-lg shadow-lg text-white">
             <div className="text-3xl md:text-4xl font-bold mb-4 flex justify-center">Our Philosophy</div>
-            <p className="text-lg md:text-xl mb-4">
+            <p className="text-lg md:text-xl mb-4 font-bold">
               At Trivart, we believe that art is not just a visual experience but a profound connection to culture, history, and emotion. Our mission is to preserve and promote the rich artistic heritage of India, bringing traditional and cultural art forms to the forefront of modern appreciation.
             </p>
-            <p className="text-lg md:text-xl mb-4">
+            <p className="text-lg md:text-xl mb-4 font-bold">
               We view each painting not merely as a product but as a story—a narrative that captures the essence of the artists' heritage and the culture they represent. By curating a collection that honors the past while resonating with contemporary art lovers, we strive to create a bridge between generations.
             </p>
-            <p className="text-lg md:text-xl">
+            <p className="text-lg md:text-xl font-bold">
               At the heart of Trivart is a commitment to integrity, quality, and cultural preservation. We believe in the power of art to transcend boundaries, inspire creativity, and enrich lives, making it accessible to everyone who seeks to connect with the deeper meanings behind each brushstroke.
             </p>
           </div>

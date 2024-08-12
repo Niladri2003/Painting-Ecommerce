@@ -36,6 +36,7 @@ const Cart = () => {
               <p className="text-gray-500 mt-2">🔒 Secure Checkout</p>
             </div>
           </div>
+          
         </div>
         <div className="mt-8">
           <div className="mb-4">
