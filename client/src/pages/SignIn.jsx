@@ -7,6 +7,7 @@ import { useToast } from '@chakra-ui/toast';
 import { BASEAPI } from '../utils/BASE_API';
 import { setToken } from '../slices/authSlice';
 import { restoreCart } from '../slices/cartSlice';
+import { setUser } from '../slices/profileSlice';
 
 const SignIn = () => {
     const dispatch = useDispatch(); 
@@ -42,27 +43,30 @@ const SignIn = () => {
 
         try {
             const response = await axios.post(`${BASEAPI}/user/sign-in`, formData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: { 'Content-Type': 'application/json' },
             });
+            // console.log('Response:', response);
+
             if (response.status === 201 || response.status === 200) {
                 const { tokens } = response.data;
                 const { access } = tokens;
+
+                tokens.user_details.password_hash = null;
+                dispatch(setUser(tokens.user_details));
                 dispatch(setToken(access));
 
                 // Restore cart from localStorage after login
-                const savedCart = localStorage.getItem("cart");
-                const savedTotal = localStorage.getItem("total");
-                const savedTotalItems = localStorage.getItem("totalItems");
+                // const savedCart = localStorage.getItem("cart");
+                // const savedTotal = localStorage.getItem("total");
+                // const savedTotalItems = localStorage.getItem("totalItems");
 
-                if (savedCart && savedTotal && savedTotalItems) {
-                    dispatch(restoreCart({
-                        cart: JSON.parse(savedCart),
-                        total: JSON.parse(savedTotal),
-                        totalItems: JSON.parse(savedTotalItems),
-                    }));
-                }
+                // if (savedCart && savedTotal && savedTotalItems) {
+                //     dispatch(restoreCart({
+                //         cart: JSON.parse(savedCart),
+                //         total: JSON.parse(savedTotal),
+                //         totalItems: JSON.parse(savedTotalItems),
+                //     }));
+                // }
 
                 toast({
                     title: "Login successful!",
