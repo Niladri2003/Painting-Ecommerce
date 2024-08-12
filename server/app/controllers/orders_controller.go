@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"fmt"
+	generator "github.com/angelodlfrtr/go-invoice-generator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
 	"github.com/niladri2003/PaintingEcommerce/pkg/middleware"
 	"github.com/niladri2003/PaintingEcommerce/platform/database"
 	"github.com/valyala/fasthttp"
+	"os"
 	"time"
 )
 
@@ -47,6 +49,7 @@ func CreateOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get default address"})
 	}
+	// Get User Details
 
 	orderId := uuid.New()
 	order := models.Order{
@@ -81,6 +84,67 @@ func CreateOrder(c *fiber.Ctx) error {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to create order item"})
 		}
 	}
+	// Generate Invoice
+	invoiceDoc, _ := generator.New(generator.Invoice, &generator.Options{
+		TextTypeInvoice: "INVOICE",
+		AutoPrint:       false,
+	})
+	invoiceDoc.SetHeader(&generator.HeaderFooter{
+		Text:       "<center>Trivart</center>",
+		Pagination: true,
+	})
+	invoiceDoc.SetFooter(&generator.HeaderFooter{
+		Text:       "<center>Thank you for your business!</center>",
+		Pagination: true,
+	})
+	invoiceDoc.SetRef("INV-" + orderId.String()[:8])
+	invoiceDoc.SetDate(time.Now().Format("02/01/2006"))
+
+	// Set company and customer details
+	invoiceDoc.SetCompany(&generator.Contact{
+		Name: "Trivart",
+		Address: &generator.Address{
+			Address:    "123 Business Rd",
+			City:       "Business City",
+			Country:    "Country",
+			PostalCode: "123456",
+		},
+	})
+	// Set Customer Details
+	invoiceDoc.SetCustomer(&generator.Contact{
+		Name: defaultAddress.FirstName + " " + defaultAddress.LastName,
+		Address: &generator.Address{
+			Address:    defaultAddress.StreetAddress,
+			City:       defaultAddress.TownCity,
+			Country:    defaultAddress.Country,
+			PostalCode: defaultAddress.PinCode,
+		},
+	})
+	// Add each cart item to the invoice
+	for _, item := range cart.Items {
+		invoiceDoc.AppendItem(&generator.Item{
+			Name:     item.ProductName,
+			UnitCost: fmt.Sprintf("%.2f", item.TotalPrice),
+			Quantity: fmt.Sprintf("%d", item.Quantity),
+		})
+	}
+	// Generate the PDF
+	pdf, err := invoiceDoc.Build()
+	if err != nil {
+		fmt.Println("PDF error", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to generate invoice"})
+	}
+	invoiceDir := "invoices"
+	if _, err := os.Stat(invoiceDir); os.IsNotExist(err) {
+		os.Mkdir(invoiceDir, os.ModePerm)
+	}
+	invoicePath := fmt.Sprintf("invoices/%s.pdf", orderId.String())
+	err = pdf.OutputFileAndClose(invoicePath)
+	if err != nil {
+		fmt.Println("save error", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to save invoice"})
+	}
+
 	err = db.DeleteCart(claims.UserID)
 	if err != nil {
 		c.Status(500).JSON(fiber.Map{"error": true, "msg": "Failed to Clear cart"})
