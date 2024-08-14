@@ -11,6 +11,9 @@ func PublicRoutes(a *fiber.App) {
 	//Routes for POST method
 	route.Post("/user/register", controllers.UserSignUp)
 	route.Post("/user/sign-in", controllers.UserSignIn)
+	route.Get("/user/google/login", controllers.GoogleLogin) 
+	route.Get("/user/google/callback", controllers.GoogleCallback) 
+	
 	route.Get("/get-all-category", controllers.GetAllCategory)
 
 	route.Get("/get-product-details/:id", controllers.GetProductDetails)
