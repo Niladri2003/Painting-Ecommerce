@@ -19,6 +19,7 @@ const Shop = () => {
       console.error('Error fetching products:', error);
     }
   };
+console.log(product);
 
   useEffect(() => {
     getAllProducts();
