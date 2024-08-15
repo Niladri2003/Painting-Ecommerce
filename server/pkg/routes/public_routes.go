@@ -8,11 +8,13 @@ import (
 func PublicRoutes(a *fiber.App) {
 	route := a.Group("/api/v1")
 
-	//Routes for POST method
+	//Routes for Authentication method
 	route.Post("/user/register", controllers.UserSignUp)
 	route.Post("/user/sign-in", controllers.UserSignIn)
 	route.Get("/user/google/login", controllers.GoogleLogin) 
 	route.Get("/user/google/callback", controllers.GoogleCallback) 
+	route.Get("/user/get-tokens", controllers.GetTokens) 
+
 	
 	route.Get("/get-all-category", controllers.GetAllCategory)
 
