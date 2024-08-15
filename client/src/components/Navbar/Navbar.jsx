@@ -13,9 +13,18 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
+  const { user } = useSelector((state) => state.profile);
+
+  console.log("fetch user:", user); // Fetch from your user state or API
+
+  const userProfileImage = user?.profile_picture
+    ? user.profile_picture
+    : `https://api.dicebear.com/5.x/initials/svg?seed=${
+        user?.first_name || "User"
+      } ${user?.last_name || ""}`;
+
   // const {user} = useSelector((state)=>state.profile)
   // console.log("fetch user:", user?.profile_picture) // Fetch from your user state or API
-  const userProfileImage = "" // Fetch from your user state or API
 
   useEffect(() => {
     const handleScroll = () => {
@@ -87,7 +96,9 @@ const Navbar = () => {
               {totalItems > 0 && (
                 <span
                   className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${
-                    isScrolled ? "bg-red-600  text-white" : "bg-red-600 text-white"
+                    isScrolled
+                      ? "bg-red-600  text-white"
+                      : "bg-red-600 text-white"
                   }`}
                 >
                   {totalItems}
