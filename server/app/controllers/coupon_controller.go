@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -13,10 +14,10 @@ import (
 
 func CreateCoupon(c *fiber.Ctx) error {
 	var input struct {
-		CouponCode         string  `json:"coupon_code"`
-		Validity           string  `json:"validity"`
-		DiscountPercentage float64 `json:"discount_percentage"`
-		IsActive           bool    `json:"is_active"`
+		CouponCode         string `json:"coupon_code"`
+		Validity           string `json:"validity"`
+		DiscountPercentage string `json:"discount_percentage"`
+		IsActive           bool   `json:"is_active"`
 	}
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
@@ -32,20 +33,27 @@ func CreateCoupon(c *fiber.Ctx) error {
 	}
 	// Parse the request body into the input struct
 	if err := c.BodyParser(&input); err != nil {
+		fmt.Println(err)
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
 	}
 
 	// Parse the validity date string to time.Time
-	validity, err := time.Parse("2006-01-02", input.Validity) // Adjust format as needed
+	validity, err := time.Parse("02-01-2006", input.Validity) // Adjust format as needed
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "invalid date format"})
 	}
+	// Convert price to float
+	priceValue, err := strconv.ParseFloat(input.DiscountPercentage, 64)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid price format"})
+	}
+
 	// Create a new Coupon struct
 	coupon := models.Coupon{
 		ID:                 uuid.New(),
 		CouponCode:         input.CouponCode,
 		Validity:           validity,
-		DiscountPercentage: input.DiscountPercentage,
+		DiscountPercentage: priceValue,
 		IsActive:           input.IsActive,
 	}
 	db, err := database.OpenDbConnection()

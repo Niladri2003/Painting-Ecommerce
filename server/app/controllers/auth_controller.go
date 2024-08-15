@@ -112,7 +112,7 @@ func UserSignIn(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-	fmt.Printf("Parsed sign-in data: %+v\n", signIn)
+	//fmt.Printf("Parsed sign-in data: %+v\n", signIn)
 	//create a database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
@@ -125,7 +125,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	// fmt.Printf("Email", signIn.Email)
 
 	foundedUser, err := db.GetUserByEmail(signIn.Email)
-	fmt.Println(foundedUser)
+	//fmt.Println(foundedUser)
 	if err != nil {
 		// Return, if user not found.
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -160,7 +160,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	// Create a new Redis connection
 	connRedis, err := cache.RedisConnection()
 	if err != nil {
-		fmt.Println("Redis Error", err)
+		//fmt.Println("Redis Error", err)
 		//Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
@@ -170,6 +170,7 @@ func UserSignIn(c *fiber.Ctx) error {
 
 	//Save refresh token to Redis.
 	errSaveToRedis := connRedis.Set(context.Background(), userId, tokens.Refresh, 0).Err()
+	fmt.Println(errSaveToRedis)
 	if errSaveToRedis != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
