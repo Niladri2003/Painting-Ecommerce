@@ -7,7 +7,7 @@ import { logout } from "../../slices/authSlice";
 import defaultAvatar from "../../assets/avatar/defaultAvatar.jpg";
 import { useToast } from "@chakra-ui/react";
 
-const AvatarDropdown = ({ userProfileImage }) => {
+const AvatarDropdown = ({ userProfileImage ,size = "sm" }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const dispatch = useDispatch();
@@ -47,6 +47,7 @@ const AvatarDropdown = ({ userProfileImage }) => {
         src={userProfileImage || defaultAvatar}
         alt="User Avatar"
         className="cursor-pointer"
+        size={size}
         onClick={handleAvatarClick}
       />
       {isDropdownOpen && (
