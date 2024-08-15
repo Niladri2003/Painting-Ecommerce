@@ -43,16 +43,25 @@ func CreateProduct(c *fiber.Ctx) error {
 	// Parse product details
 	title := c.FormValue("title")
 	description := c.FormValue("description")
-	price := c.FormValue("price")
+	originalPrice := c.FormValue("original_price")
+	discountedPrice := c.FormValue("discounted_price")
+	is_active := c.FormValue("is_active")
 	categoryID := c.FormValue("category_id")
 
 	// Validate inputs
-	if title == "" || description == "" || price == "" || categoryID == "" {
+	if title == "" || description == "" || originalPrice == "" || categoryID == "" || discountedPrice == "" {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Missing required fields"})
 	}
-
+	is_activeBool, err := strconv.ParseBool(is_active)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid is_active flag"})
+	}
 	// Convert price to float
-	priceValue, err := strconv.ParseFloat(price, 64)
+	originalPriceValue, err := strconv.ParseFloat(originalPrice, 64)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid price format"})
+	}
+	discountedPriceValue, err := strconv.ParseFloat(discountedPrice, 64)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid price format"})
 	}
@@ -71,7 +80,9 @@ func CreateProduct(c *fiber.Ctx) error {
 	product.ID = productId
 	product.Title = title
 	product.Description = description
-	product.Price = priceValue
+	product.OriginalPrice = originalPriceValue
+	product.DiscountedPrice = discountedPriceValue
+	product.IsActive = is_activeBool
 	product.CategoryID = categoryUUID
 	product.CreatedAt = time.Now()
 	product.UpdatedAt = time.Now()
@@ -166,17 +177,10 @@ func DeleteProduct(c *fiber.Ctx) error {
 			"msg":   "Only admin can create Product",
 		})
 	}
-	type ProductRequest struct {
-		ID string `json:"id"`
-	}
-	var productRequest ProductRequest
-	if err := c.BodyParser(&productRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON"})
-	}
 
 	// Validate the ID
-	productID := productRequest.ID
-	fmt.Println("productID:", productID)
+	productID := c.Params("productId")
+
 	productUUID, err := uuid.Parse(productID)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid product ID"})

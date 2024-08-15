@@ -17,7 +17,7 @@ func ProtectedRoutes(a *fiber.App) {
 	route.Post("/test", middleware.Protected(), controllers.Test)
 	route.Post("/create-category", middleware.Protected(), controllers.CreateCategory)
 	route.Post("/create-product", middleware.Protected(), controllers.CreateProduct)
-	route.Delete("/delete-product", middleware.Protected(), controllers.DeleteProduct)
+	route.Delete("/delete-product/:productId", middleware.Protected(), controllers.DeleteProduct)
 
 	//Routes for address
 	route.Post("/create-address", middleware.Protected(), controllers.CreateAddress)
@@ -49,4 +49,12 @@ func ProtectedRoutes(a *fiber.App) {
 	route.Get("/get-all-coupons", middleware.Protected(), controllers.GetAllCoupon)
 	route.Post("/change-coupon-status/:couponID", middleware.Protected(), controllers.ChangeCouponStatus)
 	route.Delete("delete-coupon/:couponID", middleware.Protected(), controllers.DeleteCoupon)
+
+	//Product Size Routes
+	route.Post("/create-product-size/:productID", middleware.Protected(), controllers.CreateProductSize)
+	route.Delete("/delete-product-size/:sizeID", middleware.Protected(), controllers.DeleteProductSize)
+
+	// Product Subcategory
+	route.Post("/create-product-subcategory/:productId", middleware.Protected(), controllers.CreateProductSubcategory)
+	route.Delete("/delete-product-subcategory/:subcategoryID", middleware.Protected(), controllers.DeleteProductSubcategory)
 }

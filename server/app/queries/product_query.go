@@ -12,7 +12,23 @@ type ProductQueries struct {
 	*sqlx.DB
 }
 
+// CreateProduct method for creating product by given Product object.
+func (q *ProductQueries) CreateProduct(p *models.Product) error {
+	// Define query string.
+	query := `INSERT INTO products (id, title, description, original_price,discounted_price,is_active, category_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9)`
+
+	// Send query to database.
+	_, err := q.Exec(query, p.ID, p.Title, p.Description, p.OriginalPrice, p.DiscountedPrice, p.IsActive, p.CategoryID, p.CreatedAt, p.UpdatedAt)
+	if err != nil {
+		fmt.Println("product Creation error")
+		return err
+	}
+
+	return nil
+}
+
 // GetProducts method for getting all products.
+// GetProducts method for getting all products including sizes and subcategories.
 func (q *ProductQueries) GetProducts() ([]models.AllProduct, error) {
 	// Define the query.
 	query := `
@@ -20,24 +36,32 @@ func (q *ProductQueries) GetProducts() ([]models.AllProduct, error) {
 		p.id AS product_id,
 		p.title,
 		p.description,
-		p.price,
+		p.original_price,
+		p.discounted_price,
+		p.is_active,
 		pi.id AS image_id,
 		pi.image_url,
 		pi.created_at AS image_created_at,
 		c.id AS category_id,
-		c.name AS category_name
+		c.name AS category_name,
+		ps.id AS size_id,
+		COALESCE(ps.size, '') AS size,
+		COALESCE(ps.charge, 0) AS size_charge,
+		sc.id AS subcategory_id,
+		COALESCE(sc.subcategory, '') AS subcategory,
+		COALESCE(sc.charge, 0) AS subcategory_charge
 	FROM
 		products p
 	LEFT JOIN
-		product_images pi
-	ON
-		p.id = pi.product_id
+		product_images pi ON p.id = pi.product_id
 	LEFT JOIN
-		categories c
-	ON
-		p.category_id = c.id
+		categories c ON p.category_id = c.id
+	LEFT JOIN
+		products_size ps ON p.id = ps.product_id
+	LEFT JOIN
+		products_subcategory sc ON p.id = sc.product_id
 	ORDER BY
-		p.id, pi.created_at;
+		p.id, pi.created_at, ps.size, sc.subcategory;
 	`
 
 	// Create a slice to hold the results.
@@ -47,13 +71,17 @@ func (q *ProductQueries) GetProducts() ([]models.AllProduct, error) {
 	}
 	defer rows.Close()
 
-	// Map to hold products and their images.
+	// Map to hold products and their details.
 	productsMap := make(map[string]*models.AllProduct)
 	imagesMap := make(map[string][]models.ProductImage)
+	sizesMap := make(map[string][]models.ProductSize)
+	subcategoriesMap := make(map[string][]models.ProductSubCategory)
 
 	for rows.Next() {
 		var p models.AllProduct
 		var pi models.ProductImage
+		var ps models.ProductSize
+		var sc models.ProductSubCategory
 		var categoryID uuid.UUID
 		var categoryName string
 
@@ -62,12 +90,20 @@ func (q *ProductQueries) GetProducts() ([]models.AllProduct, error) {
 			&p.ID,
 			&p.Title,
 			&p.Description,
-			&p.Price,
+			&p.OriginalPrice,
+			&p.DiscountedPrice,
+			&p.IsActive,
 			&pi.ID,
 			&pi.ImageURL,
 			&pi.CreatedAt,
 			&categoryID,
 			&categoryName,
+			&ps.ID,
+			&ps.Size,
+			&ps.Charge,
+			&sc.ID,
+			&sc.Subcategory,
+			&sc.Charge,
 		); err != nil {
 			return nil, err
 		}
@@ -91,46 +127,66 @@ func (q *ProductQueries) GetProducts() ([]models.AllProduct, error) {
 		if pi.ID != uuid.Nil {
 			imagesMap[productIDStr] = append(imagesMap[productIDStr], pi)
 		}
+
+		// Append size to the product's size slice.
+		if ps.ID != uuid.Nil {
+			sizesMap[productIDStr] = append(sizesMap[productIDStr], ps)
+		}
+
+		// Append subcategory to the product's subcategory slice.
+		if sc.ID != uuid.Nil {
+			subcategoriesMap[productIDStr] = append(subcategoriesMap[productIDStr], sc)
+		}
 	}
 
 	// Convert map to slice.
 	var products []models.AllProduct
 	for id, product := range productsMap {
-		// Attach images to the product.
+		// Attach images, sizes, and subcategories to the product.
 		product.Images = imagesMap[id]
+		product.Sizes = sizesMap[id]
+		product.SubCategory = subcategoriesMap[id]
 		products = append(products, *product)
 	}
 
 	return products, nil
 }
+
 func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.AllProduct, error) {
-	fmt.Println("catid", categoryID)
 	// Define the query.
 	query := `
 	SELECT
 		p.id AS product_id,
 		p.title,
 		p.description,
-		p.price,
+		p.original_price,
+		p.discounted_price,
+		p.is_active,
 		pi.id AS image_id,
 		pi.image_url,
 		pi.created_at AS image_created_at,
 		c.id AS category_id,
-		c.name AS category_name
+		c.name AS category_name,
+		ps.id AS size_id,
+		ps.size,
+		ps.charge AS size_charge,
+		sc.id AS subcategory_id,
+		sc.subcategory,
+		sc.charge AS subcategory_charge
 	FROM
 		products p
 	LEFT JOIN
-		product_images pi
-	ON
-		p.id = pi.product_id
+		product_images pi ON p.id = pi.product_id
 	LEFT JOIN
-		categories c
-	ON
-		p.category_id = c.id
+		categories c ON p.category_id = c.id
+	LEFT JOIN
+		products_size ps ON p.id = ps.product_id
+	LEFT JOIN
+		products_subcategory sc ON p.id = sc.product_id
 	WHERE
 		p.category_id = $1
 	ORDER BY
-		p.id, pi.created_at;
+		p.id, pi.created_at, ps.size, sc.subcategory;
 	`
 
 	// Create a slice to hold the results.
@@ -140,14 +196,18 @@ func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.A
 	}
 	defer rows.Close()
 
-	// Map to hold products and their images.
+	// Map to hold products and their details.
 	productsMap := make(map[string]*models.AllProduct)
 	imagesMap := make(map[string][]models.ProductImage)
+	sizesMap := make(map[string][]models.ProductSize)
+	subcategoriesMap := make(map[string][]models.ProductSubCategory)
 
 	for rows.Next() {
 		var p models.AllProduct
 		var pi models.ProductImage
-		var categoryID uuid.UUID
+		var ps models.ProductSize
+		var sc models.ProductSubCategory
+		var catID uuid.UUID
 		var categoryName string
 
 		// Scan the row into variables.
@@ -155,20 +215,28 @@ func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.A
 			&p.ID,
 			&p.Title,
 			&p.Description,
-			&p.Price,
+			&p.OriginalPrice,
+			&p.DiscountedPrice,
+			&p.IsActive,
 			&pi.ID,
 			&pi.ImageURL,
 			&pi.CreatedAt,
-			&categoryID,
+			&catID,
 			&categoryName,
+			&ps.ID,
+			&ps.Size,
+			&ps.Charge,
+			&sc.ID,
+			&sc.Subcategory,
+			&sc.Charge,
 		); err != nil {
 			return nil, err
 		}
 
 		// Initialize category details.
-		if categoryID != uuid.Nil {
+		if catID != uuid.Nil {
 			p.Category = models.ProductCategory{
-				ID:   categoryID,
+				ID:   catID,
 				Name: categoryName,
 			}
 		}
@@ -184,20 +252,32 @@ func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.A
 		if pi.ID != uuid.Nil {
 			imagesMap[productIDStr] = append(imagesMap[productIDStr], pi)
 		}
+
+		// Append size to the product's size slice.
+		if ps.ID != uuid.Nil {
+			sizesMap[productIDStr] = append(sizesMap[productIDStr], ps)
+		}
+
+		// Append subcategory to the product's subcategory slice.
+		if sc.ID != uuid.Nil {
+			subcategoriesMap[productIDStr] = append(subcategoriesMap[productIDStr], sc)
+		}
 	}
 
 	// Convert map to slice.
 	var products []models.AllProduct
 	for id, product := range productsMap {
-		// Attach images to the product.
+		// Attach images, sizes, and subcategories to the product.
 		product.Images = imagesMap[id]
+		product.Sizes = sizesMap[id]
+		product.SubCategory = subcategoriesMap[id]
 		products = append(products, *product)
 	}
 
 	return products, nil
 }
 
-// GetProduct method for getting one product by given ID.
+// GetProduct details method for getting one product by given ID.
 func (q *ProductQueries) GetProduct(id uuid.UUID) (models.Product, error) {
 	fmt.Println("Id=", id)
 	// Define product variable.
@@ -215,28 +295,15 @@ func (q *ProductQueries) GetProduct(id uuid.UUID) (models.Product, error) {
 	return product, nil
 }
 
-// CreateProduct method for creating product by given Product object.
-func (q *ProductQueries) CreateProduct(p *models.Product) error {
-	// Define query string.
-	query := `INSERT INTO products (id, title, description, price, category_id, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`
-
-	// Send query to database.
-	_, err := q.Exec(query, p.ID, p.Title, p.Description, p.Price, p.CategoryID, p.CreatedAt, p.UpdatedAt)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // UpdateProduct method for updating product by given Product object.
 func (q *ProductQueries) UpdateProduct(id uuid.UUID, p *models.Product) error {
 	// Define query string.
-	query := `UPDATE products SET title = $2, description = $3, price = $4, category_id = $5, updated_at = $6 WHERE id = $1`
+	query := `UPDATE products SET title = $2, description = $3, original_price = $4,discounted_price=$5, is_active=$6,category_id = $7, updated_at = $8 WHERE id = $1`
 
 	// Send query to database.
-	_, err := q.Exec(query, id, p.Title, p.Description, p.Price, p.CategoryID, p.UpdatedAt)
+	_, err := q.Exec(query, id, p.Title, p.Description, p.OriginalPrice, p.DiscountedPrice, p.IsActive, p.CategoryID, p.UpdatedAt)
 	if err != nil {
+		fmt.Println("Error while updating product", err)
 		return err
 	}
 
@@ -251,6 +318,7 @@ func (q *ProductQueries) DeleteProduct(id uuid.UUID) error {
 	// Send query to database.
 	_, err := q.Exec(query, id)
 	if err != nil {
+		fmt.Println("Error deleting product: ", err)
 		return err
 	}
 
