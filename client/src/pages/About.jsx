@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from '../components/Navbar';
+import Navbar from '../components/Navbar/Navbar';
 import Footer from '../components/footer/Footer';
 import aboutImage from '../assets/about-us/side_img.jpg';
 import HomeHero from '../components/Home/HomeHero';
