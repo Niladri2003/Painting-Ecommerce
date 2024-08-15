@@ -105,7 +105,9 @@ const SignIn = () => {
     const handleGoogleLogin = () => {
         // Redirect to your backend's Google OAuth login endpoint
         window.location.href = `${BASEAPI}/user/google/login`;
-      };
+    };
+
+    
 
     return (
         <div className='w-full'>
