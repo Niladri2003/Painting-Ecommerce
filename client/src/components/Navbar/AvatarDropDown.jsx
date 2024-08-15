@@ -47,6 +47,7 @@ const AvatarDropdown = ({ userProfileImage }) => {
         src={userProfileImage || defaultAvatar}
         alt="User Avatar"
         className="cursor-pointer"
+        size="sm"
         onClick={handleAvatarClick}
       />
       {isDropdownOpen && (
