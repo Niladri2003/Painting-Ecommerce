@@ -160,6 +160,7 @@ func UserSignIn(c *fiber.Ctx) error {
 	// Create a new Redis connection
 	connRedis, err := cache.RedisConnection()
 	if err != nil {
+		fmt.Println("Redis Error", err)
 		//Return status 500 and Redis connection error.
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
@@ -175,6 +176,7 @@ func UserSignIn(c *fiber.Ctx) error {
 			"msg":   errSaveToRedis.Error(),
 		})
 	}
+	foundedUser.PasswordHash = ""
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"error": false,

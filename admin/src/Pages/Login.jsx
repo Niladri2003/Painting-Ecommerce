@@ -60,7 +60,7 @@ export function Login() {
                     className="flex lg:w-[50%] w-full flex-col items-center lg:justify-around justify-center px-4 py-10 sm:px-6 sm:py-16 lg:px-16 lg:py-24">
                     <div className="w-full  ">
                         <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl">Log in</h2>
-                        <p>Foreverknots Admin Section</p>
+                        <p>Trivert Admin Section</p>
                         {/*<p className="mt-2 text-sm text-gray-600">*/}
                         {/*    Don&apos;t have an account?{' '}*/}
                         {/*    <Link to={"/signup"}>*/}
@@ -95,7 +95,7 @@ export function Login() {
                                     <div className="flex items-center justify-between">
                                         <label htmlFor="" className="text-base font-medium text-gray-900">
                                             {' '}
-                                            password{' '}
+                                            Password{' '}
                                         </label>
                                         {/*<a*/}
                                         {/*    href="#"*/}
@@ -131,18 +131,18 @@ export function Login() {
 
                     </div>
                 </div>
-                <div className="h-[80%] w-[50%] relative flex items-center bg-red-300 justify-center rounded-md  ">
-                    <img
-                        className="h-full w-full rounded-md object-cover"
-                        src={Cover2}
-                        alt=""
-                    />
-                    <div
-                        className="absolute inset-0 bg-black opacity-65 transition-opacity duration-300 rounded-md "></div>
-                    <div className="absolute inset-0 flex items-center justify-center rounded-md ">
-                        <span className="text-white text-3xl font-[700] font-Jost">ForeverKnots Admin Page</span>
-                    </div>
-                </div>
+                {/*<div className="h-[80%] w-[50%] relative flex items-center bg-red-300 justify-center rounded-md  ">*/}
+                {/*    <img*/}
+                {/*        className="h-full w-full rounded-md object-cover"*/}
+                {/*        src={Cover2}*/}
+                {/*        alt=""*/}
+                {/*    />*/}
+                {/*    <div*/}
+                {/*        className="absolute inset-0 bg-black opacity-65 transition-opacity duration-300 rounded-md "></div>*/}
+                {/*    <div className="absolute inset-0 flex items-center justify-center rounded-md ">*/}
+                {/*        <span className="text-white text-3xl font-[700] font-Jost">ForeverKnots Admin Page</span>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
             </div>
         </section>
     )

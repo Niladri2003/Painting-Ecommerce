@@ -62,7 +62,7 @@ export const dashboardLinks=[
     },
     {
         id:4,
-        name:"Image",
+        name:"Coupon",
         path:"dashboard/image-uploader",
         icon:`<svg
           xmlns="http://www.w3.org/2000/svg"

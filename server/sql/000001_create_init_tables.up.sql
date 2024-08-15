@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 SET TIMEZONE="Asia/Kolkata";
 
 CREATE TABLE users (
-                       id UUID DEFAULT uuid_generate_v4 () PRIMARY KEY,
+                       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
                        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
                        first_name VARCHAR(100) NOT NULL,
@@ -39,14 +39,40 @@ CREATE TABLE categories (
                             name VARCHAR(255) NOT NULL UNIQUE,
                             description TEXT
 );
+CREATE TABLE coupons
+(
+    id                  UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    coupon_code         VARCHAR(50) NOT NULL UNIQUE,
+    validity            DATE,
+    discount_percentage NUMERIC     NOT NULL,
+    is_active           BOOLEAN     NOT NULL
+);
+
 CREATE TABLE products (
                           id UUID PRIMARY KEY,
                           title VARCHAR(255) NOT NULL,
                           description TEXT,
-                          price DECIMAL(10, 2) NOT NULL, -- Adjust precision and scale as needed
+                          original_price   DECIMAL(10, 2) NOT NULL, -- Adjust precision and scale as needed
+                          discounted_price DECIMAL(10, 2) NOT NULL,
+                          is_active        VARCHAR(50)    NOT NULL,
                           category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
                           created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE products_size
+(
+    id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    product_id UUID REFERENCES products (id) ON DELETE CASCADE,
+    size       VARCHAR(50),
+    charge     DECIMAL(10, 2) NOT NULL
+);
+
+CREATE TABLE products_subcategory
+(
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    product_id  UUID REFERENCES products (id) ON DELETE CASCADE,
+    subcategory VARCHAR(50),
+    charge      DECIMAL(10, 2) NOT NULL
 );
 CREATE TABLE product_images (
                                 id UUID PRIMARY KEY,
@@ -96,6 +122,8 @@ CREATE TABLE contacts (
 CREATE TABLE carts (
                        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
                        user_id UUID NOT NULL,
+                       is_coupon_applied BOOLEAN NOT NULL,
+                       coupon_code       VARCHAR(50),
                        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -111,6 +139,7 @@ CREATE TABLE cart_items (
                             product_id UUID NOT NULL,
                             product_name VARCHAR(255) NOT NULL,
                             quantity INT NOT NULL CHECK (quantity > 0),
+                            quantity_price DECIMAL(10, 2) NOT NULL,
                             total_price DECIMAL(10, 2) NOT NULL, -- Price at the time of adding to cart
                             created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useToast, Input, Select } from '@chakra-ui/react';
 import { BASEAPI } from '../../utils/BASEAPI';
 
-const PhotographyServices = () => {
+const ProductUpload = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [category, setCategory] = useState([]);
     const [previewSrc, setPreviewSrc] = useState([]);
@@ -19,6 +19,7 @@ const PhotographyServices = () => {
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
         setSelectedFiles(files);
+
         const previewUrls = files.map(file => URL.createObjectURL(file));
         setPreviewSrc(previewUrls);
         setUploadError(null);
@@ -256,6 +257,16 @@ const PhotographyServices = () => {
                             type="file"
                         />
                     </div>
+                    <div className="grid grid-cols-3 w-[40%] gap-4 mt-4">
+                        {previewSrc.map((src, index) => (
+                            <img
+                                key={index}
+                                src={src}
+                                alt={`Preview ${index + 1}`}
+                                className="h-20 w-20 object-cover rounded-md"
+                            />
+                        ))}
+                    </div>
                 </div>
                 <div className="flex justify-end gap-4">
                     <button
@@ -277,4 +288,4 @@ const PhotographyServices = () => {
     );
 };
 
-export default PhotographyServices;
+export default ProductUpload;
