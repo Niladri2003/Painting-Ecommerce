@@ -9,10 +9,9 @@ import (
 func ProtectedRoutes(a *fiber.App) {
 	route := a.Group("/api/v1")
 
-	
 	//Routes for user
-	route.Post("/reset-password",middleware.Protected(), controllers.ResetPassword)
-	route.Delete("/delete-account",middleware.Protected(), controllers.DeleteAccount)
+	route.Post("/reset-password", middleware.Protected(), controllers.ResetPassword)
+	route.Delete("/delete-account", middleware.Protected(), controllers.DeleteAccount)
 
 	//Routes for POST method
 	route.Post("/test", middleware.Protected(), controllers.Test)
@@ -45,4 +44,9 @@ func ProtectedRoutes(a *fiber.App) {
 	route.Post("/status-delivered/:orderID", middleware.Protected(), controllers.UploadOrderStatusToDelivered)
 	route.Post("/status-payment-failed/:orderID", middleware.Protected(), controllers.UploadOrderStatusToPaymentFailed)
 
+	// Coupon Routes
+	route.Post("/create-coupon", middleware.Protected(), controllers.CreateCoupon)
+	route.Get("/get-all-coupons", middleware.Protected(), controllers.GetAllCoupon)
+	route.Post("/change-coupon-status/:couponID", middleware.Protected(), controllers.ChangeCouponStatus)
+	route.Delete("delete-coupon/:couponID", middleware.Protected(), controllers.DeleteCoupon)
 }

@@ -16,6 +16,7 @@ type Queries struct {
 	*queries.CartQueries    // Add CartQueries
 	*queries.OrderQueries
 	*queries.OrderItemsQuery
+	*queries.CouponQueries
 }
 
 // OpenDbConnection  func for opening database connection
@@ -46,5 +47,6 @@ func OpenDbConnection() (*Queries, error) {
 		CartQueries:         &queries.CartQueries{DB: db},
 		OrderQueries:        &queries.OrderQueries{DB: db},
 		OrderItemsQuery:     &queries.OrderItemsQuery{DB: db},
+		CouponQueries:       &queries.CouponQueries{DB: db},
 	}, nil
 }
