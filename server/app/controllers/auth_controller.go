@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -18,6 +19,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 )
+
+// Define the sessionStore as a sync.Map (thread-safe map)
+var sessionStore sync.Map
 
 func UserSignUp(c *fiber.Ctx) error {
 	//Create a new user auth struct
@@ -403,6 +407,7 @@ func GoogleCallback(c *fiber.Ctx) error {
 				"error": "Failed to create user",
 			})
 		}
+		foundedUser = *user // Set foundedUser to the newly created user
 	} else {
 		// Update the profile picture if it has changed
 		if foundedUser.ProfilePicture == nil || *foundedUser.ProfilePicture != googleUser.ProfilePicture {
@@ -425,34 +430,51 @@ func GoogleCallback(c *fiber.Ctx) error {
 		})
 	}
 
-	// Set tokens in secure, HTTP-only cookies
+	// Store tokens and user information in session or in a secure place
+	sessionID := uuid.New().String()
+	sessionStore.Store(sessionID, fiber.Map{
+		"user":          foundedUser,
+		"access_token":  tokens.Access,
+		"refresh_token": tokens.Refresh,
+	})
+
+	// Set session ID as a cookie
 	c.Cookie(&fiber.Cookie{
-		Name:     "access_token",
-		Value:    tokens.Access,
+		Name:     "session_id",
+		Value:    sessionID,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HTTPOnly: true,
-		Secure:   os.Getenv("ENVIRONMENT") == "production", // Corrected comparison
-		SameSite: "None",
-	})
-	c.Cookie(&fiber.Cookie{
-		Name:     "refresh_token",
-		Value:    tokens.Refresh,
-		Expires:  time.Now().Add(time.Hour * 24 * 7),
-		HTTPOnly: true,
-		Secure:   os.Getenv("ENVIRONMENT") == "production", // Consistent Secure flag
+		Secure:   os.Getenv("STAGE_STATUS") == "production",
 		SameSite: "None",
 	})
 
-	frontendURL := os.Getenv("FRONTEND_URL")
-	// Redirect to frontend
-	return c.Redirect(frontendURL)
-	// return c.JSON(fiber.Map{
-	// 	"error": false,
-	// 	"msg":   "login successful",
-	// 	"tokens": fiber.Map{
-	// 		"access":       tokens.Access,
-	// 		"refreshToken": tokens.Refresh,
-	// 		"user_details": googleUser,
-	// 	},
-	// })
+	redirectUrl := os.Getenv("FRONTEND_URL") + "/auth/callback"
+	return c.Redirect(redirectUrl)
+}
+
+func GetTokens(c *fiber.Ctx) error {
+	// Retrieve the session ID from the cookies
+	sessionID := c.Cookies("session_id")
+	if sessionID == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	// Retrieve the tokens and user information from the session store
+	sessionData, ok := sessionStore.Load(sessionID)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Session not found",
+		})
+	}
+
+	sessionMap := sessionData.(fiber.Map)
+
+	// Send the tokens and user information to the frontend
+	return c.JSON(fiber.Map{
+		"access_token":  sessionMap["access_token"],
+		"refresh_token": sessionMap["refresh_token"],
+		"user_details":  sessionMap["user"],
+	})
 }
