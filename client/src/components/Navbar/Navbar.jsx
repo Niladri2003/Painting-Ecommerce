@@ -60,7 +60,7 @@ const Navbar = () => {
                 isScrolled ? "text-white" : "text-black"
               }`}
             >
-              LOGO
+              Trivart
             </Link>
           </div>
           <div className="flex items-center md:hidden justify-end">
