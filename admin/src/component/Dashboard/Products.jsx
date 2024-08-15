@@ -50,7 +50,7 @@ const Products = () => {
             });
             setProduct(response.data.data);
             setSortedProducts(response.data.data);
-            console.log(response.data);
+            //console.log(response.data);
         } catch (error) {
             console.error('Error fetching products:', error);
             toast({

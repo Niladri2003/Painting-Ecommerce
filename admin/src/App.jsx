@@ -15,6 +15,7 @@ import ProductUpload from "./component/Dashboard/ProductUpload.jsx";
 import {Home} from "lucide-react";
 import NotFound from "./Pages/NotFound.jsx";
 import Products from "./component/Dashboard/Products.jsx";
+import Orders from "./component/Dashboard/Orders.dashboard.jsx";
 
 
 
@@ -43,6 +44,7 @@ function App() {
                  <Route path="dashboard/service-uploader" element={<ProductUpload/>} />
                  <Route path="dashboard/contact-us" element={<ContactUs/>} />
                  <Route path="dashboard/all-products" element={<Products/>} />
+                 <Route path="dashboard/all-orders" element={<Orders/>} />
              </Route>
          </Routes>
      </div>
