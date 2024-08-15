@@ -2,7 +2,11 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"net/http"
+	"os"
+	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -13,7 +17,11 @@ import (
 	"github.com/niladri2003/PaintingEcommerce/platform/cache"
 	"github.com/niladri2003/PaintingEcommerce/platform/database"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/oauth2"
 )
+
+// Define the sessionStore as a sync.Map (thread-safe map)
+var sessionStore sync.Map
 
 func UserSignUp(c *fiber.Ctx) error {
 	//Create a new user auth struct
@@ -324,5 +332,149 @@ func DeleteAccount(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error": false,
 		"msg":   "account deleted successfully",
+	})
+}
+
+// GoogleLogin handles the /auth/google/login endpoint
+func GoogleLogin(c *fiber.Ctx) error {
+	// Generate the OAuth2 URL for Google login
+
+	url := utils.GoogleOauthConfig.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+
+	// Redirect the user to Google's OAuth2 consent page
+	return c.Redirect(url)
+}
+
+func GoogleCallback(c *fiber.Ctx) error {
+	code := c.Query("code")
+	if code == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Code not found",
+		})
+	}
+
+	token, err := utils.GoogleOauthConfig.Exchange(context.Background(), code)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to exchange token",
+		})
+	}
+
+	// Fetch user information from Google
+	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + token.AccessToken)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to get user info",
+		})
+	}
+	defer resp.Body.Close()
+
+	// Unmarshal the response
+	var googleUser struct {
+		Email          string `json:"email"`
+		FirstName      string `json:"given_name"`
+		LastName       string `json:"family_name"`
+		GoogleID       string `json:"id"`
+		ProfilePicture string `json:"picture"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&googleUser); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to parse user info",
+		})
+	}
+
+	// Handle user registration/login
+	db, _ := database.OpenDbConnection()
+	foundedUser, err := db.GetUserByEmail(googleUser.Email)
+
+	if err != nil && foundedUser.Email != googleUser.Email {
+		// User does not exist, create a new one
+		user := &models.User{
+			ID:             uuid.New(),
+			FirstName:      googleUser.FirstName,
+			LastName:       googleUser.LastName,
+			Email:          googleUser.Email,
+			UserStatus:     1,
+			UserRole:       "user",
+			GoogleID:       &googleUser.GoogleID,
+			ProfilePicture: &googleUser.ProfilePicture,
+			CreatedAt:      time.Now(),
+			UpdatedAt:      time.Now(),
+		}
+		err := db.CreateUser(user)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to create user",
+			})
+		}
+		foundedUser = *user // Set foundedUser to the newly created user
+	} else {
+		// Update the profile picture if it has changed
+		if foundedUser.ProfilePicture == nil || *foundedUser.ProfilePicture != googleUser.ProfilePicture {
+			foundedUser.ProfilePicture = &googleUser.ProfilePicture
+			foundedUser.UpdatedAt = time.Now()
+			err := db.UpdateUserProfilePicture(&foundedUser)
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Failed to update profile picture",
+				})
+			}
+		}
+	}
+
+	// Generate JWT tokens
+	tokens, err := utils.GenerateNewTokens(foundedUser.ID.String(), foundedUser.UserRole)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to generate tokens",
+		})
+	}
+
+	// Store tokens and user information in session or in a secure place
+	sessionID := uuid.New().String()
+	sessionStore.Store(sessionID, fiber.Map{
+		"user":          foundedUser,
+		"access_token":  tokens.Access,
+		"refresh_token": tokens.Refresh,
+	})
+
+	// Set session ID as a cookie
+	c.Cookie(&fiber.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+		Secure:   os.Getenv("STAGE_STATUS") == "production",
+		SameSite: "None",
+	})
+
+	redirectUrl := os.Getenv("FRONTEND_URL") + "/auth/callback"
+	return c.Redirect(redirectUrl)
+}
+
+func GetTokens(c *fiber.Ctx) error {
+	// Retrieve the session ID from the cookies
+	sessionID := c.Cookies("session_id")
+	if sessionID == "" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Unauthorized",
+		})
+	}
+
+	// Retrieve the tokens and user information from the session store
+	sessionData, ok := sessionStore.Load(sessionID)
+	if !ok {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Session not found",
+		})
+	}
+
+	sessionMap := sessionData.(fiber.Map)
+
+	// Send the tokens and user information to the frontend
+	return c.JSON(fiber.Map{
+		"access_token":  sessionMap["access_token"],
+		"refresh_token": sessionMap["refresh_token"],
+		"user_details":  sessionMap["user"],
 	})
 }

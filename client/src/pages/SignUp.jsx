@@ -103,6 +103,12 @@ const SignUp = () => {
         }
     };
 
+    
+    const handleGoogleLogin = () => {
+        // Redirect to your backend's Google OAuth login endpoint
+        window.location.href = `${BASEAPI}/user/google/login`;
+    };
+
     return (
         <div className='w-full'>
             <section className="flex justify-center items-center sm:py-4 lg:py-16">
@@ -159,6 +165,7 @@ const SignUp = () => {
                         <button
                             type="button"
                             className=" w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition duration-300 flex justify-center items-center"
+                            onClick={handleGoogleLogin}
                         >
                             <FcGoogle className="w-6 h-6 inline-block mr-2" />
                             <span>Sign in with Google</span>

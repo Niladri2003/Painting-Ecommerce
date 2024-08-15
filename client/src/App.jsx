@@ -11,6 +11,7 @@ import ScrollTop from "./components/helper/ScrollTop.jsx";
 import Cart from "./pages/CartPage.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import Account from "./pages/Account.jsx";
+import AuthCallback from "./pages/AuthCallback.jsx";
 
 function App() {
 
@@ -29,6 +30,7 @@ function App() {
         <Route path="/signin" element={<SignIn/>} />
         <Route path="/cart" element={<Cart/>} />
         <Route path="/account" element={<Account/>}/>
+        <Route path="/auth/callback" element={<AuthCallback/>}/>
       </Routes>
       <Footer/>
     </div>
