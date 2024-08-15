@@ -30,6 +30,8 @@ func main() {
 	//Middlewares
 	middleware.FiberMiddleware(app)
 
+	utils.GoogleOauthInit()
+
 	//Routes
 	routes.PublicRoutes(app)
 	routes.ProtectedRoutes(app)

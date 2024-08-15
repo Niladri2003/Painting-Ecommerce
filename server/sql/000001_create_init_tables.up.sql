@@ -4,16 +4,30 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- +migrate Up
 SET TIMEZONE="Asia/Kolkata";
 
+-- CREATE TABLE users (
+--                        id UUID DEFAULT uuid_generate_v4 () PRIMARY KEY,
+--                        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
+--                        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
+--                        first_name VARCHAR(100) NOT NULL,
+--                        last_name VARCHAR(100) NOT NULL,
+--                        email VARCHAR(255) NOT NULL UNIQUE,
+--                        password_hash VARCHAR(255) NOT NULL,
+--                        user_status INT NOT NULL,
+--                        user_role VARCHAR(25) NOT NULL
+-- );
 CREATE TABLE users (
-                       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-                       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
-                       updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW (),
-                       first_name VARCHAR(100) NOT NULL,
-                       last_name VARCHAR(100) NOT NULL,
-                       email VARCHAR(255) NOT NULL UNIQUE,
-                       password_hash VARCHAR(255) NOT NULL,
-                       user_status INT NOT NULL,
-                       user_role VARCHAR(25) NOT NULL
+
+                        id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+                        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                        first_name VARCHAR(100) NOT NULL,
+                        last_name VARCHAR(100) NOT NULL,
+                        email VARCHAR(255) NOT NULL UNIQUE,
+                        password_hash VARCHAR(255),
+                        user_status INT NOT NULL,
+                        user_role VARCHAR(25) NOT NULL,
+                        google_id VARCHAR(255), -- Optional Google ID for users signing in with Google
+                        profile_picture VARCHAR(255) -- Optional profile picture URL
 );
 -- Create the addresses table
 CREATE TABLE addresses (

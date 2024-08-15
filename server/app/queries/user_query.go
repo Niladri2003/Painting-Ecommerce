@@ -85,3 +85,10 @@ func (q *UserQueries) DeleteUserByID(id uuid.UUID) error {
     return err
 }
 
+
+// UpdateUserProfilePicture updates the user's profile picture and updated_at timestamp in the database.
+func (q *UserQueries) UpdateUserProfilePicture(user *models.User) error {
+	query := `UPDATE users SET profile_picture = $1, updated_at = $2 WHERE id = $3`
+	_, err := q.Exec(query, user.ProfilePicture, time.Now(), user.ID)
+	return err
+}
