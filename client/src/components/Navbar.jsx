@@ -213,7 +213,9 @@ import { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
+import { GiShoppingBag } from "react-icons/gi";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { FaUserCircle } from "react-icons/fa";
 import { Avatar } from "@chakra-ui/react"; // For the avatar icon, adjust if needed
 import defaultAvatar from "../assets/avatar/defaultAvatar.jpg"; // A default avatar image
 import { logout } from "../slices/authSlice"; // Import the logout action
@@ -304,18 +306,18 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
+        <div className="grid grid-cols-2 md:grid-cols-3 h-16">
+          <div className="grid place-content-center text-2xl font-normal justify-start md:justify-center">
             <Link
               to="/"
               className={`font-bold cursor-pointer ${
                 isScrolled ? "text-white" : "text-black"
               }`}
             >
-              My Navbar
+              LOGO
             </Link>
           </div>
-          <div className="flex items-center md:hidden">
+          <div className="flex items-center md:hidden justify-end">
             <button
               onClick={toggleMenu}
               className="text-gray-500 hover:text-gray-700"
@@ -323,7 +325,7 @@ const Navbar = () => {
               {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
             </button>
           </div>
-          <div className="hidden md:flex lg:flex">
+          <div className="hidden md:flex lg:flex col-start-1 col-end-2 row-start-1 place-items-center">
             <div className="ml-10 flex items-baseline space-x-4">
               <Link
                 to="/"
@@ -335,15 +337,6 @@ const Navbar = () => {
                 Home
               </Link>
               <Link
-                to="/about"
-                onClick={handleNavItemClick}
-                className={`${
-                  isScrolled ? "text-white" : "text-black"
-                } hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}
-              >
-                About
-              </Link>
-              <Link
                 to="/shop"
                 onClick={handleNavItemClick}
                 className={`${
@@ -353,15 +346,24 @@ const Navbar = () => {
                 Shop
               </Link>
               <Link
+                to="/about"
+                onClick={handleNavItemClick}
+                className={`${
+                  isScrolled ? "text-white" : "text-black"
+                } hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}
+              >
+                About
+              </Link>
+              <Link
                 to="/contact-us"
                 onClick={handleNavItemClick}
                 className={`${
                   isScrolled ? "text-white" : "text-black"
                 } hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center`}
               >
-                <span>Contact Us</span>
+                <span>Contact</span>
               </Link>
-              <div className="hidden md:flex items-center justify-center gap-x-4">
+              {/* <div className="hidden md:flex items-center justify-center gap-x-4">
                 {token ? (
                   <div className="relative" ref={dropdownRef}>
                     <Avatar
@@ -417,9 +419,97 @@ const Navbar = () => {
                     </span>
                   )}
                 </Link>
-              </div>
+              </div> */}
             </div>
           </div>
+          <div className="hidden md:flex flex items-center justify-center gap-x-4">
+                {token ? (
+                  <div className="relative" ref={dropdownRef}>
+                    <Avatar
+                      src={userProfileImage || defaultAvatar}
+                      alt="User Avatar"
+                      className="cursor-pointer"
+                      onClick={handleAvatarClick}
+                    />
+                    {isDropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                        <Link
+                          to="/account"
+                          className=" px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
+                        >
+                          My Account
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className=" w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200 rounded-md flex items-center"
+                        >
+                          Logout <MdLogout className="ml-2" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    <Link to="/cart" className="relative">
+                <FaUserCircle
+                    className={`text-2xl ${
+                      isScrolled ? "text-white" : "text-black"
+                    }`}
+                  />
+                  {cartCount > 0 && (
+                    <span
+                      className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${
+                        isScrolled
+                          ? "bg-red-600  text-white"
+                          : "bg-red-600 text-white"
+                      }`}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+
+                  <div className="flex space-x-4 capitalize">
+                    <Link
+                      to="/signin"
+                      className={`${
+                        isScrolled ? "text-white" : "text-black"
+                      } hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}
+                      >
+                      Log in
+                    </Link>
+                  </div>
+                      </>
+                )}
+                <Link to="/cart" className="relative">
+                  <GiShoppingBag
+                    className={`text-3xl ${
+                      isScrolled ? "text-white" : "text-black"
+                    }`}
+                  />
+                 <span
+                      className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${
+                        isScrolled
+                          ? "bg-red-600  text-white"
+                          : "bg-red-600 text-white"
+                      }`}
+                    >
+                     0
+                    </span>
+                  {/* <span>0</span> */}
+                  {cartCount > 0 && (
+                    <span
+                      className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${
+                        isScrolled
+                          ? "bg-red-600  text-white"
+                          : "bg-red-600 text-white"
+                      }`}
+                    >
+                      {cartCount}
+                    </span>
+                  )}
+                </Link>
+              </div>
         </div>
       </div>
       <div
