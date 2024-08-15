@@ -10,3 +10,6 @@ DROP TABLE contacts;
 DROP TABLE addresses;
 DROP TABLE carts;
 DROP TABLE cart_items;
+DROP TABLE coupons;
+DROP TABLE products_size;
+DROP TABLE products_subcategory;

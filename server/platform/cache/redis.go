@@ -11,6 +11,7 @@ func RedisConnection() (*redis.Client, error) {
 	dbNumber, _ := strconv.Atoi(os.Getenv("REDIS_DB_NUMBER"))
 
 	redisConnURL, err := utils.ConnectionURLBuilder("redis")
+	//fmt.Println("Redis Connection URL: ", redisConnURL)
 	if err != nil {
 		return nil, err
 	}

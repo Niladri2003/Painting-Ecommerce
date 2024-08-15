@@ -9,9 +9,9 @@ import AccountDashboard from "./component/Dashboard/AccountDashboard.jsx";
 import Notification from "./component/Dashboard/Notification.jsx";
 import GalleryCoverImages from "./component/Dashboard/GalleryCoverImages.jsx";
 import PrivateRoute from "./component/Auth/PrivateRoute.jsx";
-import ImageUploader from "./component/Dashboard/ImageUploader.jsx";
+import CouponUploader from "./component/Dashboard/CouponUploader.jsx";
 import ContactUs from "./component/Dashboard/ContactUs.jsx";
-import PhotographyServices from "./component/Dashboard/PhotographyServices.jsx";
+import ProductUpload from "./component/Dashboard/ProductUpload.jsx";
 import {Home} from "lucide-react";
 import NotFound from "./Pages/NotFound.jsx";
 import Products from "./component/Dashboard/Products.jsx";
@@ -39,8 +39,8 @@ function App() {
                  <Route path="dashboard/account-dashboard" element={<AccountDashboard />} />
                  <Route path="dashboard/notification" element={<Notification/>} />
                  <Route path="dashboard/gallery-cover-images" element={<GalleryCoverImages/>} />
-                 <Route path="dashboard/image-uploader" element={<ImageUploader/>} />
-                 <Route path="dashboard/service-uploader" element={<PhotographyServices/>} />
+                 <Route path="dashboard/coupon" element={<CouponUploader/>} />
+                 <Route path="dashboard/service-uploader" element={<ProductUpload/>} />
                  <Route path="dashboard/contact-us" element={<ContactUs/>} />
                  <Route path="dashboard/all-products" element={<Products/>} />
              </Route>
