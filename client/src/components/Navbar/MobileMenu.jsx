@@ -15,10 +15,10 @@ const MobileMenu = ({ isOpen, toggleMenu, token, userProfileImage, cartCount }) 
           <FaTimes size={24} />
         </button>
       </div>
-      <div className="flex flex-col mt-6 space-y-4 px-4">
+      <div className="flex flex-col mt-4 space-y-4 px-4">
         {token && (
           <div className="mb-4 flex justify-center relative">
-            <AvatarDropdown userProfileImage={userProfileImage} />
+            <AvatarDropdown userProfileImage={userProfileImage} size="md"/>
           </div>
         )}
         <Link
