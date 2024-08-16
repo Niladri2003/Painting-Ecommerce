@@ -3,20 +3,23 @@ import CardImg from "../assets/Home/cardImg.png";
 import { Link } from "react-router-dom";
 import HomeHero from "../components/Home/HomeHero.jsx";
 import Footer from "../components/footer/Footer.jsx";
+import FeatureProducts from "./FeatureProducts.jsx";
 
 const Home = () => {
     return (
         <div className="w-full overflow-hidden">
             <HomeHero />
-            <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+            <section className="w-full py-12 md:py-24 lg:py-32 bg-muted px-3">
                 <div className=" md:px-6 grid gap-8">
                     <div className="text-start space-y-4">
                         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">Featured Products</h2>
                         <p className="text-muted-foreground md:text-xl">Check out our top-selling products.</p>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-14">
-                        <div className="grid lg:grid-cols-3 gap-4 w-full">
-                            <div className="relative overflow-hidden rounded-lg group">
+                    <div className="flex flex-col sm:flex-row gap-10">
+                        {/*  */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full md:py-10">
+                            <FeatureProducts/>
+                            {/* <div className="relative overflow-hidden rounded-lg group border">
                                 <Link to="#" className="absolute inset-0 z-10">
                                     <span className="sr-only">View Product</span>
                                 </Link>
@@ -33,6 +36,7 @@ const Home = () => {
                                     <h4 className="text-base font-semibold">$29.99</h4>
                                 </div>
                             </div>
+
                             <div className="relative overflow-hidden rounded-lg group">
                                 <Link to="#" className="absolute inset-0 z-10">
                                     <span className="sr-only">View Product</span>
@@ -50,6 +54,8 @@ const Home = () => {
                                     <h4 className="text-base font-semibold">$49.99</h4>
                                 </div>
                             </div>
+
+
                             <div className="relative overflow-hidden rounded-lg group">
                                 <Link to="#" className="absolute inset-0 z-10">
                                     <span className="sr-only">View Product</span>
@@ -67,6 +73,8 @@ const Home = () => {
                                     <h4 className="text-base font-semibold">$79.99</h4>
                                 </div>
                             </div>
+
+
                             <div className="relative overflow-hidden rounded-lg group">
                                 <Link to="#" className="absolute inset-0 z-10">
                                     <span className="sr-only">View Product</span>
@@ -85,6 +93,8 @@ const Home = () => {
                                     <h4 className="text-base font-semibold">$59.99</h4>
                                 </div>
                             </div>
+
+
                             <div className="relative overflow-hidden rounded-lg group">
                                 <Link to="#" className="absolute inset-0 z-10">
                                     <span className="sr-only">View Product</span>
@@ -101,6 +111,7 @@ const Home = () => {
                                     <p className="text-sm text-muted-foreground">Timeless design</p>
                                     <h4 className="text-base font-semibold">$59.99</h4>
                                 </div>
+
                             </div>
                             <div className="relative overflow-hidden rounded-lg group">
                                 <Link to="#" className="absolute inset-0 z-10">
@@ -118,12 +129,12 @@ const Home = () => {
                                     <p className="text-sm text-muted-foreground">Timeless design</p>
                                     <h4 className="text-base font-semibold">$59.99</h4>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
-                        <div className="w-full relative">
+                        <div className="w-full h-[15rem] md:h-full md:w-2/3  grid place-items-center relative">
                             <img src={HeroImage} alt="Hero" className="w-full h-full rounded-[10px]" />
-                            <div className={"absolute top-[50%] left-[10%] right-[10%] flex flex-col items-center gap-5"} >
-                                <p className={"text-[36px] font-[700] text-center"} >
+                            <div className={"absolute grid place-items-center gap-3"} >
+                                <p className={"text-[30px] font-[400] text-center"} >
                                     Write a Title Here. Click to Edit and Add Your Own
                                 </p>
                                 <button className="bg-black text-white text-lg px-5 py-2">
@@ -135,21 +146,21 @@ const Home = () => {
                 </div>
             </section>
 
-            <div className={"border-black  border-t-[1px] border-b-[1px]"}>
-                <div className={"flex flex-row items-center justify-around p-10"}>
-                    <p className={"text-[24px] font-[600]"}>Logo</p>
-                    <p className={"text-[24px] font-[600]"}>Logo</p>
-                    <p className={"text-[24px] font-[600]"}>Logo</p>
-                    <p className={"text-[24px] font-[600]"}>Logo</p>
+            <div className={"border-black  border-t-[1px] border-b-[1px] mx-10"}>
+                <div className={"grid grid-cols-2 place-items-center gap-10 my-10 md:grid-cols-4"}>
+                    <p className={"text-[32px] font-[600]"}>Logo</p>
+                    <p className={"text-[32px] font-[600]"}>Logo</p>
+                    <p className={"text-[32px] font-[600]"}>Logo</p>
+                    <p className={"text-[32px] font-[600]"}>Logo</p>
 
                 </div>
             </div>
-            <div className={"grid grid-cols-2 mt-[40px]"}>
+            <div className={"grid grid-cols-1 md:grid-cols-2 mt-[40px] px-3 md:px-0"}>
                 <div>
                     <img src={CardImg} alt="Hero" className="w-full h-full rounded-[10px]" />
                 </div>
-                <div className={"w-full flex flex-col items-center justify-around p-10"}>
-                    <div className={"flex flex-col items-start justify-center gap-4 p-10 max-w-2xl"}>
+                <div className={"w-full flex flex-col items-center justify-around md:p-10"}>
+                    <div className={"flex flex-col items-start justify-center gap-4 md:p-10 max-w-2xl"}>
                         <p className={"text-[25px] font-[600]"}>About</p>
                         <p>This is a paragraph. Click to edit and add your own text. Add any information you want to
                             share. You can use this space to tell users a story about the company or describe a special
