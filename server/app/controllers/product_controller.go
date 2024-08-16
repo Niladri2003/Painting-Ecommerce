@@ -52,6 +52,7 @@ func CreateProduct(c *fiber.Ctx) error {
 	if title == "" || description == "" || originalPrice == "" || categoryID == "" || discountedPrice == "" {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Missing required fields"})
 	}
+
 	is_activeBool, err := strconv.ParseBool(is_active)
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid is_active flag"})
@@ -65,7 +66,9 @@ func CreateProduct(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": "Invalid price format"})
 	}
-
+	if originalPrice < discountedPrice {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Original price is lower than discounted price"})
+	}
 	// Convert categoryID to uuid.UUID
 	categoryUUID, err := uuid.Parse(categoryID)
 	if err != nil {
@@ -240,7 +243,20 @@ func GetAllProducts(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-	allProducts, err := db.GetProducts()
+	allProducts, err := db.GetAllProducts()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": allProducts})
+
+}
+func GetTop5ProductsCategoryWise(c *fiber.Ctx) error {
+	// Create database connection
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	allProducts, err := db.GetTopProductsByCategory()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}

@@ -40,3 +40,8 @@ type ProductImg struct {
 	ImageURL  string    `db:"image_url" json:"image_url"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 }
+
+type CategoryWithProducts struct {
+	CategoryName string       `json:"category_name"`
+	Products     []AllProduct `json:"products"`
+}
