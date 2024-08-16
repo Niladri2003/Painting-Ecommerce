@@ -29,7 +29,6 @@ func (q *ProductQueries) CreateProduct(p *models.Product) error {
 	return nil
 }
 
-// GetProducts method for getting all products.
 // GetProducts method for getting all products including sizes and subcategories.
 func (q *ProductQueries) GetAllProducts() ([]models.AllProduct, error) {
 	query := `
@@ -182,6 +181,7 @@ func (q *ProductQueries) GetAllProducts() ([]models.AllProduct, error) {
 	return products, nil
 }
 
+// Get Products of a specific category
 func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.AllProduct, error) {
 	query := `
 		SELECT
@@ -324,6 +324,8 @@ func (q *ProductQueries) GetProductsByCategory(categoryID uuid.UUID) ([]models.A
 
 	return products, nil
 }
+
+// GetProductByID
 func (q *ProductQueries) GetProduct(id uuid.UUID) (models.AllProduct, error) {
 	// Define product variable.
 	product := models.AllProduct{}
@@ -456,6 +458,8 @@ func (q *ProductQueries) GetProduct(id uuid.UUID) (models.AllProduct, error) {
 
 	return product, nil
 }
+
+// Get top 5 products in each category
 func (q *ProductQueries) GetTopProductsByCategory() ([]models.CategoryWithProducts, error) {
 	query := `
 		WITH RankedProducts AS (
@@ -648,5 +652,16 @@ func (q *ProductQueries) DeleteProduct(id uuid.UUID) error {
 		return err
 	}
 
+	return nil
+}
+
+// Change Product status to Active or de-active
+func (q *ProductQueries) ChnageProductStatus(id uuid.UUID, isActive bool) error {
+	query := `UPDATE products SET is_active = $2 WHERE id = $1`
+	_, err := q.Exec(query, id, isActive)
+	if err != nil {
+		fmt.Println("Error updating product status: ", err)
+		return err
+	}
 	return nil
 }

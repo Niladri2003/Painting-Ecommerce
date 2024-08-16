@@ -287,3 +287,46 @@ func GetProductsByCategoryID(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": allProducts})
 
 }
+
+func ChangeProductStatus(c *fiber.Ctx) error {
+
+	type isActiveRequest struct {
+		IsActive string `json:"is_active"`
+	}
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
+	}
+
+	if time.Now().Unix() > claims.Expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	}
+
+	if claims.UserRole != "admin" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only users can create order"})
+	}
+	id := c.Params("productId")
+	// Parse the ID as uuid.UUID
+	ProductId, err := uuid.Parse(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Invalid Product ID"})
+	}
+	var request isActiveRequest
+	if err := c.BodyParser(&request); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
+	// Convert the is_active string to boolean
+	isActiveBool, err := strconv.ParseBool(request.IsActive)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "invalid is_active value"})
+	}
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	if err := db.ChnageProductStatus(ProductId, isActiveBool); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.Status(200).JSON(fiber.Map{"msg": "Product status changed successfully"})
+
+}

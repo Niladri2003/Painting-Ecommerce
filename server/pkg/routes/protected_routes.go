@@ -18,6 +18,7 @@ func ProtectedRoutes(a *fiber.App) {
 	route.Post("/create-category", middleware.Protected(), controllers.CreateCategory)
 	route.Post("/create-product", middleware.Protected(), controllers.CreateProduct)
 	route.Delete("/delete-product/:productId", middleware.Protected(), controllers.DeleteProduct)
+	route.Post("/change-product-status/:productId", middleware.Protected(), controllers.ChangeProductStatus)
 
 	//Routes for address
 	route.Post("/create-address", middleware.Protected(), controllers.CreateAddress)
