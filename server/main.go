@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/joho/godotenv"
 	"github.com/niladri2003/PaintingEcommerce/pkg/configs"
 	"github.com/niladri2003/PaintingEcommerce/pkg/middleware"
@@ -35,6 +36,7 @@ func main() {
 	//Routes
 	routes.PublicRoutes(app)
 	routes.ProtectedRoutes(app)
+	app.Get("/metrics", monitor.New(monitor.Config{Title: "Trivart Server Metrics"}))
 	// Start server (with or without graceful shutdown)
 	if os.Getenv("STAGE_STATUS") == "dev" {
 		fmt.Println("Running in development mode")

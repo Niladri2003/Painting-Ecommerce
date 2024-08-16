@@ -30,10 +30,12 @@ func CreateCart(c *fiber.Ctx) error {
 	}
 
 	cart := &models.Cart{
-		ID:        uuid.New(),
-		UserID:    claims.UserID,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		ID:                  uuid.New(),
+		UserID:              claims.UserID,
+		IsCouponCodeApplied: false,
+		CouponCode:          "",
+		CreatedAt:           time.Now(),
+		UpdatedAt:           time.Now(),
 	}
 
 	if err := db.CreateCart(cart); err != nil {
@@ -75,9 +77,11 @@ func AddItemToCart(c *fiber.Ctx) error {
 	}
 
 	// Calculate the total price
-	item.TotalPrice = product.Price * float64(item.Quantity)
+	item.TotalPrice = product.OriginalPrice * float64(item.Quantity)
+	item.AfterDiscountTotalPrice = product.DiscountedPrice * float64(item.Quantity)
+	item.QuantityPrice = product.OriginalPrice
 	item.ID = uuid.New()
-	item.ProductName = product.Title	
+	item.ProductName = product.Title
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
 
@@ -126,7 +130,9 @@ func UpdateCartItem(c *fiber.Ctx) error {
 	}
 
 	// Calculate the total price
-	item.TotalPrice = product.Price * float64(item.Quantity)
+	item.TotalPrice = product.OriginalPrice * float64(item.Quantity)
+	item.AfterDiscountTotalPrice = product.DiscountedPrice * float64(item.Quantity)
+	item.QuantityPrice = product.OriginalPrice
 	item.UpdatedAt = time.Now()
 
 	// Update the cart item

@@ -68,7 +68,7 @@ CREATE TABLE products (
                           description TEXT,
                           original_price   DECIMAL(10, 2) NOT NULL, -- Adjust precision and scale as needed
                           discounted_price DECIMAL(10, 2) NOT NULL,
-                          is_active        VARCHAR(50)    NOT NULL,
+                          is_active BOOLEAN NOT NULL,
                           category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
                           created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -154,6 +154,7 @@ CREATE TABLE cart_items (
                             product_name VARCHAR(255) NOT NULL,
                             quantity INT NOT NULL CHECK (quantity > 0),
                             quantity_price DECIMAL(10, 2) NOT NULL,
+                            after_discount_total_price DECIMAL(10, 2) NOT NULL,
                             total_price DECIMAL(10, 2) NOT NULL, -- Price at the time of adding to cart
                             created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,

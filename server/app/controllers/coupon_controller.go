@@ -83,7 +83,7 @@ func DeleteCoupon(c *fiber.Ctx) error {
 	couponIDParam := c.Params("couponID")
 	couponID, err := uuid.Parse(couponIDParam)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Invalid order ID"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Invalid subcategory ID"})
 	}
 	db, err := database.OpenDbConnection()
 	if err != nil {

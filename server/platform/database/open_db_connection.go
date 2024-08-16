@@ -17,6 +17,8 @@ type Queries struct {
 	*queries.OrderQueries
 	*queries.OrderItemsQuery
 	*queries.CouponQueries
+	*queries.ProductSubCategoryQuery
+	*queries.ProductSizeQuery
 }
 
 // OpenDbConnection  func for opening database connection
@@ -38,15 +40,17 @@ func OpenDbConnection() (*Queries, error) {
 		return nil, err
 	}
 	return &Queries{
-		UserQueries:         &queries.UserQueries{DB: db},
-		CategoryQueries:     &queries.CategoryQueries{DB: db},
-		ProductQueries:      &queries.ProductQueries{DB: db},
-		ProductImageQueries: &queries.ProductImageQueries{DB: db},
-		ContactQueries:      &queries.ContactQueries{DB: db}, // Add ContactQueries
-		AddressQueries:      &queries.AddressQueries{DB: db}, // Add AddressQueries
-		CartQueries:         &queries.CartQueries{DB: db},
-		OrderQueries:        &queries.OrderQueries{DB: db},
-		OrderItemsQuery:     &queries.OrderItemsQuery{DB: db},
-		CouponQueries:       &queries.CouponQueries{DB: db},
+		UserQueries:             &queries.UserQueries{DB: db},
+		CategoryQueries:         &queries.CategoryQueries{DB: db},
+		ProductQueries:          &queries.ProductQueries{DB: db},
+		ProductImageQueries:     &queries.ProductImageQueries{DB: db},
+		ContactQueries:          &queries.ContactQueries{DB: db}, // Add ContactQueries
+		AddressQueries:          &queries.AddressQueries{DB: db}, // Add AddressQueries
+		CartQueries:             &queries.CartQueries{DB: db},
+		OrderQueries:            &queries.OrderQueries{DB: db},
+		OrderItemsQuery:         &queries.OrderItemsQuery{DB: db},
+		CouponQueries:           &queries.CouponQueries{DB: db},
+		ProductSubCategoryQuery: &queries.ProductSubCategoryQuery{DB: db},
+		ProductSizeQuery:        &queries.ProductSizeQuery{DB: db},
 	}, nil
 }

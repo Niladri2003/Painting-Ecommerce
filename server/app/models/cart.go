@@ -28,21 +28,25 @@ type CartItem struct {
 
 // Cart represents a user's shopping cart.
 type Cart struct {
-	ID        uuid.UUID   `json:"id" db:"id"`
-	UserID    uuid.UUID   `json:"user_id" db:"user_id"`
-	Items     []CartItem  `json:"items"`
-	CreatedAt time.Time   `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time   `json:"updated_at" db:"updated_at"`
+	ID                  uuid.UUID  `json:"id" db:"id"`
+	UserID              uuid.UUID  `json:"user_id" db:"user_id"`
+	IsCouponCodeApplied bool       `json:"is_coupon_applied" db:"is_coupon_applied"`
+	CouponCode          string     `json:"coupon_code" db:"coupon_code"`
+	Items               []CartItem `json:"items"`
+	CreatedAt           time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt           time.Time  `json:"updated_at" db:"updated_at"`
 }
 
 // CartItem represents an item in a cart.
 type CartItem struct {
-	ID        uuid.UUID `json:"id" db:"id"`
-	CartID    uuid.UUID `json:"cart_id" db:"cart_id"`
-	ProductID uuid.UUID `json:"product_id" db:"product_id"`
-	ProductName string  `json:"product_name" db:"product_name"`
-	Quantity  int       `json:"quantity" db:"quantity"`
-	TotalPrice     float64   `json:"price" db:"total_price"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	ID                      uuid.UUID `json:"id" db:"id"`
+	CartID                  uuid.UUID `json:"cart_id" db:"cart_id"`
+	ProductID               uuid.UUID `json:"product_id" db:"product_id"`
+	ProductName             string    `json:"product_name" db:"product_name"`
+	Quantity                int       `json:"quantity" db:"quantity"`
+	QuantityPrice           float64   `json:"quantity_price" db:"quantity_price"`
+	TotalPrice              float64   `json:"price" db:"total_price"`
+	AfterDiscountTotalPrice float64   `json:"after_discount_total_price" db:"after_discount_total_price"`
+	CreatedAt               time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt               time.Time `json:"updated_at" db:"updated_at"`
 }

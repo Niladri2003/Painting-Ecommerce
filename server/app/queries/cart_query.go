@@ -14,19 +14,19 @@ type CartQueries struct {
 // CreateCart inserts a new cart into the database.
 func (q *CartQueries) CreateCart(cart *models.Cart) error {
 	query := `
-		INSERT INTO carts (id, user_id, created_at, updated_at)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO carts (id, user_id, is_coupon_applied, coupon_code, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id`
-	err := q.Get(&cart.ID, query, cart.ID, cart.UserID, cart.CreatedAt, cart.UpdatedAt)
+	err := q.Get(&cart.ID, query, cart.ID, cart.UserID, cart.IsCouponCodeApplied, cart.CouponCode, cart.CreatedAt, cart.UpdatedAt)
 	return err
 }
 
 // AddItemToCart inserts a new item into the cart_items table.
 func (q *CartQueries) AddItemToCart(item *models.CartItem) error {
 	query := `
-		INSERT INTO cart_items (id, cart_id, product_id, product_name, quantity, total_price, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7,$8)`
-	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.ProductName, item.Quantity, item.TotalPrice, item.CreatedAt, item.UpdatedAt)
+		INSERT INTO cart_items (id, cart_id, product_id, product_name, quantity,quantity_price, total_price,after_discount_total_price, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9,$10)`
+	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.ProductName, item.Quantity, item.QuantityPrice, item.TotalPrice, item.AfterDiscountTotalPrice, item.CreatedAt, item.UpdatedAt)
 	return err
 }
 

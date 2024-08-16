@@ -11,15 +11,15 @@ func PublicRoutes(a *fiber.App) {
 	//Routes for Authentication method
 	route.Post("/user/register", controllers.UserSignUp)
 	route.Post("/user/sign-in", controllers.UserSignIn)
-	route.Get("/user/google/login", controllers.GoogleLogin) 
-	route.Get("/user/google/callback", controllers.GoogleCallback) 
-	route.Get("/user/get-tokens", controllers.GetTokens) 
+	route.Get("/user/google/login", controllers.GoogleLogin)
+	route.Get("/user/google/callback", controllers.GoogleCallback)
+	route.Get("/user/get-tokens", controllers.GetTokens)
 
-	
 	route.Get("/get-all-category", controllers.GetAllCategory)
 
 	route.Get("/get-product-details/:id", controllers.GetProductDetails)
 	route.Get("/get-all-product", controllers.GetAllProducts)
+	route.Get("/get-product-categorise", controllers.GetTop5ProductsCategoryWise)
 	route.Get("/get-products-by-category-id/:id", controllers.GetProductsByCategoryID)
 
 	//Routes for contact us
