@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const NavItems = ({ isScrolled, handleNavItemClick }) => {
   return (
-    <div className="ml-10 flex items-baseline space-x-4">
+    <div className="flex items-baseline space-x-4">
       <Link
         to="/"
         onClick={handleNavItemClick}
