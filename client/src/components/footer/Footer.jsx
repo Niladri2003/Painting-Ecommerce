@@ -32,7 +32,7 @@ const Footer = () => {
             <img
               src={logo}
               alt="Trivart Logo"
-              className="  h-7  md:h-10 md:w-4/5 lg:w-[50%] "
+              className="  h-7 md:h-10 md:w-4/5 lg:w-[50%] "
             />
           </div>
           {/* start */}
