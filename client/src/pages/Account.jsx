@@ -350,6 +350,7 @@ import {
   FaPlus,
   FaTrash,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import defaultAvatar from "../assets/avatar/defaultAvatar.jpg"; // Replace with your actual image path
 import { BASEAPI } from "../utils/BASE_API";
 import {
@@ -386,6 +387,8 @@ const AccountPage = () => {
   const toast = useToast();
   const userProfileImage = null;
   const token = localStorage.getItem("authToken"); // Assuming the token is stored in localStorage
+  
+  const user = useSelector((state) => state.profile.user);
 
   useEffect(() => {
     if (selectedTab === "delivery-address") {
@@ -876,7 +879,7 @@ const AccountPage = () => {
             alt="User Avatar"
             className="w-24 h-24 rounded-full"
           />
-          <h2 className="mt-4 text-xl font-semibold">Sarah Miller</h2>
+          <h2 className="mt-4 text-xl font-semibold">{user ? `${user.first_name} ${user.last_name}` : 'User'}</h2>
         </div>
         <nav className="mt-6">
           <ul>
