@@ -22,7 +22,7 @@ func ProtectedRoutes(a *fiber.App) {
 
 	//Routes for address
 	route.Post("/create-address", middleware.Protected(), controllers.CreateAddress)
-	route.Put("/update-address", middleware.Protected(), controllers.UpdateAddressByUserID)
+	route.Put("/update-address/:addressId", middleware.Protected(), controllers.UpdateAddressByAddressId)
 	route.Get("/get-addresses", middleware.Protected(), controllers.GetAddressByUserID)
 
 	route.Get("/delete-address/:addressId", middleware.Protected(), controllers.DeleteAddressByAddressId)
