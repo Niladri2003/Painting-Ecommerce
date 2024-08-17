@@ -316,6 +316,7 @@ func ResetPassword(c *fiber.Ctx) error {
 	})
 }
 
+/*
 func DeleteAccount(c *fiber.Ctx) error {
 	// Extract the user ID from the JWT claims.
 	claims, err := middleware.ExtractTokenMetadata(c)
@@ -332,6 +333,81 @@ func DeleteAccount(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
+		})
+	}
+
+	// Delete the user from the database.
+	if err := db.DeleteUserByID(claims.UserID); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "failed to delete the user",
+		})
+	}
+
+	userId := claims.UserID.String()
+
+	// Remove the user's session token from Redis (optional, if using session tokens).
+	connRedis, err := cache.RedisConnection()
+	if err == nil {
+		_ = connRedis.Del(context.Background(), userId).Err()
+	}
+
+	// Return success response.
+	return c.JSON(fiber.Map{
+		"error": false,
+		"msg":   "account deleted successfully",
+	})
+}
+
+*/
+
+func DeleteAccount(c *fiber.Ctx) error {
+	// Extract the user ID from the JWT claims.
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "unauthorized",
+		})
+	}
+
+	// Parse the request body to get the provided password.
+	type PasswordRequest struct {
+		Password string `json:"password"`
+	}
+	var passwordReq PasswordRequest
+
+	if err := c.BodyParser(&passwordReq); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "invalid request body",
+		})
+	}
+
+	// Create a database connection.
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Fetch the user's stored hashed password from the database.
+	existingUser, err := db.GetUserByID(claims.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "failed to fetch user details",
+		})
+	}
+
+	// Compare the provided password with the stored hashed password.
+	err = bcrypt.CompareHashAndPassword([]byte(existingUser.PasswordHash), []byte(passwordReq.Password))
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "password mismatch",
 		})
 	}
 
