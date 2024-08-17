@@ -126,8 +126,17 @@ func CreateAddress(c *fiber.Ctx) error {
 }
 
 // UpdateAddressByUserID handles updating an address for a specific user.
-func UpdateAddressByUserID(c *fiber.Ctx) error {
+func UpdateAddressByAddressId(c *fiber.Ctx) error {
 	// Get user ID from JWT claims
+	addressId := c.Params("addressId")
+	parsedAddressId, err := uuid.Parse(addressId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Invalid address ID",
+		})
+	}
+
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -136,7 +145,7 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		})
 	}
 
-	userId := claims.UserID
+	// userId := claims.UserID
 
 	// Check if token is expired
 	now := time.Now().Unix()
@@ -169,7 +178,6 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		})
 	}
 
-
 	// Create database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
@@ -179,31 +187,6 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		})
 	}
 
-	addresses, err := db.GetAddressesByUserID(claims.UserID)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Error while fetching address in CreateAddress",
-		})
-	}
-
-	// Handle SetAsDefault logic
-	var setAsDefault *bool
-	if addressForm.SetAsDefault != nil {
-		// If SetAsDefault is provided in the request, use it
-		defaultVal := *addressForm.SetAsDefault
-		setAsDefault = &defaultVal
-	} else {
-		// If SetAsDefault is not provided, default to false
-		defaultVal := false
-		setAsDefault = &defaultVal
-
-		// However, if this is the user's first address, set it to true
-		if len(addresses) == 0 {
-			defaultVal = true
-			setAsDefault = &defaultVal
-		}
-	}
 
 	// Convert AddressForm to Address
 	address := models.Address{
@@ -218,24 +201,23 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		MobileNumber:  addressForm.MobileNumber,
 		Email:         addressForm.Email,
 		OrderNotes:    addressForm.OrderNotes,
-		SetAsDefault:  setAsDefault,
+		SetAsDefault:  addressForm.SetAsDefault,
 		UpdatedAt:     time.Now().Format(time.RFC3339),
 	}
 
 	// Update the address by userID
-	if err := db.UpdateAddressByUserID(userId, &address); err != nil {
+	if err := db.UpdateAddressByAddressId(parsedAddressId, &address); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
 	}
 
-	// Fetch the updated address
-	updatedAddress, err := db.GetAddressesByUserID(userId)
+	updatedAddress, err := db.GetAddressByAddresId(parsedAddressId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
-			"msg":   err.Error(),
+			"msg":   "Error while fetching address",
 		})
 	}
 
