@@ -177,7 +177,7 @@ const SignUp = () => {
                             Login
                         </Link>
                     </p>
-                    <div className="flex items-center justify-center mt-6">
+                    {/* <div className="flex items-center justify-center mt-6">
                         <input type="checkbox" id="terms" className="mr-2" required />
                         <label htmlFor="terms" className="text-sm text-gray-600">
                             By continuing, I agree to the{' '}
@@ -190,7 +190,7 @@ const SignUp = () => {
                             </a>
                             .
                         </label>
-                    </div>
+                    </div> */}
                 </div>
             </section>
         </div>
