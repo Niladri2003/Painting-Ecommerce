@@ -117,9 +117,9 @@ func UserSignUp(c *fiber.Ctx) error {
 
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
-		"error": false,
-		"msg":   nil,
-		"user":  user,
+		"error":   false,
+		"msg":     nil,
+		"user":    user,
 		"cart_id": cart.ID.String(),
 	})
 }
@@ -213,7 +213,7 @@ func UserSignIn(c *fiber.Ctx) error {
 			"access":       tokens.Access,
 			"refreshToken": tokens.Refresh,
 			"user_details": foundedUser,
-			"cart_id" : cart.ID.String(),
+			"cart_id":      cart.ID.String(),
 		},
 	})
 }
@@ -315,51 +315,6 @@ func ResetPassword(c *fiber.Ctx) error {
 		"msg":   "password reset successful",
 	})
 }
-
-/*
-func DeleteAccount(c *fiber.Ctx) error {
-	// Extract the user ID from the JWT claims.
-	claims, err := middleware.ExtractTokenMetadata(c)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "unauthorized",
-		})
-	}
-
-	// Create a database connection.
-	db, err := database.OpenDbConnection()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
-
-	// Delete the user from the database.
-	if err := db.DeleteUserByID(claims.UserID); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   "failed to delete the user",
-		})
-	}
-
-	userId := claims.UserID.String()
-
-	// Remove the user's session token from Redis (optional, if using session tokens).
-	connRedis, err := cache.RedisConnection()
-	if err == nil {
-		_ = connRedis.Del(context.Background(), userId).Err()
-	}
-
-	// Return success response.
-	return c.JSON(fiber.Map{
-		"error": false,
-		"msg":   "account deleted successfully",
-	})
-}
-
-*/
 
 func DeleteAccount(c *fiber.Ctx) error {
 	// Extract the user ID from the JWT claims.
@@ -517,7 +472,7 @@ func GoogleCallback(c *fiber.Ctx) error {
 			CreatedAt:           time.Now(),
 			UpdatedAt:           time.Now(),
 		}
-	
+
 		if err := db.CreateCart(cart); err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 		}
@@ -536,7 +491,6 @@ func GoogleCallback(c *fiber.Ctx) error {
 			}
 		}
 
-
 		cart, err := db.GetCartByUserID(foundedUser.ID)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
@@ -544,8 +498,6 @@ func GoogleCallback(c *fiber.Ctx) error {
 
 		cartId = cart.ID.String()
 	}
-
-
 
 	// Generate JWT tokens
 	tokens, err := utils.GenerateNewTokens(foundedUser.ID.String(), foundedUser.UserRole)
@@ -559,7 +511,7 @@ func GoogleCallback(c *fiber.Ctx) error {
 	sessionID := uuid.New().String()
 	sessionStore.Store(sessionID, fiber.Map{
 		"user":          foundedUser,
-		"cart_id":		 cartId,
+		"cart_id":       cartId,
 		"access_token":  tokens.Access,
 		"refresh_token": tokens.Refresh,
 	})
