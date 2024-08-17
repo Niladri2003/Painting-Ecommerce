@@ -12,7 +12,7 @@ import (
 // CreateAddress handles creating a new address for a specific user.
 func CreateAddress(c *fiber.Ctx) error {
 
-	var address models.AddressForm
+	var addressForm models.AddressForm
 
 	now := time.Now().Unix()
 
@@ -41,17 +41,18 @@ func CreateAddress(c *fiber.Ctx) error {
 	}
 
 	// Parse request body
-	if err := c.BodyParser(&address); err != nil {
+	if err := c.BodyParser(&addressForm); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   "invalid request body",
 		})
 	}
-	// Convert SetAsDefault from string to bool
-	var setAsDefault *bool
-	if address.SetAsDefault != nil {
-		defaultVal := *address.SetAsDefault == "true"
-		setAsDefault = &defaultVal
+
+	if addressForm.FirstName == "" || addressForm.LastName == "" || addressForm.Country == "" || addressForm.StreetAddress == "" || addressForm.TownCity == "" || addressForm.State == "" || addressForm.PinCode == "" || addressForm.MobileNumber == "" || addressForm.Email == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "All fields are required",
+		})
 	}
 
 	// Create database connection
@@ -62,27 +63,54 @@ func CreateAddress(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
+
+	addresses, err := db.GetAddressesByUserID(claims.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Error while fetching address in CreateAddress",
+		})
+	}
+
+	// Handle SetAsDefault logic
+	var setAsDefault *bool
+	if addressForm.SetAsDefault != nil {
+		// If SetAsDefault is provided in the request, use it
+		defaultVal := *addressForm.SetAsDefault
+		setAsDefault = &defaultVal
+	} else {
+		// If SetAsDefault is not provided, default to false
+		defaultVal := false
+		setAsDefault = &defaultVal
+
+		// However, if this is the user's first address, set it to true
+		if len(addresses) == 0 {
+			defaultVal = true
+			setAsDefault = &defaultVal
+		}
+	}
+
 	// Create a new address model
-	addressModel := &models.Address{
+	address := &models.Address{
 		ID:            uuid.New(),
 		UserID:        claims.UserID,
-		FirstName:     address.FirstName,
-		LastName:      address.LastName,
-		Country:       address.Country,
-		StreetAddress: address.StreetAddress,
-		TownCity:      address.TownCity,
-		State:         address.State,
-		PinCode:       address.PinCode,
-		MobileNumber:  address.MobileNumber,
-		Email:         address.Email,
-		OrderNotes:    address.OrderNotes, // Handle as optional
+		FirstName:     addressForm.FirstName,
+		LastName:      addressForm.LastName,
+		Country:       addressForm.Country,
+		StreetAddress: addressForm.StreetAddress,
+		TownCity:      addressForm.TownCity,
+		State:         addressForm.State,
+		PinCode:       addressForm.PinCode,
+		MobileNumber:  addressForm.MobileNumber,
+		Email:         addressForm.Email,
+		OrderNotes:    addressForm.OrderNotes, // Handle as optional
 		SetAsDefault:  setAsDefault,
 		CreatedAt:     time.Now().Format(time.RFC3339),
 		UpdatedAt:     time.Now().Format(time.RFC3339),
 	}
 
 	// Create a new address in the database
-	id, err := db.CreateAddress(addressModel)
+	id, err := db.CreateAddress(address)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
@@ -134,19 +162,47 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		})
 	}
 
-	// Ensure user ID from JWT matches the user ID in the request body
-
-	if addressForm.UserID != userId {
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{
+	if addressForm.FirstName == "" || addressForm.LastName == "" || addressForm.Country == "" || addressForm.StreetAddress == "" || addressForm.TownCity == "" || addressForm.State == "" || addressForm.PinCode == "" || addressForm.MobileNumber == "" || addressForm.Email == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
-			"msg":   "User ID mismatch",
+			"msg":   "All fields are required",
 		})
 	}
-	// Convert SetAsDefault from string to bool
+
+
+	// Create database connection
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	addresses, err := db.GetAddressesByUserID(claims.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Error while fetching address in CreateAddress",
+		})
+	}
+
+	// Handle SetAsDefault logic
 	var setAsDefault *bool
 	if addressForm.SetAsDefault != nil {
-		defaultVal := *addressForm.SetAsDefault == "true"
+		// If SetAsDefault is provided in the request, use it
+		defaultVal := *addressForm.SetAsDefault
 		setAsDefault = &defaultVal
+	} else {
+		// If SetAsDefault is not provided, default to false
+		defaultVal := false
+		setAsDefault = &defaultVal
+
+		// However, if this is the user's first address, set it to true
+		if len(addresses) == 0 {
+			defaultVal = true
+			setAsDefault = &defaultVal
+		}
 	}
 
 	// Convert AddressForm to Address
@@ -164,15 +220,6 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		OrderNotes:    addressForm.OrderNotes,
 		SetAsDefault:  setAsDefault,
 		UpdatedAt:     time.Now().Format(time.RFC3339),
-	}
-
-	// Create database connection
-	db, err := database.OpenDbConnection()
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
 	}
 
 	// Update the address by userID

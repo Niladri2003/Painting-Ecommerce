@@ -21,6 +21,13 @@ func CreateContactUs(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
+
+	if (contact.FirstName == "" || contact.LastName == "" || contact.Email == "" || contact.Message == "" || contact.Phone == "" || contact.Subject == "") {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "All fields are required",
+		})
+	}
 	
 	// Validate contact fields
 	validate := utils.NewValidator()
