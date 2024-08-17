@@ -100,7 +100,7 @@ const SignIn = () => {
             console.error('Error:', error);
             toast({
                 title: "Error",
-                description: "User doesn't exist.",
+                description: error.response.data.msg,
                 status: "error",
                 duration: 2500,
                 isClosable: true,
