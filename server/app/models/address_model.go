@@ -34,5 +34,5 @@ type AddressForm struct {
 	MobileNumber  string    `json:"mobile_number"`
 	Email         string    `json:"email"`
 	OrderNotes    *string   `json:"order_notes,omitempty"` // Optional field
-	SetAsDefault  *string   `json:"set_as_default,omitempty" db:"set_as_default"`
+	SetAsDefault  *bool   `json:"set_as_default,omitempty" db:"set_as_default"`
 }
