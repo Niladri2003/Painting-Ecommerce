@@ -8,6 +8,7 @@ import { BASEAPI } from '../utils/BASE_API';
 import { setToken } from '../slices/authSlice';
 import { restoreCart } from '../slices/cartSlice';
 import { setUser } from '../slices/profileSlice';
+import { setCartId } from '../slices/cartSlice';
 
 const SignIn = () => {
     const dispatch = useDispatch(); 
@@ -50,11 +51,16 @@ const SignIn = () => {
 
             if (response.status === 201 || response.status === 200) {
                 const { tokens } = response.data;
-                const { access } = tokens;
+                
+        
+                const { access, cart_id } = tokens;
+                console.log('cart_id:',cart_id);
 
                 tokens.user_details.password_hash = null;
                 dispatch(setUser(tokens.user_details));
                 dispatch(setToken(access));
+                dispatch(setCartId(cart_id));
+
 
                 // Restore cart from localStorage after login
                 // const savedCart = localStorage.getItem("cart");
