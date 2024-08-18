@@ -102,3 +102,19 @@ func (q *CartQueries) GetCartItemByID(cartItemId uuid.UUID) (*models.CartItem, e
 	}
 	return &cartItem, nil
 }
+
+// Apply coupon to cart
+func (q *CartQueries) ApplyCouponTocart(item *models.Cart) error {
+	query := `
+		UPDATE carts
+		SET is_coupon_applied = $1, coupon_code = $2, discount_percentage = $3, updated_at = $4
+		WHERE id = $5`
+
+	_, err := q.Exec(query, item.IsCouponCodeApplied, item.CouponCode, item.Discountpercentage, item.UpdatedAt, item.ID)
+	if err != nil {
+		fmt.Println("Coupon add error:", err)
+		return err
+	}
+
+	return nil
+}

@@ -52,6 +52,7 @@ func ProtectedRoutes(a *fiber.App) {
 	route.Get("/get-all-coupons", middleware.Protected(), controllers.GetAllCoupon)
 	route.Post("/change-coupon-status/:couponID", middleware.Protected(), controllers.ChangeCouponStatus)
 	route.Delete("delete-coupon/:couponID", middleware.Protected(), controllers.DeleteCoupon)
+	route.Post("/remove-coupon", middleware.Protected(), controllers.RemoveCoupon)
 
 	//Product Size Routes
 	route.Post("/create-product-size/:productID", middleware.Protected(), controllers.CreateProductSize)
