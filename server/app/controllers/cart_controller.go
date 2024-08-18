@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -34,6 +35,7 @@ func CreateCart(c *fiber.Ctx) error {
 		UserID:              claims.UserID,
 		IsCouponCodeApplied: false,
 		CouponCode:          "",
+		Discountpercentage:  0.0,
 		CreatedAt:           time.Now(),
 		UpdatedAt:           time.Now(),
 	}
@@ -47,8 +49,11 @@ func CreateCart(c *fiber.Ctx) error {
 
 // AddItemToCart handles adding an item to a cart.
 func AddItemToCart(c *fiber.Ctx) error {
-	var item models.CartItem
 
+	//	data requirement for this api
+	// CartId, ProductId,Quantity,SizeId,SubcategoryID
+
+	var item models.CartItem
 	// Extract token metadata
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
@@ -63,7 +68,6 @@ func AddItemToCart(c *fiber.Ctx) error {
 	if err := c.BodyParser(&item); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "invalid request body"})
 	}
-
 	// Open database connection
 	db, err := database.OpenDbConnection()
 	if err != nil {
@@ -73,15 +77,33 @@ func AddItemToCart(c *fiber.Ctx) error {
 	// Fetch product price from database
 	product, err := db.GetProduct(item.ProductID)
 	if err != nil {
+		fmt.Println("Error while finding product", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+	//Fetch Product subcategory details
+	fmt.Println("subID", item.ProductSubCategoryId)
+	subcategory, err := db.GetSubcategoryById(item.ProductSubCategoryId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to load subcategory info"})
+	}
+	//Fetch size details
+	sizeInfo, err := db.GetProductSizeId(item.ProductSizeId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to load size info"})
 	}
 
 	// Calculate the total price
-	item.TotalPrice = product.OriginalPrice * float64(item.Quantity)
-	item.AfterDiscountTotalPrice = product.DiscountedPrice * float64(item.Quantity)
-	item.QuantityPrice = product.OriginalPrice
+	//cart id, quantity, productid will be coming from frontend
+
 	item.ID = uuid.New()
 	item.ProductName = product.Title
+	item.QuantityPrice = product.OriginalPrice
+	item.TotalPrice = float64(item.Quantity)*product.OriginalPrice + (sizeInfo.Charge + subcategory.Charge)
+	item.AfterDiscountTotalPrice = float64(item.Quantity)*product.DiscountedPrice + (sizeInfo.Charge + subcategory.Charge)
+	item.Size = sizeInfo.Size
+	item.Subcategory = subcategory.Subcategory
+	item.ProductSubCategoryId = subcategory.ID
+	item.ProductSizeId = sizeInfo.ID
 	item.CreatedAt = time.Now()
 	item.UpdatedAt = time.Now()
 
@@ -95,8 +117,13 @@ func AddItemToCart(c *fiber.Ctx) error {
 
 // UpdateCartItem updates an existing item in the cart.
 func UpdateCartItem(c *fiber.Ctx) error {
-	var item models.CartItem
 
+	//TODO - Check the given cartItemId belongs to the user cart
+	type request struct {
+		CartItemId string `json:"cart_item_id"`
+		Quantity   int    `json:"quantity"`
+	}
+	var input request
 	// Extract token metadata
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
@@ -108,35 +135,45 @@ func UpdateCartItem(c *fiber.Ctx) error {
 	}
 
 	// Parse request body
-	if err := c.BodyParser(&item); err != nil {
+	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "invalid request body"})
 	}
-
-	// Validate that the item belongs to the specified cart
-	cartID, itemID := item.CartID, item.ID
-	if cartID == uuid.Nil || itemID == uuid.Nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "cart ID and item ID are required"})
+	CartITemID, err := uuid.Parse(input.CartItemId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Failed to parse cart item id"})
 	}
-
 	// Fetch product details to get the price
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
+	cartItem, err := db.GetCartItemByID(CartITemID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
 
-	product, err := db.GetProduct(item.ProductID)
+	product, err := db.GetProduct(cartItem.ProductID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
-
-	// Calculate the total price
-	item.TotalPrice = product.OriginalPrice * float64(item.Quantity)
-	item.AfterDiscountTotalPrice = product.DiscountedPrice * float64(item.Quantity)
-	item.QuantityPrice = product.OriginalPrice
-	item.UpdatedAt = time.Now()
+	//Fetch Product subcategory details
+	subcategory, err := db.GetSubcategoryById(cartItem.ProductSubCategoryId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to load subcategory info"})
+	}
+	//Fetch size details
+	sizeInfo, err := db.GetProductSizeId(cartItem.ProductSizeId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to load size info"})
+	}
+	// Update the quantity and recalculate prices
+	cartItem.Quantity = input.Quantity
+	cartItem.TotalPrice = float64(cartItem.Quantity)*product.OriginalPrice + (sizeInfo.Charge + subcategory.Charge)
+	cartItem.AfterDiscountTotalPrice = float64(cartItem.Quantity)*product.DiscountedPrice + (sizeInfo.Charge + subcategory.Charge)
+	cartItem.UpdatedAt = time.Now()
 
 	// Update the cart item
-	if err := db.UpdateCartItem(&item); err != nil {
+	if err := db.UpdateCartItem(cartItem); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 

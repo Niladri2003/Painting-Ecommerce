@@ -109,7 +109,10 @@ CREATE TABLE order_items (
                          order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
                          product_id UUID REFERENCES products(id) ON DELETE SET NULL,
                          product_name VARCHAR(255) NOT NULL,
+                         size           VARCHAR(50)    NOT NULL,
+                         subcategory    VARCHAR(50)    NOT NULL,
                          quantity INT NOT NULL,
+                         quantity_price DECIMAL(10, 2) NOT NULL,
                          price DECIMAL(10, 2) NOT NULL, -- Price at the time of purchase
                          status VARCHAR(50) NOT NULL, -- e.g., 'approved', 'canceled'
                          created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -138,6 +141,7 @@ CREATE TABLE carts (
                        user_id UUID NOT NULL,
                        is_coupon_applied BOOLEAN NOT NULL,
                        coupon_code       VARCHAR(50),
+                       discount_percentage NUMERIC NOT NULL,
                        created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -156,6 +160,10 @@ CREATE TABLE cart_items (
                             quantity_price DECIMAL(10, 2) NOT NULL,
                             after_discount_total_price DECIMAL(10, 2) NOT NULL,
                             total_price DECIMAL(10, 2) NOT NULL, -- Price at the time of adding to cart
+                            product_size_id        UUID        NOT NULL,
+                            product_subcategory_id UUID        NOT NULL,
+                            size                   VARCHAR(50) NOT NULL,
+                            subcategory            VARCHAR(50) NOT NULL,
                             created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,

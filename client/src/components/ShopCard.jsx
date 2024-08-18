@@ -1,7 +1,6 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import CardImg from "../assets/Home/cardImg.png";
 
+import { useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 const Card = ({ product }) => {
   const navigate = useNavigate();
 
@@ -45,6 +44,19 @@ const Card = ({ product }) => {
         </div>
       </div>
   );
+};
+
+Card.propTypes = {
+  product: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    images: PropTypes.arrayOf(
+        PropTypes.shape({
+          image_url: PropTypes.string.isRequired,
+        })
+    ).isRequired,
+  }).isRequired,
 };
 
 export default Card;
