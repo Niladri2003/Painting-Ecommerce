@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch } from "react-redux";
 import { updateCart, removeFromCart } from "../../slices/cartSlice";
+import PropTypes from 'prop-types';
 
 export const CartItem = ({ item }) => {
     const { data, images } = item;
@@ -62,3 +63,22 @@ export const CartItem = ({ item }) => {
         </div>
     );
 };
+
+// Add propTypes validation here
+CartItem.propTypes = {
+    item: PropTypes.shape({
+        data: PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            title: PropTypes.string.isRequired,
+            price: PropTypes.number.isRequired,
+            quantity: PropTypes.number.isRequired,
+        }).isRequired,
+        images: PropTypes.arrayOf(
+            PropTypes.shape({
+                image_url: PropTypes.string.isRequired,
+            })
+        ).isRequired,
+    }).isRequired,
+};
+
+export default CartItem;
