@@ -98,6 +98,7 @@ CREATE TABLE orders (
                         id UUID PRIMARY KEY,
                         user_id UUID REFERENCES users(id) ON DELETE SET NULL,
                         total DECIMAL(10, 2) NOT NULL,
+                        coupon_code       VARCHAR(50),
                         status VARCHAR(50) NOT NULL, -- e.g., 'pending', 'completed', 'shipped'
                         address_id UUID REFERENCES addresses(id) ON DELETE SET NULL,
                         invoice_url TEXT NOT NULL,

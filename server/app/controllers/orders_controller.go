@@ -2,14 +2,12 @@ package controllers
 
 import (
 	"fmt"
-	generator "github.com/angelodlfrtr/go-invoice-generator"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
 	"github.com/niladri2003/PaintingEcommerce/pkg/middleware"
 	"github.com/niladri2003/PaintingEcommerce/platform/database"
 	"github.com/valyala/fasthttp"
-	"os"
 	"time"
 )
 
@@ -44,17 +42,44 @@ func CreateOrder(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get Cart Items"})
 	}
+
+	cartItemLen := len(cart.Items)
+	if cartItemLen == 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Cart Items is empty"})
+	}
 	//Get Default Address
 	defaultAddress, err := db.GetDefaultAddressByID(claims.UserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get default address"})
 	}
+	if defaultAddress == nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Default address is nil"})
+	}
 	// Get User Details
+	applied := cart.IsCouponCodeApplied
+	if applied {
+		orderId := uuid.New()
+		order := models.Order{
+			ID:         orderId,
+			UserID:     claims.UserID,
+			CouponCode: cart.CouponCode,
+			Total:      calculateTotalWithDiscount(cart.Items, cart.Discountpercentage),
+			Status:     "pending",
+			AddressID:  defaultAddress.ID,
+			InvoiceUrl: "",
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
+		}
+		if err := db.CreateOrder(&order); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to create order"})
+		}
 
+	}
 	orderId := uuid.New()
 	order := models.Order{
 		ID:         orderId,
 		UserID:     claims.UserID,
+		CouponCode: "",
 		Total:      calculateTotal(cart.Items),
 		Status:     "pending",
 		AddressID:  defaultAddress.ID,
@@ -65,19 +90,23 @@ func CreateOrder(c *fiber.Ctx) error {
 	if err := db.CreateOrder(&order); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to create order"})
 	}
+
 	//Create Order Items
 	for _, item := range cart.Items {
 		fmt.Println(item.ProductName)
 		orderItem := models.OrderItem{
-			ID:          uuid.New(), // Generate a new UUID for the order item
-			OrderID:     orderId,
-			ProductID:   item.ProductID,
-			ProductName: item.ProductName,
-			Quantity:    item.Quantity,
-			Price:       item.TotalPrice,
-			Status:      "approved", // or any other default status
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
+			ID:            uuid.New(), // Generate a new UUID for the order item
+			OrderID:       orderId,
+			ProductID:     item.ProductID,
+			ProductName:   item.ProductName,
+			Size:          item.Size,
+			Subcategory:   item.Subcategory,
+			Quantity:      item.Quantity,
+			QuantityPrice: item.QuantityPrice,
+			Price:         item.TotalPrice,
+			Status:        "pending", // or any other default status
+			CreatedAt:     time.Now(),
+			UpdatedAt:     time.Now(),
 		}
 
 		if err := db.CreateOrderItem(&orderItem); err != nil {
@@ -85,65 +114,65 @@ func CreateOrder(c *fiber.Ctx) error {
 		}
 	}
 	// Generate Invoice
-	invoiceDoc, _ := generator.New(generator.Invoice, &generator.Options{
-		TextTypeInvoice: "INVOICE",
-		AutoPrint:       false,
-	})
-	invoiceDoc.SetHeader(&generator.HeaderFooter{
-		Text:       "<center>Trivart</center>",
-		Pagination: true,
-	})
-	invoiceDoc.SetFooter(&generator.HeaderFooter{
-		Text:       "<center>Thank you for your business!</center>",
-		Pagination: true,
-	})
-	invoiceDoc.SetRef("INV-" + orderId.String()[:8])
-	invoiceDoc.SetDate(time.Now().Format("02/01/2006"))
-
-	// Set company and customer details
-	invoiceDoc.SetCompany(&generator.Contact{
-		Name: "Trivart",
-		Address: &generator.Address{
-			Address:    "123 Business Rd",
-			City:       "Business City",
-			Country:    "Country",
-			PostalCode: "123456",
-		},
-	})
-	// Set Customer Details
-	invoiceDoc.SetCustomer(&generator.Contact{
-		Name: defaultAddress.FirstName + " " + defaultAddress.LastName,
-		Address: &generator.Address{
-			Address:    defaultAddress.StreetAddress,
-			City:       defaultAddress.TownCity,
-			Country:    defaultAddress.Country,
-			PostalCode: defaultAddress.PinCode,
-		},
-	})
-	// Add each cart item to the invoice
-	for _, item := range cart.Items {
-		invoiceDoc.AppendItem(&generator.Item{
-			Name:     item.ProductName,
-			UnitCost: fmt.Sprintf("%.2f", item.TotalPrice),
-			Quantity: fmt.Sprintf("%d", item.Quantity),
-		})
-	}
-	// Generate the PDF
-	pdf, err := invoiceDoc.Build()
-	if err != nil {
-		fmt.Println("PDF error", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to generate invoice"})
-	}
-	invoiceDir := "invoices"
-	if _, err := os.Stat(invoiceDir); os.IsNotExist(err) {
-		os.Mkdir(invoiceDir, os.ModePerm)
-	}
-	invoicePath := fmt.Sprintf("invoices/%s.pdf", orderId.String())
-	err = pdf.OutputFileAndClose(invoicePath)
-	if err != nil {
-		fmt.Println("save error", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to save invoice"})
-	}
+	//invoiceDoc, _ := generator.New(generator.Invoice, &generator.Options{
+	//	TextTypeInvoice: "INVOICE",
+	//	AutoPrint:       false,
+	//})
+	//invoiceDoc.SetHeader(&generator.HeaderFooter{
+	//	Text:       "<center>Trivart</center>",
+	//	Pagination: true,
+	//})
+	//invoiceDoc.SetFooter(&generator.HeaderFooter{
+	//	Text:       "<center>Thank you for your business!</center>",
+	//	Pagination: true,
+	//})
+	//invoiceDoc.SetRef("INV-" + orderId.String()[:8])
+	//invoiceDoc.SetDate(time.Now().Format("02/01/2006"))
+	//
+	//// Set company and customer details
+	//invoiceDoc.SetCompany(&generator.Contact{
+	//	Name: "Trivart",
+	//	Address: &generator.Address{
+	//		Address:    "123 Business Rd",
+	//		City:       "Business City",
+	//		Country:    "Country",
+	//		PostalCode: "123456",
+	//	},
+	//})
+	//// Set Customer Details
+	//invoiceDoc.SetCustomer(&generator.Contact{
+	//	Name: defaultAddress.FirstName + " " + defaultAddress.LastName,
+	//	Address: &generator.Address{
+	//		Address:    defaultAddress.StreetAddress,
+	//		City:       defaultAddress.TownCity,
+	//		Country:    defaultAddress.Country,
+	//		PostalCode: defaultAddress.PinCode,
+	//	},
+	//})
+	//// Add each cart item to the invoice
+	//for _, item := range cart.Items {
+	//	invoiceDoc.AppendItem(&generator.Item{
+	//		Name:     item.ProductName,
+	//		UnitCost: fmt.Sprintf("%.2f", item.QuantityPrice),
+	//		Quantity: fmt.Sprintf("%d", item.Quantity),
+	//	})
+	//}
+	//// Generate the PDF
+	//pdf, err := invoiceDoc.Build()
+	//if err != nil {
+	//	fmt.Println("PDF error", err)
+	//	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to generate invoice"})
+	//}
+	//invoiceDir := "invoices"
+	//if _, err := os.Stat(invoiceDir); os.IsNotExist(err) {
+	//	os.Mkdir(invoiceDir, os.ModePerm)
+	//}
+	//invoicePath := fmt.Sprintf("invoices/%s.pdf", orderId.String())
+	//err = pdf.OutputFileAndClose(invoicePath)
+	//if err != nil {
+	//	fmt.Println("save error", err)
+	//	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to save invoice"})
+	//}
 
 	err = db.DeleteCart(claims.UserID)
 	if err != nil {
@@ -301,6 +330,7 @@ func GetAllOrdersByUserId(c *fiber.Ctx) error {
 	}
 	orders, err := db.GetOrdersByUserID(claims.UserID)
 	if err != nil {
+		fmt.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get all orders"})
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "data": orders, "msg": "All orders Fetched succesfully"})
@@ -340,7 +370,16 @@ func GetAllOrders(c *fiber.Ctx) error {
 func calculateTotal(items []models.CartItem) float64 {
 	total := 0.0
 	for _, item := range items {
-		total += float64(item.TotalPrice)
+		total += float64(item.AfterDiscountTotalPrice)
 	}
 	return total
+}
+func calculateTotalWithDiscount(items []models.CartItem, discount float64) float64 {
+	total := 0.0
+	for _, item := range items {
+		total += item.AfterDiscountTotalPrice
+	}
+	discountAmount := total * (discount / 100)
+	finalTotal := total - discountAmount
+	return finalTotal
 }

@@ -28,14 +28,14 @@ func (q *OrderQueries) CreateOrder(order *models.Order) error {
 
 	query := `
 		INSERT INTO orders (
-			id, user_id, total, status, address_id, invoice_url, created_at, updated_at
+			id, user_id, total,coupon_code, status, address_id, invoice_url, created_at, updated_at
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8
+			$1, $2, $3, $4, $5, $6, $7, $8,$9
 		)
 	`
 
 	// Send query to database
-	_, err := q.Exec(query, order.ID, order.UserID, order.Total, order.Status, order.AddressID, order.InvoiceUrl, order.CreatedAt, order.UpdatedAt)
+	_, err := q.Exec(query, order.ID, order.UserID, order.Total, order.CouponCode, order.Status, order.AddressID, order.InvoiceUrl, order.CreatedAt, order.UpdatedAt)
 	if err != nil {
 		return err
 	}
@@ -243,6 +243,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			o.id AS order_id,
 			o.user_id,
 			o.total,
+			o.coupon_code,
 			o.status AS order_status,
 			o.invoice_url,
 			o.created_at AS order_created_at,
@@ -250,7 +251,10 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			oi.id AS order_item_id,
 			oi.product_id,
 			COALESCE(oi.product_name, '') AS product_name, -- Handle NULL values for product_name
+			COALESCE(oi.size, '') AS size,                -- Handle NULL values for size
+			COALESCE(oi.subcategory, '') AS subcategory,  -- Handle NULL values for subcategory
 			COALESCE(oi.quantity, 0) AS quantity,         -- Handle NULL values for quantity
+			COALESCE(oi.quantity_price, 0.0) AS quantity_price, -- Handle NULL values for quantity_price
 			COALESCE(oi.price, 0.0) AS price,             -- Handle NULL values for price
 			COALESCE(oi.status, '') AS order_item_status, -- Handle NULL values for status
 			oi.created_at AS order_item_created_at,
@@ -280,8 +284,6 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			o.created_at DESC, o.id ASC
 	`
 
-	fmt.Println("UserID:", userID)
-
 	// Execute the query
 	rows, err := q.DB.Query(query, userID)
 	if err != nil {
@@ -303,14 +305,17 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 		var address models.Address
 		var orderItemQuantity sql.NullInt64
 		var orderItemPrice sql.NullFloat64
+		var orderItemQuantityPrice sql.NullFloat64
 		var orderItemStatus sql.NullString
 		var orderItemCreatedAt sql.NullTime
 		var addressID sql.NullString
+		var couponCode sql.NullString
 
 		err := rows.Scan(
 			&orderWithItems.OrderID,
 			&orderWithItems.UserID,
 			&orderWithItems.Total,
+			&couponCode, // Handle NULLs for coupon_code
 			&orderWithItems.OrderStatus,
 			&orderWithItems.InvoiceURL,
 			&orderWithItems.OrderCreatedAt,
@@ -318,11 +323,14 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			&orderItem.ID,
 			&orderItem.ProductID,
 			&orderItem.ProductName,
-			&orderItemQuantity,  // Handle NULLs for quantity
-			&orderItemPrice,     // Handle NULLs for price
-			&orderItemStatus,    // Handle NULLs for status
-			&orderItemCreatedAt, // Handle NULLs for created_at
-			&addressID,          // Check if address is present
+			&orderItem.Size,         // Handle NULLs for size
+			&orderItem.Subcategory,  // Handle NULLs for subcategory
+			&orderItemQuantity,      // Handle NULLs for quantity
+			&orderItemQuantityPrice, // Handle NULLs for quantity_price
+			&orderItemPrice,         // Handle NULLs for price
+			&orderItemStatus,        // Handle NULLs for status
+			&orderItemCreatedAt,     // Handle NULLs for created_at
+			&addressID,              // Check if address is present
 			&address.UserID,
 			&address.FirstName,
 			&address.LastName,
@@ -347,6 +355,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 				OrderID:        orderWithItems.OrderID,
 				UserID:         orderWithItems.UserID,
 				Total:          orderWithItems.Total,
+				CouponCode:     "", // Default empty value
 				OrderStatus:    orderWithItems.OrderStatus,
 				InvoiceURL:     orderWithItems.InvoiceURL,
 				OrderCreatedAt: orderWithItems.OrderCreatedAt,
@@ -356,11 +365,23 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			}
 		}
 
+		// Assign the coupon code, handling NULLs
+		if couponCode.Valid {
+			orderMap[orderWithItems.OrderID].CouponCode = couponCode.String
+		}
+
 		// Assign the quantity, handling NULLs
 		if orderItemQuantity.Valid {
 			orderItem.Quantity = int(orderItemQuantity.Int64)
 		} else {
 			orderItem.Quantity = 0 // Default value for NULLs
+		}
+
+		// Assign the quantity_price, handling NULLs
+		if orderItemQuantityPrice.Valid {
+			orderItem.QuantityPrice = orderItemQuantityPrice.Float64
+		} else {
+			orderItem.QuantityPrice = 0.0 // Default value for NULLs
 		}
 
 		// Assign the price, handling NULLs
@@ -412,50 +433,55 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 
 // Get All Orders
 func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
-	// Define the SQL query with address and order item details
+	// Define the SQL query
 	query := `
 		SELECT 
 			o.id AS order_id,
 			o.user_id,
 			o.total,
+			o.coupon_code,
 			o.status AS order_status,
-			a.id AS address_id,
-			a.first_name AS address_first_name,
-			a.last_name AS address_last_name,
-			a.country AS address_country,
-			a.street_address AS address_street_address,
-			a.town_city AS address_town_city,
-			a.state AS address_state,
-			a.pin_code AS address_pin_code,
-			a.mobile_number AS address_mobile_number,
-			a.email AS address_email,
-			a.order_notes AS address_order_notes,
 			o.invoice_url,
 			o.created_at AS order_created_at,
 			o.updated_at AS order_updated_at,
 			oi.id AS order_item_id,
 			oi.product_id,
 			COALESCE(oi.product_name, '') AS product_name, -- Handle NULL values for product_name
-			COALESCE(oi.quantity, 0) AS quantity,          -- Handle NULL values for quantity
-			COALESCE(oi.price, 0.0) AS price,              -- Handle NULL values for price
-			COALESCE(oi.status, '') AS order_item_status,  -- Handle NULL values for status
+			COALESCE(oi.size, '') AS size,                -- Handle NULL values for size
+			COALESCE(oi.subcategory, '') AS subcategory,  -- Handle NULL values for subcategory
+			COALESCE(oi.quantity, 0) AS quantity,         -- Handle NULL values for quantity
+			COALESCE(oi.quantity_price, 0.0) AS quantity_price, -- Handle NULL values for quantity_price
+			COALESCE(oi.price, 0.0) AS price,             -- Handle NULL values for price
+			COALESCE(oi.status, '') AS order_item_status, -- Handle NULL values for status
 			oi.created_at AS order_item_created_at,
-			oi.updated_at AS order_item_updated_at
+			a.id AS address_id,
+			a.user_id AS address_user_id,
+			a.first_name,
+			a.last_name,
+			a.country,
+			a.street_address,
+			a.town_city,
+			a.state,
+			a.pin_code,
+			a.mobile_number,
+			a.email,
+			a.order_notes,
+			a.created_at AS address_created_at,
+			a.updated_at AS address_updated_at
 		FROM 
 			orders o
 		LEFT JOIN 
-			addresses a ON o.address_id = a.id
-		LEFT JOIN 
 			order_items oi ON o.id = oi.order_id
+		LEFT JOIN 
+			addresses a ON o.address_id = a.id
 		ORDER BY 
-			o.created_at DESC, o.id ASC;
+			o.created_at DESC, o.id ASC
 	`
-	fmt.Println(query)
 
 	// Execute the query
 	rows, err := q.DB.Query(query)
 	if err != nil {
-		return nil, fmt.Errorf("error querying database for orders: %w", err)
+		return nil, fmt.Errorf("error querying database for orders by userID %s: %w", err)
 	}
 	defer func() {
 		if closeErr := rows.Close(); closeErr != nil {
@@ -473,14 +499,33 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 		var address models.Address
 		var orderItemQuantity sql.NullInt64
 		var orderItemPrice sql.NullFloat64
+		var orderItemQuantityPrice sql.NullFloat64
 		var orderItemStatus sql.NullString
+		var orderItemCreatedAt sql.NullTime
+		var addressID sql.NullString
+		var couponCode sql.NullString
 
 		err := rows.Scan(
 			&orderWithItems.OrderID,
 			&orderWithItems.UserID,
 			&orderWithItems.Total,
+			&couponCode, // Handle NULLs for coupon_code
 			&orderWithItems.OrderStatus,
-			&address.ID,
+			&orderWithItems.InvoiceURL,
+			&orderWithItems.OrderCreatedAt,
+			&orderWithItems.OrderUpdatedAt,
+			&orderItem.ID,
+			&orderItem.ProductID,
+			&orderItem.ProductName,
+			&orderItem.Size,         // Handle NULLs for size
+			&orderItem.Subcategory,  // Handle NULLs for subcategory
+			&orderItemQuantity,      // Handle NULLs for quantity
+			&orderItemQuantityPrice, // Handle NULLs for quantity_price
+			&orderItemPrice,         // Handle NULLs for price
+			&orderItemStatus,        // Handle NULLs for status
+			&orderItemCreatedAt,     // Handle NULLs for created_at
+			&addressID,              // Check if address is present
+			&address.UserID,
 			&address.FirstName,
 			&address.LastName,
 			&address.Country,
@@ -491,17 +536,8 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 			&address.MobileNumber,
 			&address.Email,
 			&address.OrderNotes,
-			&orderWithItems.InvoiceURL,
-			&orderWithItems.OrderCreatedAt,
-			&orderWithItems.OrderUpdatedAt,
-			&orderItem.ID,
-			&orderItem.ProductID,
-			&orderItem.ProductName, // Handle product_name field
-			&orderItemQuantity,     // Handle NULLs for quantity
-			&orderItemPrice,        // Handle NULLs for price
-			&orderItemStatus,       // Handle NULLs for status
-			&orderItem.CreatedAt,
-			&orderItem.UpdatedAt,
+			&address.CreatedAt,
+			&address.UpdatedAt,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("error scanning row into structs: %w", err)
@@ -513,63 +549,77 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 				OrderID:        orderWithItems.OrderID,
 				UserID:         orderWithItems.UserID,
 				Total:          orderWithItems.Total,
+				CouponCode:     "", // Default empty value
 				OrderStatus:    orderWithItems.OrderStatus,
 				InvoiceURL:     orderWithItems.InvoiceURL,
 				OrderCreatedAt: orderWithItems.OrderCreatedAt,
 				OrderUpdatedAt: orderWithItems.OrderUpdatedAt,
-				Address:        []models.Address{},   // Initialize address slice
+				Address:        []models.Address{},   // Set address details
 				OrderItems:     []models.OrderItem{}, // Initialize order items slice
 			}
 		}
 
-		// Handle NULL values for order item fields
+		// Assign the coupon code, handling NULLs
+		if couponCode.Valid {
+			orderMap[orderWithItems.OrderID].CouponCode = couponCode.String
+		}
+
+		// Assign the quantity, handling NULLs
 		if orderItemQuantity.Valid {
 			orderItem.Quantity = int(orderItemQuantity.Int64)
 		} else {
 			orderItem.Quantity = 0 // Default value for NULLs
 		}
 
+		// Assign the quantity_price, handling NULLs
+		if orderItemQuantityPrice.Valid {
+			orderItem.QuantityPrice = orderItemQuantityPrice.Float64
+		} else {
+			orderItem.QuantityPrice = 0.0 // Default value for NULLs
+		}
+
+		// Assign the price, handling NULLs
 		if orderItemPrice.Valid {
 			orderItem.Price = orderItemPrice.Float64
 		} else {
 			orderItem.Price = 0.0 // Default value for NULLs
 		}
 
+		// Assign the status, handling NULLs
 		if orderItemStatus.Valid {
 			orderItem.Status = orderItemStatus.String
 		} else {
 			orderItem.Status = "" // Default value for NULLs
 		}
 
-		// Add the address to the corresponding order if present
-		if address.ID != uuid.Nil {
-			addressExists := false
-			for _, addr := range orderMap[orderWithItems.OrderID].Address {
-				if addr.ID == address.ID {
-					addressExists = true
-					break
-				}
-			}
-			if !addressExists {
-				orderMap[orderWithItems.OrderID].Address = append(orderMap[orderWithItems.OrderID].Address, address)
-			}
+		// Assign the created_at, handling NULLs
+		if orderItemCreatedAt.Valid {
+			orderItem.CreatedAt = orderItemCreatedAt.Time
+		} else {
+			orderItem.CreatedAt = time.Time{} // Default value for NULLs
 		}
 
 		// Add the order item to the corresponding order
 		if orderItem.ID != uuid.Nil {
 			orderMap[orderWithItems.OrderID].OrderItems = append(orderMap[orderWithItems.OrderID].OrderItems, orderItem)
 		}
+
+		// Add the address to the order if it's not already present and if the address exists
+		if addressID.Valid {
+			address.ID = uuid.MustParse(addressID.String)
+			orderMap[orderWithItems.OrderID].Address = append(orderMap[orderWithItems.OrderID].Address, address)
+		}
+	}
+
+	// Check for errors after iterating over rows
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating over rows: %w", err)
 	}
 
 	// Convert the map to a slice
 	var orders []models.OrderWithItems
 	for _, order := range orderMap {
 		orders = append(orders, *order)
-	}
-
-	// Check for errors from iterating over rows
-	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("error iterating over rows: %w", err)
 	}
 
 	return orders, nil
