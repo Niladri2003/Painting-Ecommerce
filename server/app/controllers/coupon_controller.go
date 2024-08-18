@@ -197,5 +197,51 @@ func CouponApply(c *fiber.Ctx) error {
 	if time.Now().After(couponDetails.Validity) {
 		return c.Status(400).JSON(fiber.Map{"error": true, "msg": "coupon has expired"})
 	}
+	// Get cart details by user ID
+	cartDetails, err := db.GetCartByUserID(claims.UserID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": "Failed to get cart details"})
+	}
+	//Adding coupon details to cart
+	cartDetails.IsCouponCodeApplied = true
+	cartDetails.CouponCode = couponCode.Code
+	cartDetails.Discountpercentage = couponDetails.DiscountPercentage
+	if err := db.ApplyCouponTocart(&cartDetails); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": "Error while applying coupon"})
+	}
+
 	return c.Status(200).JSON(fiber.Map{"success": true, "msg": "coupon applied successfully", "discount": couponDetails.DiscountPercentage})
+}
+func RemoveCoupon(c *fiber.Ctx) error {
+
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
+	}
+
+	if time.Now().Unix() > claims.Expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	}
+
+	if claims.UserRole != "user" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only users can create order"})
+	}
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+	// Get cart details by user ID
+	cartDetails, err := db.GetCartByUserID(claims.UserID)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": "Failed to get cart details"})
+	}
+	// Removing coupon details from cart
+	cartDetails.IsCouponCodeApplied = false
+	cartDetails.CouponCode = ""
+	cartDetails.Discountpercentage = 0.0
+	if err := db.ApplyCouponTocart(&cartDetails); err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": "Error while applying coupon"})
+	}
+	return c.Status(200).JSON(fiber.Map{"success": true, "msg": "coupon removed successfully"})
+
 }
