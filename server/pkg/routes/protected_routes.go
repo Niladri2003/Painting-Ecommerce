@@ -23,10 +23,11 @@ func ProtectedRoutes(a *fiber.App) {
 	//Routes for address
 	route.Post("/create-address", middleware.Protected(), controllers.CreateAddress)
 	route.Put("/update-address/:addressId", middleware.Protected(), controllers.UpdateAddressByAddressId)
+	route.Put("/set-default-address/:addressId", middleware.Protected(), controllers.SetDefaultAddress)
 	route.Get("/get-addresses", middleware.Protected(), controllers.GetAddressByUserID)
 
-	route.Get("/delete-address/:addressId", middleware.Protected(), controllers.DeleteAddressByAddressId)
-	route.Get("/delete-all-addresses", middleware.Protected(), controllers.DeleteAddressByUserID)
+	route.Delete("/delete-address/:addressId", middleware.Protected(), controllers.DeleteAddressByAddressId)
+	route.Delete("/delete-all-addresses", middleware.Protected(), controllers.DeleteAddressByUserID)
 
 	// Routes for cart
 	route.Post("/create-cart", middleware.Protected(), controllers.CreateCart)
