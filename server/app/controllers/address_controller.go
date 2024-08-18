@@ -125,9 +125,18 @@ func CreateAddress(c *fiber.Ctx) error {
 	})
 }
 
-// UpdateAddressByUserID handles updating an address for a specific user.
-func UpdateAddressByUserID(c *fiber.Ctx) error {
-	// Get user ID from JWT claims
+func UpdateAddressByAddressId(c *fiber.Ctx) error {
+	// Get address ID from the URL parameters
+	addressId := c.Params("addressId")
+	parsedAddressId, err := uuid.Parse(addressId)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Invalid address ID",
+		})
+	}
+
+	// Get user claims from JWT
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -135,8 +144,6 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 			"msg":   err.Error(),
 		})
 	}
-
-	userId := claims.UserID
 
 	// Check if token is expired
 	now := time.Now().Unix()
@@ -162,13 +169,15 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		})
 	}
 
-	if addressForm.FirstName == "" || addressForm.LastName == "" || addressForm.Country == "" || addressForm.StreetAddress == "" || addressForm.TownCity == "" || addressForm.State == "" || addressForm.PinCode == "" || addressForm.MobileNumber == "" || addressForm.Email == "" {
+	// Validate required fields
+	if addressForm.FirstName == "" || addressForm.LastName == "" || addressForm.Country == "" || addressForm.StreetAddress == "" ||
+		addressForm.TownCity == "" || addressForm.State == "" || addressForm.PinCode == "" ||
+		addressForm.MobileNumber == "" || addressForm.Email == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   "All fields are required",
 		})
 	}
-
 
 	// Create database connection
 	db, err := database.OpenDbConnection()
@@ -179,34 +188,25 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		})
 	}
 
-	addresses, err := db.GetAddressesByUserID(claims.UserID)
+	// Get the existing address to check the current SetAsDefault value
+	existingAddress, err := db.GetAddressByAddresId(parsedAddressId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
-			"msg":   "Error while fetching address in CreateAddress",
+			"msg":   "Error while fetching address",
 		})
 	}
 
-	// Handle SetAsDefault logic
-	var setAsDefault *bool
+	// Determine the SetAsDefault value
+	setAsDefault := existingAddress[0].SetAsDefault
 	if addressForm.SetAsDefault != nil {
-		// If SetAsDefault is provided in the request, use it
-		defaultVal := *addressForm.SetAsDefault
-		setAsDefault = &defaultVal
-	} else {
-		// If SetAsDefault is not provided, default to false
-		defaultVal := false
-		setAsDefault = &defaultVal
-
-		// However, if this is the user's first address, set it to true
-		if len(addresses) == 0 {
-			defaultVal = true
-			setAsDefault = &defaultVal
-		}
+		// If SetAsDefault is provided, use the new value
+		setAsDefault = addressForm.SetAsDefault
 	}
 
-	// Convert AddressForm to Address
+	// Update the address with the new data
 	address := models.Address{
+		ID:            parsedAddressId,
 		UserID:        claims.UserID,
 		FirstName:     addressForm.FirstName,
 		LastName:      addressForm.LastName,
@@ -222,20 +222,20 @@ func UpdateAddressByUserID(c *fiber.Ctx) error {
 		UpdatedAt:     time.Now().Format(time.RFC3339),
 	}
 
-	// Update the address by userID
-	if err := db.UpdateAddressByUserID(userId, &address); err != nil {
+	// Update the address in the database
+	if err := db.UpdateAddressByAddressId(parsedAddressId, &address); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
 		})
 	}
 
-	// Fetch the updated address
-	updatedAddress, err := db.GetAddressesByUserID(userId)
+	// Fetch the updated address to return in the response
+	updatedAddress, err := db.GetAddressByAddresId(parsedAddressId)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
-			"msg":   err.Error(),
+			"msg":   "Error while fetching updated address",
 		})
 	}
 
@@ -413,5 +413,48 @@ func DeleteAddressByAddressId(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"error": false,
 		"msg":   "Address deleted successfully",
+	})
+}
+
+func SetDefaultAddress(c *fiber.Ctx) error {
+	addressID := c.Params("addressId")
+	// Convert addressID to uuid.UUID
+	parsedAddressId, err := uuid.Parse(addressID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid address ID",
+		})
+	}
+
+	// Get user ID from JWT claims
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	userId := claims.UserID
+
+	// Create database connection
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	// Set the default address
+	err = db.SetDefaultAddressByID(parsedAddressId, userId)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to set default address",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Default address updated successfully",
 	})
 }

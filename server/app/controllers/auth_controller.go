@@ -102,11 +102,26 @@ func UserSignUp(c *fiber.Ctx) error {
 	// Delete password hash field from JSON view.
 	user.PasswordHash = ""
 
+	cart := &models.Cart{
+		ID:                  uuid.New(),
+		UserID:              user.ID,
+		IsCouponCodeApplied: false,
+		CouponCode:          "",
+		Discountpercentage:  0.0,
+		CreatedAt:           time.Now(),
+		UpdatedAt:           time.Now(),
+	}
+
+	if err := db.CreateCart(cart); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
-		"error": false,
-		"msg":   nil,
-		"user":  user,
+		"error":   false,
+		"msg":     nil,
+		"user":    user,
+		"cart_id": cart.ID.String(),
 	})
 }
 
@@ -187,6 +202,11 @@ func UserSignIn(c *fiber.Ctx) error {
 	}
 	foundedUser.PasswordHash = ""
 	// Return status 200 OK.
+
+	cart, err := db.GetCartByUserID(foundedUser.ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
 	return c.JSON(fiber.Map{
 		"error": false,
 		"msg":   "login successful",
@@ -194,6 +214,7 @@ func UserSignIn(c *fiber.Ctx) error {
 			"access":       tokens.Access,
 			"refreshToken": tokens.Refresh,
 			"user_details": foundedUser,
+			"cart_id":      cart.ID.String(),
 		},
 	})
 }
@@ -306,12 +327,43 @@ func DeleteAccount(c *fiber.Ctx) error {
 		})
 	}
 
+	// Parse the request body to get the provided password.
+	type PasswordRequest struct {
+		Password string `json:"password"`
+	}
+	var passwordReq PasswordRequest
+
+	if err := c.BodyParser(&passwordReq); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "invalid request body",
+		})
+	}
+
 	// Create a database connection.
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   err.Error(),
+		})
+	}
+
+	// Fetch the user's stored hashed password from the database.
+	existingUser, err := db.GetUserByID(claims.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "failed to fetch user details",
+		})
+	}
+
+	// Compare the provided password with the stored hashed password.
+	err = bcrypt.CompareHashAndPassword([]byte(existingUser.PasswordHash), []byte(passwordReq.Password))
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "password mismatch",
 		})
 	}
 
@@ -349,6 +401,8 @@ func GoogleLogin(c *fiber.Ctx) error {
 }
 
 func GoogleCallback(c *fiber.Ctx) error {
+
+	var cartId string
 	code := c.Query("code")
 	if code == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -411,6 +465,20 @@ func GoogleCallback(c *fiber.Ctx) error {
 			})
 		}
 		foundedUser = *user // Set foundedUser to the newly created user
+		cart := &models.Cart{
+			ID:                  uuid.New(),
+			UserID:              foundedUser.ID,
+			IsCouponCodeApplied: false,
+			CouponCode:          "",
+			CreatedAt:           time.Now(),
+			UpdatedAt:           time.Now(),
+		}
+
+		if err := db.CreateCart(cart); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+		}
+
+		cartId = cart.ID.String()
 	} else {
 		// Update the profile picture if it has changed
 		if foundedUser.ProfilePicture == nil || *foundedUser.ProfilePicture != googleUser.ProfilePicture {
@@ -423,6 +491,13 @@ func GoogleCallback(c *fiber.Ctx) error {
 				})
 			}
 		}
+
+		cart, err := db.GetCartByUserID(foundedUser.ID)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+		}
+
+		cartId = cart.ID.String()
 	}
 
 	// Generate JWT tokens
@@ -437,6 +512,7 @@ func GoogleCallback(c *fiber.Ctx) error {
 	sessionID := uuid.New().String()
 	sessionStore.Store(sessionID, fiber.Map{
 		"user":          foundedUser,
+		"cart_id":       cartId,
 		"access_token":  tokens.Access,
 		"refresh_token": tokens.Refresh,
 	})
@@ -479,5 +555,6 @@ func GetTokens(c *fiber.Ctx) error {
 		"access_token":  sessionMap["access_token"],
 		"refresh_token": sessionMap["refresh_token"],
 		"user_details":  sessionMap["user"],
+		"cart_id":       sessionMap["cart_id"],
 	})
 }

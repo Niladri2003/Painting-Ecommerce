@@ -80,7 +80,7 @@ func (q *AddressQueries) CreateAddress(a *models.Address) (uuid.UUID, error) {
 //}
 
 // UpdateAddress method for updating address by given Address object.
-func (q *AddressQueries) UpdateAddressByUserID(userID uuid.UUID, a *models.Address) error {
+func (q *AddressQueries) UpdateAddressByAddressId(addressId uuid.UUID, a *models.Address) error {
 	// Start a transaction
 	tx, err := q.Begin()
 	if err != nil {
@@ -88,36 +88,36 @@ func (q *AddressQueries) UpdateAddressByUserID(userID uuid.UUID, a *models.Addre
 	}
 	defer tx.Rollback()
 
-	// Check if there is already a default address for the user
-	var hasDefaultAddress bool
-	err = tx.QueryRow(`SELECT EXISTS (
-		SELECT 1 FROM addresses WHERE user_id = $1 AND set_as_default = true
-	)`, userID).Scan(&hasDefaultAddress)
-	if err != nil {
-		return err
-	}
+	// // Check if there is already a default address for the user
+	// var hasDefaultAddress bool
+	// err = tx.QueryRow(`SELECT EXISTS (
+	// 	SELECT 1 FROM addresses WHERE id = $1 AND set_as_default = true
+	// )`, addressId).Scan(&hasDefaultAddress)
+	// if err != nil {
+	// 	return err
+	// }
 
-	// Determine if the new address is set as default
-	setAsDefault := false
-	if a.SetAsDefault != nil && *a.SetAsDefault {
-		setAsDefault = true
-	}
+	// // Determine if the new address is set as default
+	// setAsDefault := false
+	// if a.SetAsDefault != nil && *a.SetAsDefault {
+	// 	setAsDefault = true
+	// }
 
-	// If there is already a default address and the new one is also set as default, update the old default to no longer be default
-	if hasDefaultAddress && setAsDefault {
-		_, err = tx.Exec(`UPDATE addresses
-			SET set_as_default = false
-			WHERE user_id = $1 AND set_as_default = true`, userID)
-		if err != nil {
-			return err
-		}
-	}
+	// // If there is already a default address and the new one is also set as default, update the old default to no longer be default
+	// if hasDefaultAddress && setAsDefault {
+	// 	_, err = tx.Exec(`UPDATE addresses
+	// 		SET set_as_default = false
+	// 		WHERE user_id = $1 AND set_as_default = true`, userID)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// }
 
 	// Update the address
 	_, err = tx.Exec(`UPDATE addresses
 		SET first_name = $2, last_name = $3, country = $4, street_address = $5, town_city = $6, state = $7, pin_code = $8, mobile_number = $9, email = $10, order_notes = $11, set_as_default = $12, updated_at = $13
-		WHERE user_id = $1`,
-		userID, a.FirstName, a.LastName, a.Country, a.StreetAddress, a.TownCity, a.State, a.PinCode, a.MobileNumber, a.Email, a.OrderNotes, setAsDefault, a.UpdatedAt)
+		WHERE id = $1`,
+		addressId, a.FirstName, a.LastName, a.Country, a.StreetAddress, a.TownCity, a.State, a.PinCode, a.MobileNumber, a.Email, a.OrderNotes, a.SetAsDefault, a.UpdatedAt)
 	if err != nil {
 		return err
 	}
@@ -141,6 +141,20 @@ func (q *AddressQueries) GetAddressesByUserID(userID uuid.UUID) ([]models.Addres
 	}
 
 	return addresses, nil
+}
+
+func (q AddressQueries) GetAddressByAddresId(addressId uuid.UUID)([]models.Address, error){
+	var address []models.Address
+
+	query := `SELECT * FROM addresses WHERE id = $1`
+
+	err := q.Select(&address, query,addressId )
+
+	if err != nil {
+		return nil, err
+	}
+
+	return address, nil
 }
 
 // Get Default Address
@@ -188,3 +202,29 @@ func (q *AddressQueries) DeleteAddress(id uuid.UUID) error {
 
 	return nil
 }
+
+// SetDefaultAddressByID sets the specified address as default and ensures all other addresses for the user are set as non-default.
+func (q *AddressQueries) SetDefaultAddressByID(addressID, userID uuid.UUID) error {
+    // Start a transaction
+    tx, err := q.Begin()
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback()
+
+    // Set all addresses for the user to false
+    _, err = tx.Exec(`UPDATE addresses SET set_as_default = FALSE WHERE user_id = $1`, userID)
+    if err != nil {
+        return err
+    }
+
+    // Set the selected address as the default
+    _, err = tx.Exec(`UPDATE addresses SET set_as_default = TRUE WHERE id = $1 AND user_id = $2`, addressID, userID)
+    if err != nil {
+        return err
+    }
+
+    // Commit the transaction
+    return tx.Commit()
+}
+

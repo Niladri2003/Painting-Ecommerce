@@ -31,6 +31,9 @@ COPY .env .
 COPY sql /root/sql
 COPY platform/migration/sample_data.sql /root/platform/migration/
 
+#COPY Email Template
+COPY templates /root/templates
+
 # Expose port 3000 to the outside world
 EXPOSE 5000
 
@@ -80,6 +83,12 @@ ENV SMTP_HOST=smtp.gmail.com
 ENV SMTP_PORT=587
 ENV EMAIL_USERNAME=abhisheksantra99@gmail.com
 ENV EMAIL_PASSWORD=qggrtvpxbbqcautz
+#Google authentication
+
+ENV GOOGLE_CLIENT_ID=687753841844-ssa190dj6dvp7ukbuqsps33lcijuc9bt.apps.googleusercontent.com
+ENV GOOGLE_CLIENT_SECRET=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
+ENV REDIRECT_URL=https://ecommerce.niladriadak.tech/api/v1/user/google/callback
+ENV FRONTEND_URL=https://painting-ecommerce.vercel.app
 
 
 # Command to run the executable

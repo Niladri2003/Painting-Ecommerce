@@ -44,7 +44,7 @@ const AvatarDropdown = ({ userProfileImage ,size = "sm" }) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <Avatar
-        src={userProfileImage || defaultAvatar}
+        src={userProfileImage}
         alt="User Avatar"
         className="cursor-pointer"
         size={size}

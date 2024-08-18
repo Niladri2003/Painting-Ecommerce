@@ -23,6 +23,8 @@ const Navbar = () => {
         user?.first_name || "User"
       } ${user?.last_name || ""}`;
 
+      console.log("fetch user:", userProfileImage); // Fetch from your user state or API
+
   // const {user} = useSelector((state)=>state.profile)
   // console.log("fetch user:", user?.profile_picture) // Fetch from your user state or API
 

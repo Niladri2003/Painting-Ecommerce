@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useToast } from '@chakra-ui/toast';
 import { setToken } from '../slices/authSlice';
 import { setUser } from '../slices/profileSlice';
+import { setCartId } from '../slices/cartSlice';
 import { BASEAPI } from '../utils/BASE_API';
 
 const AuthCallback = () => {
@@ -18,13 +19,15 @@ const AuthCallback = () => {
         const response = await axios.get(`${BASEAPI}/user/get-tokens`, {
           withCredentials: true, // Ensure cookies are sent with the request
         });
+        console.log('Response:', response);
 
         if (response.status === 200) {
-          const { access_token, refresh_token, user_details } = response.data;
+          const { access_token, refresh_token, cart_id, user_details } = response.data;
 
           // Dispatch to redux store if needed
           dispatch(setToken(access_token));
           dispatch(setUser(user_details));
+          dispatch(setCartId(cart_id));
 
           toast({
             title: "Login successful!",

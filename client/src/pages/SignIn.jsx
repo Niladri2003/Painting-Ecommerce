@@ -8,6 +8,7 @@ import { BASEAPI } from '../utils/BASE_API';
 import { setToken } from '../slices/authSlice';
 import { restoreCart } from '../slices/cartSlice';
 import { setUser } from '../slices/profileSlice';
+import { setCartId } from '../slices/cartSlice';
 
 const SignIn = () => {
     const dispatch = useDispatch(); 
@@ -50,11 +51,16 @@ const SignIn = () => {
 
             if (response.status === 201 || response.status === 200) {
                 const { tokens } = response.data;
-                const { access } = tokens;
+                
+        
+                const { access, cart_id } = tokens;
+                console.log('cart_id:',cart_id);
 
                 tokens.user_details.password_hash = null;
                 dispatch(setUser(tokens.user_details));
                 dispatch(setToken(access));
+                dispatch(setCartId(cart_id));
+
 
                 // Restore cart from localStorage after login
                 // const savedCart = localStorage.getItem("cart");
@@ -94,7 +100,7 @@ const SignIn = () => {
             console.error('Error:', error);
             toast({
                 title: "Error",
-                description: "User doesn't exist.",
+                description: error.response.data.msg,
                 status: "error",
                 duration: 2500,
                 isClosable: true,
@@ -160,20 +166,7 @@ const SignIn = () => {
                             Sign Up
                         </span>
                     </p>
-                    <div className="flex items-center justify-center mt-6">
-                        <input type="checkbox" id="terms" className="mr-2" required />
-                        <label htmlFor="terms" className="text-sm text-gray-600">
-                            By continuing, I agree to the{' '}
-                            <a href="#" className="text-orange-600 hover:text-orange-800">
-                                terms of use
-                            </a>{' '}
-                            &{' '}
-                            <a href="#" className="text-orange-600 hover:text-orange-800">
-                                privacy policy
-                            </a>
-                            .
-                        </label>
-                    </div>
+               
                 </div>
             </section>
         </div>

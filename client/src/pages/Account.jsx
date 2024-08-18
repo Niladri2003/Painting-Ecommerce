@@ -151,7 +151,7 @@ const AccountPage = () => {
         isClosable: true,
       });
 
-      loadAddresses();
+      await loadAddresses();
       setIsModalOpen(false);
       setEditAddress(null);
       resetFormData();
@@ -186,7 +186,7 @@ const AccountPage = () => {
           Authorization: `${token}`,
         },
       });
-      loadAddresses();
+      await loadAddresses();
       toast({
         title: "Address deleted successfully",
         status: "success",
