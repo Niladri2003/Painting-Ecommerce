@@ -23,18 +23,20 @@ func ProtectedRoutes(a *fiber.App) {
 	//Routes for address
 	route.Post("/create-address", middleware.Protected(), controllers.CreateAddress)
 	route.Put("/update-address/:addressId", middleware.Protected(), controllers.UpdateAddressByAddressId)
+	route.Put("/set-default-address/:addressId", middleware.Protected(), controllers.SetDefaultAddress)
 	route.Get("/get-addresses", middleware.Protected(), controllers.GetAddressByUserID)
 
-	route.Get("/delete-address/:addressId", middleware.Protected(), controllers.DeleteAddressByAddressId)
-	route.Get("/delete-all-addresses", middleware.Protected(), controllers.DeleteAddressByUserID)
+	route.Delete("/delete-address/:addressId", middleware.Protected(), controllers.DeleteAddressByAddressId)
+	route.Delete("/delete-all-addresses", middleware.Protected(), controllers.DeleteAddressByUserID)
 
 	// Routes for cart
-	route.Post("/create-cart", middleware.Protected(), controllers.CreateCart)
+	// route.Post("/create-cart", middleware.Protected(), controllers.CreateCart)
 	route.Get("/get-cart", middleware.Protected(), controllers.GetCartByUserID)
 	route.Post("/add-item", middleware.Protected(), controllers.AddItemToCart)
-	route.Put("/update-item", middleware.Protected(), controllers.UpdateCartItem)
+	route.Post("/update-item", middleware.Protected(), controllers.UpdateCartItem)
 	route.Delete("/remove-item/:itemId", middleware.Protected(), controllers.RemoveItemFromCart)
 	route.Delete("/delete-cart", middleware.Protected(), controllers.DeleteCart)
+	route.Post("/apply-coupon", middleware.Protected(), controllers.CouponApply)
 
 	// Orders Routes
 	route.Post("/create-order", middleware.Protected(), controllers.CreateOrder)
@@ -50,6 +52,7 @@ func ProtectedRoutes(a *fiber.App) {
 	route.Get("/get-all-coupons", middleware.Protected(), controllers.GetAllCoupon)
 	route.Post("/change-coupon-status/:couponID", middleware.Protected(), controllers.ChangeCouponStatus)
 	route.Delete("delete-coupon/:couponID", middleware.Protected(), controllers.DeleteCoupon)
+	route.Post("/remove-coupon", middleware.Protected(), controllers.RemoveCoupon)
 
 	//Product Size Routes
 	route.Post("/create-product-size/:productID", middleware.Protected(), controllers.CreateProductSize)

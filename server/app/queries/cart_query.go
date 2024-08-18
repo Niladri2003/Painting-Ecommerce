@@ -1,6 +1,7 @@
 package queries
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/niladri2003/PaintingEcommerce/app/models"
@@ -14,30 +15,39 @@ type CartQueries struct {
 // CreateCart inserts a new cart into the database.
 func (q *CartQueries) CreateCart(cart *models.Cart) error {
 	query := `
-		INSERT INTO carts (id, user_id, is_coupon_applied, coupon_code, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6)
+		INSERT INTO carts (id, user_id, is_coupon_applied, coupon_code, discount_percentage,created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6,$7)
 		RETURNING id`
-	err := q.Get(&cart.ID, query, cart.ID, cart.UserID, cart.IsCouponCodeApplied, cart.CouponCode, cart.CreatedAt, cart.UpdatedAt)
+	err := q.Get(&cart.ID, query, cart.ID, cart.UserID, cart.IsCouponCodeApplied, cart.CouponCode, cart.Discountpercentage, cart.CreatedAt, cart.UpdatedAt)
 	return err
 }
 
 // AddItemToCart inserts a new item into the cart_items table.
 func (q *CartQueries) AddItemToCart(item *models.CartItem) error {
 	query := `
-		INSERT INTO cart_items (id, cart_id, product_id, product_name, quantity,quantity_price, total_price,after_discount_total_price, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9,$10)`
-	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.ProductName, item.Quantity, item.QuantityPrice, item.TotalPrice, item.AfterDiscountTotalPrice, item.CreatedAt, item.UpdatedAt)
+		INSERT INTO cart_items (id, cart_id, product_id, product_name, quantity,quantity_price,after_discount_total_price,total_price,product_size_id,product_subcategory_id,size,subcategory, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9,$10,$11,$12,$13,$14)`
+	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.ProductName, item.Quantity, item.QuantityPrice, item.AfterDiscountTotalPrice, item.TotalPrice, item.ProductSizeId, item.ProductSubCategoryId, item.Size, item.Subcategory, item.CreatedAt, item.UpdatedAt)
+	if err != nil {
+		fmt.Println("Item add to cart error", err)
+		return err
+	}
 	return err
 }
 
-// UpdateCartItem updates an existing item in the cart_items table.
 func (q *CartQueries) UpdateCartItem(item *models.CartItem) error {
 	query := `
 		UPDATE cart_items
-		SET quantity = $1, total_price = $2, updated_at = $3
-		WHERE id = $4`
-	_, err := q.Exec(query, item.Quantity, item.TotalPrice, item.UpdatedAt, item.ID)
-	return err
+		SET quantity = $1, total_price = $2, after_discount_total_price = $3, updated_at = $4
+		WHERE id = $5`
+
+	_, err := q.Exec(query, item.Quantity, item.TotalPrice, item.AfterDiscountTotalPrice, item.UpdatedAt, item.ID)
+	if err != nil {
+		fmt.Println("Update error:", err)
+		return err
+	}
+
+	return nil
 }
 
 // RemoveItemFromCart removes an item from the cart_items table.
@@ -79,4 +89,32 @@ func (q *CartQueries) DeleteCart(userID uuid.UUID) error {
 	// Delete the cart
 	// _, err = q.Exec(`DELETE FROM carts WHERE user_id = $1`, userID)
 	return err
+}
+
+// Get Cart Item info using cartItem id
+func (q *CartQueries) GetCartItemByID(cartItemId uuid.UUID) (*models.CartItem, error) {
+	var cartItem models.CartItem
+
+	query := `SELECT * FROM cart_items WHERE id = $1 LIMIT 1`
+	err := q.Get(&cartItem, query, cartItemId)
+	if err != nil {
+		return nil, err
+	}
+	return &cartItem, nil
+}
+
+// Apply coupon to cart
+func (q *CartQueries) ApplyCouponTocart(item *models.Cart) error {
+	query := `
+		UPDATE carts
+		SET is_coupon_applied = $1, coupon_code = $2, discount_percentage = $3, updated_at = $4
+		WHERE id = $5`
+
+	_, err := q.Exec(query, item.IsCouponCodeApplied, item.CouponCode, item.Discountpercentage, item.UpdatedAt, item.ID)
+	if err != nil {
+		fmt.Println("Coupon add error:", err)
+		return err
+	}
+
+	return nil
 }
