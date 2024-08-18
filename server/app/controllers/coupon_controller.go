@@ -158,3 +158,44 @@ func ChangeCouponStatus(c *fiber.Ctx) error {
 	}
 	return c.Status(200).JSON(fiber.Map{"error": false, "msg": "coupon updated"})
 }
+func CouponApply(c *fiber.Ctx) error {
+	type CouponCode struct {
+		Code string `json:"code"`
+	}
+	var couponCode CouponCode
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
+	}
+
+	if time.Now().Unix() > claims.Expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	}
+
+	if claims.UserRole != "user" {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only users can create order"})
+	}
+	if err := c.BodyParser(&couponCode); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "cannot parse JSON"})
+	}
+	if len(couponCode.Code) > 50 {
+		return c.Status(400).JSON(fiber.Map{"error": "coupon code too long"})
+	}
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+	couponDetails, err := db.GetCouponDetailsByCouponCode(couponCode.Code)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+	// check coupon active status
+	if !couponDetails.IsActive {
+		return c.Status(400).JSON(fiber.Map{"error": true, "msg": "coupon is deactivated"})
+	}
+	// Check if coupon validity date has passed
+	if time.Now().After(couponDetails.Validity) {
+		return c.Status(400).JSON(fiber.Map{"error": true, "msg": "coupon has expired"})
+	}
+	return c.Status(200).JSON(fiber.Map{"success": true, "msg": "coupon applied successfully", "discount": couponDetails.DiscountPercentage})
+}

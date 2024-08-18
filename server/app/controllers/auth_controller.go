@@ -107,6 +107,7 @@ func UserSignUp(c *fiber.Ctx) error {
 		UserID:              user.ID,
 		IsCouponCodeApplied: false,
 		CouponCode:          "",
+		Discountpercentage:  0.0,
 		CreatedAt:           time.Now(),
 		UpdatedAt:           time.Now(),
 	}

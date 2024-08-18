@@ -7,7 +7,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -94,6 +93,6 @@ func generateNewRefreshToken() (string, error) {
 }
 
 // ParseRefreshToken func for parse second argument from refresh token.
-func ParseRefreshToken(refreshToken string) (int64, error) {
-	return strconv.ParseInt(strings.Split(refreshToken, ".")[1], 0, 64)
-}
+//func ParseRefreshToken(refreshToken string) (int64, error) {
+//	return strconv.ParseInt(strings.Split(refreshToken, ".")[1], 0, 64)
+//}
