@@ -47,8 +47,7 @@ const AccountPage = () => {
     country: "",
     pin_code: "",
     mobile_number: "",
-    email: "",
-    set_as_default: "true",
+    email: ""
   });
 
   const toast = useToast();
@@ -130,8 +129,7 @@ const AccountPage = () => {
         country,
         pin_code,
         mobile_number,
-        email,
-        set_as_default: "true", // Hardcoded to true
+        email
       };
       await axios({
         method: method,
