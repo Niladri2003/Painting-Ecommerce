@@ -202,3 +202,29 @@ func (q *AddressQueries) DeleteAddress(id uuid.UUID) error {
 
 	return nil
 }
+
+// SetDefaultAddressByID sets the specified address as default and ensures all other addresses for the user are set as non-default.
+func (q *AddressQueries) SetDefaultAddressByID(addressID, userID uuid.UUID) error {
+    // Start a transaction
+    tx, err := q.Begin()
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback()
+
+    // Set all addresses for the user to false
+    _, err = tx.Exec(`UPDATE addresses SET set_as_default = FALSE WHERE user_id = $1`, userID)
+    if err != nil {
+        return err
+    }
+
+    // Set the selected address as the default
+    _, err = tx.Exec(`UPDATE addresses SET set_as_default = TRUE WHERE id = $1 AND user_id = $2`, addressID, userID)
+    if err != nil {
+        return err
+    }
+
+    // Commit the transaction
+    return tx.Commit()
+}
+
