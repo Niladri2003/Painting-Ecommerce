@@ -281,22 +281,20 @@
 
 // export default ProductCheckout;
 
-
-
 //code-4
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { BASEAPI } from "../utils/BASE_API";
 import { addToCart } from "../slices/cartSlice";
-import { useToast } from "@chakra-ui/react";  
+import { useToast } from "@chakra-ui/react";
 
 const ProductCheckout = () => {
   const dispatch = useDispatch();
-  const { cart_id } = useSelector((state) => state.cart);  // Access cart_id from Redux state
-  const { cart } = useSelector((state) => state.cart);  // Access cart from Redux state
+  const { cartId, cart } = useSelector((state) => state.cart); // Access cart_id from Redux state
+  console.log("Cart ID and cart:", cartId, cart); // Log the cart_id to verify
+
   const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [product, setProduct] = useState(null);
@@ -306,14 +304,14 @@ const ProductCheckout = () => {
     returnPolicy: false,
     shippingInfo: false,
   });
-  console.log("arnab ->",cart_id)     
+
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const toast = useToast();  // Chakra UI toast for notifications
-  const token = localStorage.getItem("authToken");  // Retrieve token from localStorage
+  const toast = useToast(); // Chakra UI toast for notifications
+  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
 
   const handleNavigate = (cur) => {
     navigate(`/product/${cur.id}`);
@@ -326,10 +324,10 @@ const ProductCheckout = () => {
       setProduct(data);
 
       if (data.data.sizes.length > 0) {
-        setSelectedSize(data.data.sizes[0]);  // Select the first size by default
+        setSelectedSize(data.data.sizes[0]); // Select the first size by default
       }
       if (data.data.sub_category.length > 0) {
-        setSelectedSubCategory(data.data.sub_category[0]);  // Select the first subcategory by default
+        setSelectedSubCategory(data.data.sub_category[0]); // Select the first subcategory by default
       }
     } catch (error) {
       setError(error.message);
@@ -422,7 +420,8 @@ const ProductCheckout = () => {
     if (!selectedSize || !selectedSubCategory) {
       toast({
         title: "Selection Error",
-        description: "Please select a size and subcategory before adding to cart.",
+        description:
+          "Please select a size and subcategory before adding to cart.",
         status: "warning",
         duration: 2500,
         isClosable: true,
@@ -431,25 +430,28 @@ const ProductCheckout = () => {
     }
 
     const cartItem = {
-      cart_id: cart_id,  // Use cart_id from Redux state
+      cart_id: cartId, // Use cart_id from Redux state
       product_id: product.data.id,
       product_size_id: selectedSize.id,
       product_sub_category: selectedSubCategory.id,
       quantity,
     };
 
-    console.log("Cart Item Payload:", cartItem);  // Log the payload to verify the data
+    console.log("Cart Item Payload:", cartItem); // Log the payload to verify the data
 
     try {
       const response = await axios.post(`${BASEAPI}/add-item`, cartItem, {
         headers: {
-          Authorization: `${token}`,  
-          "Content-Type": "application/json",  // Specify content type as JSON
+          Authorization: `${token}`,
+          // Specify content type as JSON
         },
       });
 
+      console.log("API Response:", response.status);
+
       if (response.status === 200 || response.status === 201) {
-        dispatch(addToCart(response.data));  // Update Redux store with the response data
+        console(response.data);
+        dispatch(addToCart(response.data.data)); // Update Redux store with the response data
         toast({
           title: "Added to Cart",
           description: "The item has been added to your cart.",
@@ -457,25 +459,29 @@ const ProductCheckout = () => {
           duration: 2500,
           isClosable: true,
         });
-      } else {
-        throw new Error("Failed to add to cart");
-      }
+      } 
+      // else {
+      //   throw new Error("Failed to add to cart");
+      // }
     } catch (error) {
-      console.error("API Error:", error.response?.data);  // Log the exact error
+      console.error("API Error:", error.response.data?.message); // Log the exact error
       toast({
         title: "Error",
-        description: error.response?.data?.message || "Failed to add item to cart. Please try again.",
+        description:
+          error.response?.data?.message ||
+          "Failed to add item to cart. Please try again.",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
     }
-};
-
+  };
 
   const presentInCart = () => {
     if (cart) {
-      const index = cart.findIndex((item) => item.product_id === product.data.id);
+      const index = cart.findIndex(
+        (item) => item.product_id === product.data.id
+      );
       return index >= 0;
     }
     return false;
@@ -515,27 +521,28 @@ const ProductCheckout = () => {
                 <div>No images available</div>
               )}
             </div>
-            {product.data.images &&
-              product.data.images.length > 1 && (
-                <>
-                  <button
-                    className="absolute left-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                    onClick={handlePreviousImage}
-                    disabled={selectedImageIndex === 0}
-                    aria-label="Previous image"
-                  >
-                    &lt;
-                  </button>
-                  <button
-                    className="absolute right-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                    onClick={handleNextImage}
-                    disabled={selectedImageIndex === product.data.images.length - 1}
-                    aria-label="Next image"
-                  >
-                    &gt;
-                  </button>
-                </>
-              )}
+            {product.data.images && product.data.images.length > 1 && (
+              <>
+                <button
+                  className="absolute left-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                  onClick={handlePreviousImage}
+                  disabled={selectedImageIndex === 0}
+                  aria-label="Previous image"
+                >
+                  &lt;
+                </button>
+                <button
+                  className="absolute right-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                  onClick={handleNextImage}
+                  disabled={
+                    selectedImageIndex === product.data.images.length - 1
+                  }
+                  aria-label="Next image"
+                >
+                  &gt;
+                </button>
+              </>
+            )}
           </div>
         </div>
 
@@ -544,15 +551,9 @@ const ProductCheckout = () => {
           <h1 className="text-2xl md:text-3xl font-bold mb-2">
             {product.data.title}
           </h1>
-          <p className="text-lg text-gray-500 line-through">
-            ₹{originalPrice}
-          </p>
-          <p className="text-xl md:text-2xl text-red-600">
-            ₹{discountedPrice}
-          </p>
-          <p className="text-md text-green-600">
-            {discountPercentage}% off
-          </p>
+          <p className="text-lg text-gray-500 line-through">₹{originalPrice}</p>
+          <p className="text-xl md:text-2xl text-red-600">₹{discountedPrice}</p>
+          <p className="text-md text-green-600">{discountPercentage}% off</p>
 
           {/* Size Selection */}
           <div className="mt-4">
@@ -564,8 +565,11 @@ const ProductCheckout = () => {
                 <button
                   key={size.id}
                   onClick={() => setSelectedSize(size)}
-                  className={`px-4 py-2 rounded-full border ${selectedSize?.id === size.id ? "bg-black text-white" : "bg-white text-black"
-                    }`}
+                  className={`px-4 py-2 rounded-full border ${
+                    selectedSize?.id === size.id
+                      ? "bg-black text-white"
+                      : "bg-white text-black"
+                  }`}
                 >
                   {size.size} (+₹{size.charge})
                 </button>
@@ -583,8 +587,11 @@ const ProductCheckout = () => {
                 <button
                   key={subcategory.id}
                   onClick={() => setSelectedSubCategory(subcategory)}
-                  className={`px-4 py-2 rounded-full border ${selectedSubCategory?.id === subcategory.id ? "bg-black text-white" : "bg-white text-black"
-                    }`}
+                  className={`px-4 py-2 rounded-full border ${
+                    selectedSubCategory?.id === subcategory.id
+                      ? "bg-black text-white"
+                      : "bg-white text-black"
+                  }`}
                 >
                   {subcategory.subcategory} (+₹{subcategory.charge})
                 </button>
