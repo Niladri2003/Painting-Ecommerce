@@ -61,6 +61,7 @@ const SignIn = () => {
                 dispatch(setToken(access));
                 dispatch(setCartId(cart_id));
 
+                localStorage.setItem("cart_id", cart_id);
 
                 // Restore cart from localStorage after login
                 // const savedCart = localStorage.getItem("cart");

@@ -16,9 +16,12 @@ const authSlice = createSlice({
             state.token = action.payload
             localStorage.setItem("authToken", action.payload);
         },
+
         logout(state) {
             state.token = null;
+            state.cartId = null;
             localStorage.removeItem("authToken");
+            localStorage.removeItem("cart_id"); 
         }
 
     }
