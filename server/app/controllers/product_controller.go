@@ -150,7 +150,9 @@ func CreateProduct(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"meg": "success",
+		"error":   false,
+		"product": product,
+		"meg":     "success",
 	})
 }
 

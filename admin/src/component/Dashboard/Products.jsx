@@ -24,6 +24,7 @@ import {
 } from '@chakra-ui/react';
 import axios from "axios";
 import { BASEAPI } from "../../utils/BASEAPI.js";
+import dayjs from "dayjs";
 
 const Products = () => {
     const [product, setProduct] = useState([]);
@@ -33,10 +34,40 @@ const Products = () => {
     const toast = useToast({ position: 'top' });
     const [selectedProduct, setSelectedProduct] = useState(null);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const token = JSON.parse(localStorage.getItem('token'));
 
     const handleRowClick = (product) => {
         setSelectedProduct(product);
         onOpen();
+    };
+
+    const handleDelete = async () => {
+        if (selectedProduct) {
+            try {
+                await axios.delete(`${BASEAPI}/v1/delete-product/${selectedProduct.id}`, {
+                    headers: {
+                        Authorization: `${token}`
+                    }
+                });
+                toast({
+                    title: 'Product deleted successfully',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+                onClose();
+                getAllProducts(); // Refresh the product list after deletion
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                toast({
+                    title: 'Error deleting product',
+                    description: error.message || 'An error occurred.',
+                    status: 'error',
+                    duration: 2000,
+                    isClosable: true,
+                });
+            }
+        }
     };
 
     const getAllProducts = async () => {
@@ -121,7 +152,7 @@ const Products = () => {
                             <Tr key={product.id} onClick={() => handleRowClick(product)} cursor="pointer">
                                 <Td>{product.title}</Td>
                                 <Td>{product.description}</Td>
-                                <Td>{product.price}</Td>
+                                <Td>{product.original_price}</Td>
                                 <Td>{product.category.name}</Td>
                             </Tr>
                         ))
@@ -137,14 +168,51 @@ const Products = () => {
                         <ModalCloseButton />
                         <ModalBody>
                             <p><strong>Description:</strong> {selectedProduct.description}</p>
-                            <p><strong>Price:</strong> ${selectedProduct.price}</p>
+                            <p><strong>Price:</strong> ₹{selectedProduct.original_price}</p>
+                            <p><strong>Discount Price:</strong> ₹{selectedProduct.discounted_price}</p>
                             <p><strong>Category:</strong> {selectedProduct.category.name}</p>
-                            {selectedProduct.images.map((image) => (
-                                <img key={image.id} src={image.image_url} alt={selectedProduct.title} width="100%" />
-                            ))}
+                            {selectedProduct.sizes && (
+                                <>
+                                    <p><strong>Sizes:</strong></p>
+                                    <ul>
+                                        {selectedProduct.sizes.map((size) => (
+                                            <li key={size.id}>
+                                                {size.size} - ₹{size.charge}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </>
+                            )}
+                            {selectedProduct.sub_category && (
+                                <>
+                                    <p><strong>Sub Categories:</strong></p>
+                                    <ul>
+                                        {selectedProduct.sub_category.map((sub) => (
+                                            <li key={sub.id}>
+                                                {sub.subcategory} - ₹{sub.charge}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </>
+                            )}
+                            <div className={"flex flex-row gap-2"}>
+                                {selectedProduct.images.map((image) => (
+                                    <div className={""}>
+                                        <img key={image.id} src={image.image_url} alt={selectedProduct.title}
+                                             className={"object-cover h-[40]"}/>
+                                    </div>
+
+                                ))}
+                            </div>
+                            <p>Created at : {dayjs(selectedProduct.created_at).format('DD-MM-YYYY')}</p>
                         </ModalBody>
+
+
                         <ModalFooter>
-                            <Button colorScheme="blue" mr={3} onClick={onClose}>
+                            <Button colorScheme="red" mr={3} onClick={handleDelete}>
+                                Delete
+                            </Button>
+                        <Button colorScheme="blue" mr={3} onClick={onClose}>
                                 Close
                             </Button>
                         </ModalFooter>
