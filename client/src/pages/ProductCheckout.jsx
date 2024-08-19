@@ -505,38 +505,65 @@ const ProductCheckout = () => {
         <div className="w-full lg:w-1/2 relative">
           <div>
             <div className="mb-4">
-              {product.data.images && product.data.images.length > 0 ? (
-                <img
-                  src={product.data.images[selectedImageIndex].image_url}
-                  alt={product.data.title || "Product image"}
-                  className="w-full h-auto max-h-[500px] object-cover rounded-lg"
-                />
+
+              {product.images && product.images.length > 0 ? (
+                  <img
+                      src={product.images[selectedImageIndex].image_url} // Use the product images
+                      alt={product.title || "Product image"} // Use a fallback alt text
+                      className="w-full h-auto max-h-[500px] object-cover rounded-lg" // Set max-height and object-fit
+                  />
               ) : (
-                <div>No images available</div>
+                  <div>No images available</div> // Fallback content
               )}
             </div>
-            {product.data.images && product.data.images.length > 1 && (
-              <>
-                <button
-                  className="absolute left-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                  onClick={handlePreviousImage}
-                  disabled={selectedImageIndex === 0}
-                  aria-label="Previous image"
-                >
-                  &lt;
-                </button>
-                <button
-                  className="absolute right-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                  onClick={handleNextImage}
-                  disabled={
-                    selectedImageIndex === product.data.images.length - 1
-                  }
-                  aria-label="Next image"
-                >
-                  &gt;
-                </button>
-              </>
-            )}
+            {product.images &&
+                product.images.length > 1 && ( // Only show buttons if there is more than 1 image
+                    <>
+                      <button
+                          className="absolute left-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                          onClick={handlePreviousImage}
+                          disabled={selectedImageIndex === 0}
+                          aria-label="Previous image"
+                      >
+                        &lt;
+                      </button>
+                      <button
+                          className="absolute right-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                          onClick={handleNextImage}
+                          disabled={selectedImageIndex === product.images.length - 1}
+                          aria-label="Next image"
+                      >
+                        &gt;
+                      </button>
+                    </>
+                )}
+            {/* Related products=================================================================================================================== */}
+            <h1>Related Products</h1>
+            <div className="w-[100%] flex gap-5 border-2 border-black border-r-0 border-l-0 py-2 overflow-x-auto">
+
+
+              {product.related_products.map((cur, index) => {
+                return (
+                    <div className=" cursor-pointer" key={index} onClick={() => handleNavigate(cur)}>
+                      <div className=" h-[8rem] w-[8rem] p-3 bg-slate-300 rounded-[.2rem] overflow-hidden">
+                        <img
+                            src={cur.images[0].image_url}
+                            alt="sub images"
+                            className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <h3 className="text-lg font-medium my-1">
+                        {cur.title}
+                      </h3>
+                      <p className="text-sm mt-1">
+                        <span className="font-medium">Price:</span> ₹{cur.price}
+                      </p>
+                    </div>
+                );
+              })}
+            </div>
+
+
           </div>
         </div>
 
