@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import HomeHero from '../components/Home/HomeHero';
 import girl from "../assets/Contact/girl.jpg";
-import overlyImg from "../assets/Contact/overlyImg.jpg";
 import Footer from '../components/footer/Footer';
 import { BASEAPI } from '../utils/BASE_API';
 import AOS from 'aos';
+import { useToast } from '@chakra-ui/react';  
 import 'aos/dist/aos.css';  // Import AOS styles
 
 export default function Contact() {
@@ -27,6 +27,8 @@ export default function Contact() {
         message: ''
     });
 
+    const toast = useToast();  // Initialize Chakra UI's useToast hook
+
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -44,7 +46,16 @@ export default function Contact() {
                 }
             });
             if (response.status === 200) {
-                alert('Message sent successfully');
+                // Display success toast
+                toast({
+                    title: "Message sent successfully.",
+                    description: "We have received your message and will get back to you soon.",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                });
+
+                // Clear the form fields
                 setFormData({
                     first_name: '',
                     last_name: '',
@@ -116,6 +127,7 @@ export default function Contact() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }
