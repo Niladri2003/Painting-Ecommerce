@@ -36,7 +36,7 @@
 //               <p className="text-gray-500 mt-2">🔒 Secure Checkout</p>
 //             </div>
 //           </div>
-          
+
 //         </div>
 //         <div className="mt-8">
 //           <div className="mb-4">
@@ -71,7 +71,7 @@
 // export default Cart;
 
 import HomeHero from "../components/Home/HomeHero";
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { SlTag } from "react-icons/sl";
 import { GrNotes } from "react-icons/gr";
 import { useSelector } from "react-redux";
@@ -82,6 +82,9 @@ const Cart = () => {
   const [couponVis, setcouponVis] = useState(false);
   const [coupon, setCoupon] = useState("");
 
+  const { restoreCart } = useSelector((state) => state.cart);
+  console.log("restore", restoreCart);
+
   const handleInputChange = (e) => {
     setCoupon(e.target.value);
   };
@@ -91,7 +94,9 @@ const Cart = () => {
       <div className="w-11/12 mx-auto flex flex-col mt-16 lg:mt-36 mb-12">
         <div className="flex flex-col lg:flex-row w-full justify-between text-lg font-bold">
           <div className="w-full lg:w-[70%] border-b-2 pb-3">My Cart</div>
-          <div className="hidden sm:block w-full lg:w-[25%] border-b-2 pb-3 mt-4 lg:mt-0">Order Summary</div>
+          <div className="hidden sm:block w-full lg:w-[25%] border-b-2 pb-3 mt-4 lg:mt-0">
+            Order Summary
+          </div>
         </div>
         <div className="w-full flex flex-col lg:flex-row mt-8">
           <div className="w-full lg:w-[70%] flex flex-col mb-10">
@@ -104,11 +109,16 @@ const Cart = () => {
             <div className="bg-gray-100 p-4 rounded-lg">
               <h3 className="text-lg font-semibold mb-2">Order summary</h3>
               <p className="text-gray-600 mb-2">Total Items: {totalItems}</p>
-              <a href="#estimate-delivery" className="text-blue-500 hover:underline mb-2 block">
+              <a
+                href="#estimate-delivery"
+                className="text-blue-500 hover:underline mb-2 block"
+              >
                 Estimate Delivery
               </a>
               <h3 className="text-xl font-bold mb-4">Total: ₹{total}</h3>
-              <button className="w-full bg-black text-white py-2 rounded">Checkout</button>
+              <button className="w-full bg-black text-white py-2 rounded">
+                Checkout
+              </button>
               <p className="text-gray-500 mt-2">🔒 Secure Checkout</p>
             </div>
           </div>
@@ -122,7 +132,11 @@ const Cart = () => {
             >
               <SlTag /> <span>Enter a promo code</span>
             </p>
-            <div className={`flex items-center ${couponVis ? 'flex-row' : 'hidden'} mt-2`}>
+            <div
+              className={`flex items-center ${
+                couponVis ? "flex-row" : "hidden"
+              } mt-2`}
+            >
               <input
                 type="text"
                 className="border outline-none w-full lg:w-1/4 px-4 py-2 rounded"

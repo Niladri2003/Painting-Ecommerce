@@ -29,7 +29,7 @@ const cartSlice = createSlice({
             }
             state.cart.push(product);
             state.totalItems += product.data.quantity;
-            state.total += product.data.price * product.data.quantity;
+            state.total += product.data.quantity_price * product.data.quantity;
             localStorage.setItem("cart", JSON.stringify(state.cart));
             localStorage.setItem("total", JSON.stringify(state.total));
             localStorage.setItem("totalItems", JSON.stringify(state.totalItems));

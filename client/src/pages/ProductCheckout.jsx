@@ -447,22 +447,16 @@ const ProductCheckout = () => {
         },
       });
 
-      console.log("API Response:", response.status);
-
-      if (response.status === 200 || response.status === 201) {
-        console(response.data);
-        dispatch(addToCart(response.data.data)); // Update Redux store with the response data
-        toast({
-          title: "Added to Cart",
-          description: "The item has been added to your cart.",
-          status: "success",
-          duration: 2500,
-          isClosable: true,
-        });
-      } 
-      // else {
-      //   throw new Error("Failed to add to cart");
-      // }
+      console.log("API Response data:", response.data); // Log the response data to verify
+      console.log(product)
+      dispatch(addToCart(product)); // Update Redux store with the response data
+      toast({
+        title: "Added to Cart",
+        description: "The item has been added to your cart.",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
     } catch (error) {
       console.error("API Error:", error.response.data?.message); // Log the exact error
       toast({
