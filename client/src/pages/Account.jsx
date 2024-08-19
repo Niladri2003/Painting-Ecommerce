@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import defaultAvatar from "../assets/avatar/defaultAvatar.jpg"; // Replace with your actual image path
-import { BASEAPI } from "../utils/BASE_API";
+import { BASEAPI } from "../utils/BASE_API.js";
 import {
   Modal,
   ModalOverlay,
@@ -23,13 +23,21 @@ import {
   Button,
   Input,
   useToast,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from "@chakra-ui/react";
 
 const AccountPage = () => {
   const [selectedTab, setSelectedTab] = useState("delivery-address");
   const [addresses, setAddresses] = useState([]);
+  const [orders, setOrders] = useState([]); // State for storing user orders
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editAddress, setEditAddress] = useState(null);
+  const [password, setPassword] = useState("");
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -39,19 +47,20 @@ const AccountPage = () => {
     country: "",
     pin_code: "",
     mobile_number: "",
-    email: "",
-    set_as_default: "true",
+    email: ""
   });
 
   const toast = useToast();
   const userProfileImage = null;
   const token = localStorage.getItem("authToken"); // Assuming the token is stored in localStorage
-  
+
   const user = useSelector((state) => state.profile.user);
 
   useEffect(() => {
     if (selectedTab === "delivery-address") {
       loadAddresses();
+    } else if (selectedTab === "orders") {
+      loadOrders();
     }
   }, [selectedTab]);
 
@@ -63,10 +72,27 @@ const AccountPage = () => {
         },
       });
       setAddresses(response.data.address);
-      console.log(response.data);
     } catch (error) {
       toast({
         title: "Error loading addresses",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+    }
+  };
+
+  const loadOrders = async () => {
+    try {
+      const response = await axios.get(`${BASEAPI}/get-all-orders`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      setOrders(response.data.orders);
+    } catch (error) {
+      toast({
+        title: "Error loading orders",
         status: "error",
         duration: 2500,
         isClosable: true,
@@ -82,7 +108,6 @@ const AccountPage = () => {
 
       const method = editAddress ? "put" : "post";
 
-      // Only keep the necessary fields for creating/updating an address
       const {
         first_name,
         last_name,
@@ -104,8 +129,7 @@ const AccountPage = () => {
         country,
         pin_code,
         mobile_number,
-        email,
-        set_as_default: "true", // Hardcoded to true
+        email
       };
       await axios({
         method: method,
@@ -251,40 +275,92 @@ const AccountPage = () => {
         ) : (
           <p className="px-4">No addresses found.</p>
         )}
-        {/* <li className="bg-white py-4 px-6 rounded-md shadow flex justify-between items-end">
-          <div>
-            <p className="font-bold">Akash Biswas</p>
-            <p className="py-2">
-              uttar goara, hatkalna, bardhaman, nibhujibazar,west bengal,713434
-              uttar goara, hatkalna, bardhaman, nibhujibazar,west bengal,713434
-              uttar goara, hatkalna, bardhaman, nibhujibazar,west bengal,713434
-            </p>
-            <p>Pin Code: 4555121</p>
-            <p>Mobile: 615111611</p>
-            <p>Email: ba a @gmail.com</p>
-          </div>
-          
-          <div className="flex space-x-3 self-end">
-            <div className="border-2 border-black p-2 rounded-[.2rem] bg-black group duration-300 hover:bg-transparent cursor-pointer">
-            <FaEdit
-              className="text-white group-hover:text-black  duration-300"
-              onClick={() => openModal(address)}
-            />
-            </div>
-            <div className="border-2 border-black p-2 rounded-[.2rem] bg-black group duration-300 hover:bg-transparent cursor-pointer">
-                 <FaTrash
-              className="text-white group-hover:text-black  duration-300"
-              onClick={() => handleDeleteAddress(address.id)}
-            /> 
-            </div>
-          </div>
-        </li> */}
-
       </ul>
     </div>
   );
 
-  // ChangePassword component modified to make API call for resetting password
+  // const renderOrders = () => (
+  //   <div className="h-[40rem] overflow-auto scrollbar-thin">
+  //     <div className="bg-gray-100 p-4 sticky top-0 z-10">
+  //       <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
+  //     </div>
+  //     <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
+  //       <Thead>
+  //         <Tr>
+  //           <Th>Product</Th>
+  //           <Th>Total</Th>
+  //           <Th>Status</Th>
+  //           <Th>Created At</Th>
+  //         </Tr>
+  //       </Thead>
+  //       <Tbody>
+  //         {/* {orders?.length > 0 ? (
+  //           orders.map((order) => (
+  //             <Tr key={order.order_id}>
+  //               <Td>{order.order_id}</Td>
+  //               <Td>{order.total}</Td>
+  //               <Td>{order.order_status}</Td>
+  //               <Td>{new Date(order.order_created_at).toLocaleString()}</Td>
+  //             </Tr>
+  //           ))
+  //         ) : (
+  //           <Tr>
+  //             <Td colSpan="4" textAlign="center">No orders found.</Td>
+  //           </Tr>
+  //         )} */}
+  //         <Tr >
+  //               <Td>Krishna Talapatra With frame10*12</Td>
+  //               <Td>₹3999</Td>
+  //               <Td>
+
+  //               <span className="text-green-700 font-bold ">Delivered</span>
+  //               </Td>
+  //               <Td>12-08-2024</Td>
+  //             </Tr>
+  //       </Tbody>
+  //     </Table>
+  //   </div>
+  // );
+  const renderOrders = () => (
+    <div className="h-[40rem] overflow-auto scrollbar-thin">
+      <div className="bg-gray-100 p-4 sticky top-0 z-10">
+        <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
+      </div>
+      <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
+        <Thead>
+          <Tr>
+            <Th>Product</Th>
+            <Th>Total</Th>
+            <Th>Status</Th>
+            <Th>Created At</Th>
+            <Th>Invoice</Th> {/* New column for the invoice download button */}
+          </Tr>
+        </Thead>
+        <Tbody>
+          <Tr >
+            <Td>Krishna Talapatra With frame10*12</Td>
+            <Td>₹3999</Td>
+            <Td>
+
+              <span className="text-green-700 font-bold ">Delivered</span>
+            </Td>
+            <Td>12-08-2024</Td>
+            <Td>
+              {/* Dummy Download Invoice Button */}
+              <button
+                className="border-2 border-black p-2 rounded-[1rem] bg-black group duration-300 hover:bg-transparent hover:text-black cursor-pointer text-white "
+                onClick={() => alert('Download invoice feature coming soon!')}
+              >
+                Invoice
+              </button>
+            </Td>
+          </Tr>
+        </Tbody>
+      </Table>
+    </div>
+  );
+
+
   const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -395,31 +471,144 @@ const AccountPage = () => {
             />
           </div>
           <Button type="submit" colorScheme="" className="border-2 border-black p-2 rounded-[1rem] bg-black group duration-300 hover:bg-transparent cursor-pointer">
-          <p className="text-white group-hover:text-black  duration-300">
-            Update Password
-          </p>
+            <p className="text-white group-hover:text-black  duration-300">
+              Update Password
+            </p>
           </Button>
         </form>
       </div>
     );
   };
 
-  const MyOrders = () => (
-    <div className="p-4 md:p-0">
-      <h1 className="text-2xl font-bold mb-6">My Orders</h1>
-      <p>No active orders.</p>
-    </div>
-  );
+
+  // const handleDeleteAccount = async (e) => {
+  //   e.preventDefault();
+  //   const password = e.target.password.value;
+
+  //   if (!password) {
+  //     toast({
+  //       title: "Validation Error",
+  //       description: "Please enter your password.",
+  //       status: "warning",
+  //       duration: 2500,
+  //       isClosable: true,
+  //     });
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await axios.delete(`${BASEAPI}/delete-account`, {
+  //       headers: {
+  //         Authorization: `${token}`,
+  //       },
+  //       data: { password },
+  //     });
+
+  //     if (response.status === 200) {
+  //       toast({
+  //         title: "Account Deleted",
+  //         description: "Your account has been deleted successfully.",
+  //         status: "success",
+  //         duration: 2500,
+  //         isClosable: true,
+  //       });
+  //       localStorage.removeItem("authToken");
+  //       navigate("/login");
+  //     } else {
+  //       throw new Error("Failed to delete account");
+  //     }
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error",
+  //       description:
+  //         error.response?.data?.message ||
+  //         "Failed to delete account. Please try again.",
+  //       status: "error",
+  //       duration: 3000,
+  //       isClosable: true,
+  //     });
+  //   }
+  // };
+
+  // const DeleteAccount = () => (
+  //   <div className="p-4 md:p-0">
+  //     <h1 className="text-2xl font-bold mb-6 text-red-600">Delete Account</h1>
+  //     <form  onSubmit={handleDeleteAccount}>
+  //       <div className="mb-4">
+  //         <label className="block text-sm font-medium mb-1">Password</label>
+  //         <Input
+  //           type="password"
+  //           className="w-full p-2 border border-gray-300 rounded"
+  //         />
+  //       </div>
+  //       <Button type="submit" colorScheme="red">
+  //         Delete Account
+  //       </Button>
+  //     </form>
+  //   </div>
+  // );
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault();
+
+    if (!password) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter your password.",
+        status: "warning",
+        duration: 2500,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.delete(`${BASEAPI}/delete-account`, {
+        data: { password },
+        headers: {
+          Authorization: `${token}`,
+        }
+
+      });
+
+      if (response.status === 200) {
+        toast({
+          title: "Account Deleted",
+          description: "Your account has been deleted successfully.",
+          status: "success",
+          duration: 2500,
+          isClosable: true,
+        });
+        localStorage.removeItem("authToken");
+        navigate("/signin");
+      } else {
+        throw new Error("Failed to delete account");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error.response?.data?.message ||
+          "Failed to delete account. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
 
   const DeleteAccount = () => (
-    <div  className="p-4 md:p-0">
+    <div className="p-4 md:p-0">
       <h1 className="text-2xl font-bold mb-6 text-red-600">Delete Account</h1>
-      <form>
+      <form onSubmit={handleDeleteAccount}>
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">Password</label>
           <Input
             type="password"
-            className="w-full p-2 border border-gray-300 rounded"
+            name="password"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)} // Update the password state on change
+            required
           />
         </div>
         <Button type="submit" colorScheme="red">
@@ -428,6 +617,7 @@ const AccountPage = () => {
       </form>
     </div>
   );
+
 
   const renderModal = () => (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -520,7 +710,7 @@ const AccountPage = () => {
       case "change-password":
         return <ChangePassword />; // Changed to include API call for resetting password
       case "orders":
-        return <MyOrders />;
+        return renderOrders(); // Display the user's orders
       case "delete-account":
         return <DeleteAccount />;
       default:

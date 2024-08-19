@@ -47,8 +47,9 @@ const OrdersList = () => {
                     Authorization: `${token}`, // Add the Authorization header
                 },
             });
-
+            
             setOrders(response.data.orders);
+            console.log(orders)
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -181,18 +182,18 @@ const OrdersList = () => {
                 <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
                     <Thead>
                         <Tr>
-                            <Th>Order ID</Th>
+                            <Th>Product Name</Th>
                             <Th>First Name</Th>
                             <Th>Last Name</Th>
                             <Th>Total</Th>
                             <Th>Status</Th>
-                            <Th>Created At</Th>
+                            <Th>Updated At</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
-                        {orders.map((order) => (
+                        {orders && orders.map((order) => (
                             <Tr key={order.order_id} onClick={() => openModal(order)} cursor="pointer" _hover={{ bg: "gray.100" }}>
-                                <Td>{order.order_id}</Td>
+                                <Td>{order.order_items[0]?.product_name}</Td>
                                 <Td>{order.addresses[0]?.first_name}</Td>
                                 <Td>{order.addresses[0]?.last_name}</Td>
                                 <Td>{order.total}</Td>
@@ -204,7 +205,7 @@ const OrdersList = () => {
                                 }>
                                     {order.order_status}
                                 </Td>
-                                <Td>{dayjs(order.order_created_at).format("DD-MM-YYYY HH:mm")}</Td>
+                                <Td>{dayjs(order.order_updated_at).format("DD-MM-YYYY HH:mm")}</Td>
                             </Tr>
                         ))}
                     </Tbody>
