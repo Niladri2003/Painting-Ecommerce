@@ -40,7 +40,7 @@ const Card = ({ product }) => {
         {/*</div>*/}
         <div className="p-4 bg-background">
           <h3 className="text-[18px] font-[500] leading-[22px]">{product.title}</h3>
-          <h4 className="text-[15px] font-[400] leading-[24px]">₹{product.price}</h4>
+          <h4 className="text-[15px] font-[400] leading-[24px]">₹{product.original_price+(product?.sizes[0].charge)+(product?.sub_category[0].charge)}</h4>
         </div>
       </div>
   );

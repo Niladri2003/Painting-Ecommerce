@@ -74,19 +74,63 @@ import HomeHero from "../components/Home/HomeHero";
 import React, { useState } from "react";
 import { SlTag } from "react-icons/sl";
 import { GrNotes } from "react-icons/gr";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { CartItem } from "../components/cart/CartItem";
-
+import { useEffect } from "react";
+import axios from "axios";
+import { useToast } from "@chakra-ui/toast";
+import { BASEAPI } from "../utils/BASE_API";
 const Cart = () => {
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
   const { cart, total, totalItems } = useSelector((state) => state.cart);
   const [couponVis, setcouponVis] = useState(false);
   const [coupon, setCoupon] = useState("");
-
+  const[cartdata,setCartdata]=useState([])
+  const toast = useToast();
   const { restoreCart } = useSelector((state) => state.cart);
-  console.log("restore", restoreCart);
+ // console.log("restore", restoreCart);
+  const token = localStorage.getItem('authToken');
 
+useEffect(() => {
+    fetchCartDetails();
+}, []);
+
+const fetchCartDetails = async () => {
+    try {
+        const {data} = await axios.get(`${BASEAPI}/get-cart`, {
+            headers: { Authorization: `${token}` }
+        });
+        console.log("DAta",data);
+        
+        setCartdata(data.cart)
+            toast({
+                title: data.msg,
+                status: 'success',
+                duration: 3000,
+                isClosable: true,
+            });
+            console.log(cartdata);
+            
+        
+    } catch (error) {
+        console.error('Error fetching addresses:', error);
+        toast({
+            title: data.msg,
+            description: 'Failed to fetch addresses.',
+            status: 'error',
+            duration: 3000,
+            isClosable: true,
+        });
+    }
+};
   const handleInputChange = (e) => {
     setCoupon(e.target.value);
+  };
+
+  const handleCheckout = () => {
+    navigate("/buynow"); // Redirect to the Buynow page
   };
 
   return (
@@ -116,7 +160,7 @@ const Cart = () => {
                 Estimate Delivery
               </a>
               <h3 className="text-xl font-bold mb-4">Total: ₹{total}</h3>
-              <button className="w-full bg-black text-white py-2 rounded">
+              <button className="w-full bg-black text-white py-2 rounded" onClick={handleCheckout}>
                 Checkout
               </button>
               <p className="text-gray-500 mt-2">🔒 Secure Checkout</p>
