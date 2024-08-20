@@ -12,6 +12,7 @@ import Cart from "./pages/CartPage.jsx";
 import Footer from "./components/footer/Footer.jsx";
 import Account from "./pages/Account.jsx";
 import AuthCallback from "./pages/AuthCallback.jsx";
+import ExtraProducts from "./pages/ExtraProducts.jsx";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/contact-us" element={<Contact/>} />
         <Route path="/about" element={<About/>} />
+        <Route path="/extraproducts" element={<ExtraProducts/>}/>
         <Route path="/shop" element={<Shop/>} />
         <Route path="/product/:id" element={<ProductCheckout />} />
         <Route path="/signup" element={<SignUp/>} />
