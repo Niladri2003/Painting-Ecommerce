@@ -6,7 +6,8 @@ import Footer from '../components/footer/Footer';
 import { BASEAPI } from '../utils/BASE_API';
 import AOS from 'aos';
 import { useToast } from '@chakra-ui/react';  
-import 'aos/dist/aos.css';  // Import AOS styles
+import 'aos/dist/aos.css';
+import {apiConnector} from "../services/apiConnector.jsx";  // Import AOS styles
 
 export default function Contact() {
     // Initialize AOS
@@ -40,11 +41,12 @@ export default function Contact() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${BASEAPI}/contact-us`, formData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            // const response = await axios.post(`${BASEAPI}/contact-us`, formData, {
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     }
+            // });
+            const response=await apiConnector('POST','/contact-us',formData,null,null,false)
             if (response.status === 200) {
                 // Display success toast
                 toast({

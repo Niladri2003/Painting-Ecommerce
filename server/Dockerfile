@@ -39,7 +39,6 @@ EXPOSE 5000
 
 # Set environment variables
 ENV STAGE_STATUS="dev"
-ENV SERVER_READ_TIMEOUT=60
 #ENV SAMPLE_DATA_PATH="/root/platform/migration/sample_data.sql"
 
 # Server settings:

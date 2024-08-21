@@ -120,8 +120,8 @@ const ProductUpload = () => {
                     'Content-Type': 'multipart/form-data',
                 },
             });
-
-            const productId = response.data.data.id;
+            console.log(response.data.product);
+            const productId = response.data.product.id;
 
             toast({
                 title: 'Product Uploaded successfully.',

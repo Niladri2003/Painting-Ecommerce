@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { BASEAPI } from "../utils/BASE_API";
 import { useToast } from "@chakra-ui/react";
+import {apiConnector} from "../services/apiConnector.jsx";
 
 const ProductCheckout = () => {
   const { cartId } = useSelector((state) => state.cart); // Access cart_id from Redux state
@@ -34,7 +35,8 @@ const ProductCheckout = () => {
   const getProductDetails = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${BASEAPI}/get-product-details/${id}`);
+      //const { data } = await axios.get(`${BASEAPI}/get-product-details/${id}`);
+      const {data}=await apiConnector('GET',`/get-product-details/${id}`,null,null,null,false)
       setProduct(data);
 
       if (data.data.sizes.length > 0) {

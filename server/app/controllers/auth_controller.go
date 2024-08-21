@@ -227,9 +227,9 @@ func RefreshToken(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
 	}
 
-	if time.Now().Unix() > claims.Expires {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
-	}
+	//if time.Now().Unix() > claims.Expires {
+	//	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	//}
 
 	// Get refresh token from the request body
 	var data struct {
@@ -658,6 +658,9 @@ func TokenDetails(c *fiber.Ctx) error {
 	claims, err := middleware.ExtractTokenMetadata(c)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	if time.Now().Unix() > claims.Expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
 	}
 	return c.JSON(fiber.Map{"data": claims})
 
