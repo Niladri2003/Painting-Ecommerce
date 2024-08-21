@@ -604,8 +604,16 @@ func (q *OrderQueries) GetOrders() ([]models.OrderWithItems, error) {
 			orderMap[orderWithItems.OrderID].OrderItems = append(orderMap[orderWithItems.OrderID].OrderItems, orderItem)
 		}
 
-		// Add the address to the order if it's not already present and if the address exists
-		if addressID.Valid {
+		// Only add the address if it's not already in the order's address slice
+		addressAlreadyAdded := false
+		for _, addr := range orderMap[orderWithItems.OrderID].Address {
+			if addr.ID == address.ID {
+				addressAlreadyAdded = true
+				break
+			}
+		}
+
+		if !addressAlreadyAdded && addressID.Valid {
 			address.ID = uuid.MustParse(addressID.String)
 			orderMap[orderWithItems.OrderID].Address = append(orderMap[orderWithItems.OrderID].Address, address)
 		}

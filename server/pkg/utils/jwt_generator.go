@@ -3,10 +3,12 @@ package utils
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -93,6 +95,49 @@ func generateNewRefreshToken() (string, error) {
 }
 
 // ParseRefreshToken func for parse second argument from refresh token.
-//func ParseRefreshToken(refreshToken string) (int64, error) {
-//	return strconv.ParseInt(strings.Split(refreshToken, ".")[1], 0, 64)
-//}
+//
+//	func ParseRefreshToken(refreshToken string) (int64, error) {
+//		return strconv.ParseInt(strings.Split(refreshToken, ".")[1], 0, 64)
+//	}
+//
+// DecodeRefreshToken decodes and validates a refresh token.
+func DecodeRefreshToken(token string) (bool, error) {
+	// Split the token into hash and expiration time.
+	parts := strings.Split(token, ".")
+	if len(parts) != 2 {
+		return false, errors.New("invalid refresh token format")
+	}
+
+	receivedHash := parts[0]
+	expireTimeStr := parts[1]
+
+	// Convert the expiration time to an integer.
+	expireTimeInt, err := strconv.ParseInt(expireTimeStr, 10, 64)
+	if err != nil {
+		return false, errors.New("invalid expiration time in refresh token")
+	}
+
+	// Check if the token is expired.
+	if time.Now().Unix() > expireTimeInt {
+		return false, errors.New("refresh token has expired")
+	}
+
+	// Recreate the original hash using the JWT_REFRESH_KEY and the expiration time.
+	hash := sha256.New()
+	refresh := os.Getenv("JWT_REFRESH_KEY") + time.Unix(expireTimeInt, 0).String()
+
+	_, err = hash.Write([]byte(refresh))
+	if err != nil {
+		return false, errors.New("failed to generate hash for validation")
+	}
+
+	expectedHash := hex.EncodeToString(hash.Sum(nil))
+
+	// Compare the received hash with the expected hash.
+	if receivedHash != expectedHash {
+		return false, errors.New("invalid refresh token")
+	}
+
+	// If everything is fine, return true.
+	return true, nil
+}

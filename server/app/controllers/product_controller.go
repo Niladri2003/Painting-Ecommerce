@@ -155,7 +155,6 @@ func CreateProduct(c *fiber.Ctx) error {
 		"meg":     "success",
 	})
 }
-
 func DeleteProduct(c *fiber.Ctx) error {
 	now := time.Now().Unix()
 
@@ -208,7 +207,6 @@ func DeleteProduct(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{"message": "Product and images deleted successfully"})
 }
-
 func GetProductDetails(c *fiber.Ctx) error {
 	id := c.Params("id")
 
@@ -238,7 +236,6 @@ func GetProductDetails(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": productDetails, "images": productImage, "related_products": allProducts})
 
 }
-
 func GetAllProducts(c *fiber.Ctx) error {
 	// Create database connection
 	db, err := database.OpenDbConnection()
@@ -289,7 +286,6 @@ func GetProductsByCategoryID(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": allProducts})
 
 }
-
 func ChangeProductStatus(c *fiber.Ctx) error {
 
 	type isActiveRequest struct {
