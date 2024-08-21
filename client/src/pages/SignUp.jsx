@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useToast } from '@chakra-ui/react'; // Import useToast from Chakra UI
-import axios from 'axios'; // Import axios for making HTTP requests
 import { FcGoogle } from "react-icons/fc";
 import { BASEAPI } from '../utils/BASE_API';
-import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
+import {apiConnector} from "../services/apiConnector.jsx"; // Import useNavigate
 
 const SignUp = () => {
     const [formData, setFormData] = useState({
@@ -54,17 +54,20 @@ const SignUp = () => {
         }
 
         try {
-            const response = await axios.post(`${BASEAPI}/user/register`, {
-                first_name: first_name.trim(),
-                last_name: last_name.trim(),
-                email: email.trim(),
-                password: password.trim(),
-                user_role: formData.user_role,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+            const response = await apiConnector(
+                'POST',                       // HTTP method
+                `/user/register`,   // API endpoint
+                {
+                    first_name: first_name.trim(),
+                    last_name: last_name.trim(),
+                    email: email.trim(),
+                    password: password.trim(),
+                    user_role: formData.user_role,
+                },                                      // Request body data
+                { 'Content-Type': 'application/json' },  // Headers
+                null,                          // URL parameters (none in this case)
+                false                          // Do not use access token
+            );
 
             if (response.status === 201 || response.status === 200) {
                 toast({
