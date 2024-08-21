@@ -6,27 +6,13 @@ import MobileMenu from "./MobileMenu";
 import NavItems from "./NavItems";
 import AvatarDropdown from "./AvatarDropDown";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { userProfileImage } from "../../utils/userProfileImage";
 
 const Navbar = () => {
   const { totalItems } = useSelector((state) => state.cart);
   const token = useSelector((state) => state.auth.token);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-
-  const { user } = useSelector((state) => state.profile);
-
-  console.log("fetch user:", user); // Fetch from your user state or API
-
-  const userProfileImage = user?.profile_picture
-    ? user.profile_picture
-    : `https://api.dicebear.com/5.x/initials/svg?seed=${
-        user?.first_name || "User"
-      } ${user?.last_name || ""}`;
-
-      console.log("fetch user:", userProfileImage); // Fetch from your user state or API
-
-  // const {user} = useSelector((state)=>state.profile)
-  // console.log("fetch user:", user?.profile_picture) // Fetch from your user state or API
 
   useEffect(() => {
     const handleScroll = () => {
