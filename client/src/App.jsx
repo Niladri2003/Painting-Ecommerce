@@ -17,7 +17,6 @@ import ExtraProducts from "./pages/ExtraProducts.jsx";
 
 function App() {
 
-
   return (
     <div className="flex min-h-screen  items-center flex-col overflow-hidden">
       <Navbar />

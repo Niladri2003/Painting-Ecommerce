@@ -735,7 +735,7 @@ const AccountPage = () => {
       <aside className="w-full md:w-1/3 bg-white shadow-md">
         <div className="flex flex-col items-center p-6">
           <img
-            src={userProfileImage || defaultAvatar}
+            src={user?.profile_picture || defaultAvatar}
             alt="User Avatar"
             className="w-24 h-24 rounded-full"
           />

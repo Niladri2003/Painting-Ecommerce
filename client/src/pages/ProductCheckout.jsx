@@ -11,6 +11,7 @@ const ProductCheckout = () => {
   const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [product, setProduct] = useState(null);
+  const [subImages, setsubImages] = useState(null)
   const [quantity, setQuantity] = useState(1);
   const [calculatedOriginalPrice, setCalculatedOriginalPrice] = useState(0);
   const [calculatedDiscountedPrice, setCalculatedDiscountedPrice] = useState(0);
@@ -28,8 +29,13 @@ const ProductCheckout = () => {
   const toast = useToast(); // Chakra UI toast for notifications
   const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
 
-  const handleNavigate = (cur) => {
-    navigate(`/product/${cur.id}`);
+  const handleNavigate = (cur,image) => {
+  
+  // Navigate to the new product page
+  navigate(`/product/${cur.id}`);
+  
+  setsubImages(image)
+   
   };
 
   const getProductDetails = async () => {
@@ -100,19 +106,19 @@ const ProductCheckout = () => {
     }
   }, [selectedSize, selectedSubCategory, product]);
 
-  const handleNextImage = () => {
-    setSelectedImageIndex((prevIndex) =>
-      product.data.images && prevIndex < product.data.images.length - 1
-        ? prevIndex + 1
-        : prevIndex
-    );
-  };
+  // const handleNextImage = () => {
+  //   setSelectedImageIndex((prevIndex) =>
+  //     product.data.images && prevIndex < product.data.images.length - 1
+  //       ? prevIndex + 1
+  //       : prevIndex
+  //   );
+  // };
 
-  const handlePreviousImage = () => {
-    setSelectedImageIndex((prevIndex) =>
-      prevIndex > 0 ? prevIndex - 1 : prevIndex
-    );
-  };
+  // const handlePreviousImage = () => {
+  //   setSelectedImageIndex((prevIndex) =>
+  //     prevIndex > 0 ? prevIndex - 1 : prevIndex
+  //   );
+  // };
 
   const toggleSection = (section) => {
     setSections((prev) => ({
@@ -129,7 +135,8 @@ const ProductCheckout = () => {
     if (!selectedSize || !selectedSubCategory) {
       toast({
         title: "Selection Error",
-        description: "Please select a size and subcategory before adding to cart.",
+        description:
+          "Please select a size and subcategory before adding to cart.",
         status: "warning",
         duration: 2500,
         isClosable: true,
@@ -140,11 +147,11 @@ const ProductCheckout = () => {
     try {
       const response = await axios.get(`${BASEAPI}/get-cart`, {
         headers: {
-          Authorization: `${token}`, 
+          Authorization: `${token}`,
         },
       });
 
-      const cartItems = response.data.items || []; 
+      const cartItems = response.data.items || [];
 
       // Check if the current product is already in the cart
       const existingItem = cartItems.find(
@@ -179,7 +186,6 @@ const ProductCheckout = () => {
           duration: 2500,
           isClosable: true,
         });
-
       } else {
         // If the item is not in the cart, add it as a new item
         const cartItem = {
@@ -205,7 +211,7 @@ const ProductCheckout = () => {
           isClosable: true,
         });
 
-        setIsInCart(true); 
+        setIsInCart(true);
       }
     } catch (error) {
       toast({
@@ -232,7 +238,9 @@ const ProductCheckout = () => {
       const cartItems = response.data.items || []; // Ensure this is an array
 
       // Check if the current product is in the cart
-      const index = cartItems.findIndex((item) => item.product_id === productId);
+      const index = cartItems.findIndex(
+        (item) => item.product_id === productId
+      );
 
       return index >= 0;
     } catch (error) {
@@ -257,55 +265,108 @@ const ProductCheckout = () => {
   }
 
   // Calculate discount percentage
-  const discountPercentage = calculatedOriginalPrice > 0
-    ? Math.round(
-        ((calculatedOriginalPrice - calculatedDiscountedPrice) /
-          calculatedOriginalPrice) *
-          100
-      )
-    : 0;
+  const discountPercentage =
+    calculatedOriginalPrice > 0
+      ? Math.round(
+          ((calculatedOriginalPrice - calculatedDiscountedPrice) /
+            calculatedOriginalPrice) *
+            100
+        )
+      : 0;
+  console.log(product);
+  const sub_images = [
+    {
+      images: "https://www.bandt.com.au/information/uploads/2015/09/getty3.jpg",
+    },
+    {
+      images:
+        "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg",
+    },
+  ];
+  // Click to change main images
+  const handleImgClick=(e)=>{
+    setsubImages(e.target.src)
+  }
 
   return (
     <div className="min-h-screen flex flex-col w-full mb-5">
-      <div className="flex flex-col lg:flex-row items-center md:flex-col lg:items-start mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl lg:gap-6 mx-auto">
-        <div className="w-full lg:w-1/2 relative">
+      <div className=" p-4 grid grid-cols-1 md:grid-cols-2 grid-rows-1 mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl lg:gap-6 mx-auto">
+        {/* first raw */}
+        <div className="w-full relative ">
           <div>
-            <div className="mb-4">
-
+            <div className="mb-4 overflow-hidden h-[500px] w-full">
               {product.images && product.images.length > 0 ? (
-                  <img
-                      src={product.images[selectedImageIndex].image_url} // Use the product images
-                      alt={product.title || "Product image"} // Use a fallback alt text
-                      className="w-full h-auto max-h-[500px] object-cover rounded-lg" // Set max-height and object-fit
-                  />
+                <img
+                  src={
+                    subImages
+                      ? subImages
+                      : product.images[selectedImageIndex].image_url
+                  } // Use the product images
+                  alt={product.title || "Product image"} // Use a fallback alt text
+                  className="w-full h-full object-cover rounded-lg border-2 border-sky-500" // Make the image cover the container
+                />
               ) : (
-                  <div>No images available</div> // Fallback content
+                <div>No images available</div> // Fallback content
               )}
             </div>
+
             {product.images &&
-                product.images.length > 1 && ( // Only show buttons if there is more than 1 image
-                    <>
-                      <button
-                          className="absolute left-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                          onClick={handlePreviousImage}
-                          disabled={selectedImageIndex === 0}
-                          aria-label="Previous image"
-                      >
-                        &lt;
-                      </button>
-                      <button
-                          className="absolute right-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                          onClick={handleNextImage}
-                          disabled={selectedImageIndex === product.images.length - 1}
-                          aria-label="Next image"
-                      >
-                        &gt;
-                      </button>
-                    </>
-                )}
+              product.images.length > 1 && ( // Only show buttons if there is more than 1 image
+                <>
+                  <button
+                    className="absolute left-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                    onClick={handlePreviousImage}
+                    disabled={selectedImageIndex === 0}
+                    aria-label="Previous image"
+                  >
+                    &lt;
+                  </button>
+                  <button
+                    className="absolute right-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
+                    onClick={handleNextImage}
+                    disabled={selectedImageIndex === product.images.length - 1}
+                    aria-label="Next image"
+                  >
+                    &gt;
+                  </button>
+                </>
+              )}
+            {/* sub images=========================================== */}
+            <div className="w-full flex gap-2">
+              {/* default images */}
+              <div className="w-[3rem] overflow-hidden h-[2.5rem] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md">
+                <img
+                  className="w-full h-full object-cover"
+                  src={product.images[selectedImageIndex].image_url}
+                  alt="sub images"
+                  onClick={(e) => {
+                    handleImgClick(e);
+                  }}
+                />
+              </div>
+              {/* sub image section */}
+              {sub_images.map((cur, index) => {
+                return (
+                  <div
+                    className="w-[3rem] overflow-hidden h-[2.5rem] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md"
+                    key={index}
+                  >
+                    <img
+                      className="w-full h-full object-cover"
+                      src={cur.images}
+                      alt="sub images"
+                      onClick={(e) => {
+                        handleImgClick(e);
+                      }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Related products=================================================================================================================== */}
-            <h1>Related Products</h1>
-            <div className="w-[100%] flex gap-5 border-2 border-black border-r-0 border-l-0 py-2 overflow-x-auto">
+            {/* <h1>Related Products</h1>
+            <div className="w-[100%] flex gap-5  border-r-0 border-l-0 py-2 overflow-x-auto">
 
 
               {product.related_products.map((cur, index) => {
@@ -327,14 +388,12 @@ const ProductCheckout = () => {
                     </div>
                 );
               })}
-            </div>
-
-
+            </div> */}
           </div>
         </div>
 
         {/* Right Side: Product Details */}
-        <div className="w-full lg:w-1/2 lg:pl-8 mt-8 lg:mt-0">
+        <div className="w-full lg:pl-8 mt-8 lg:mt-0 ">
           <h1 className="text-2xl md:text-3xl font-bold mb-2">
             {product.data.title}
           </h1>
@@ -485,6 +544,42 @@ const ProductCheckout = () => {
             )}
           </div>
         </div>
+        {/* related product section start */}
+        <div className="w-full  col-span-full row-span-2">
+         <div>
+          <div className="w-full"><h2 className="text-center text-4xl py-5">Related Products</h2></div>
+         <div className="w-[100%] flex gap-7  border-r-0 border-l-0 py-2 overflow-x-auto">
+            {product.related_products.map((cur, index) => {
+              return (
+                <div
+                  className=" cursor-pointer"
+                  key={index}
+                  onClick={(e) => handleNavigate(cur,(cur.images[0].image_url))}
+                >
+                  <div className=" h-[9rem] w-[12rem] p-3 bg-slate-300 rounded-[.2rem] overflow-hidden">
+                    <img
+                      src={cur.images[0].image_url}
+                      alt="sub images"
+                      className="w-full h-full object-cover"
+                      onClick={(e) => {
+                        handleImgClick(e);
+                      }}
+                    />
+                  </div>
+                  <h3 className="text-lg font-medium my-1">{cur.title}</h3>
+                  <p className="text-md mt-1">
+                   {cur.description}
+                  </p>
+                  <p className="text-sm mt-1">
+                    <span className="font-medium">Price:</span> ₹{cur.price}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+         </div>
+        </div>
+        {/* end related product section */}
       </div>
     </div>
   );
