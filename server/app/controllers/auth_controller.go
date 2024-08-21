@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -217,6 +219,99 @@ func UserSignIn(c *fiber.Ctx) error {
 			"cart_id":      cart.ID.String(),
 		},
 	})
+}
+func RefreshToken(c *fiber.Ctx) error {
+
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
+	}
+
+	//if time.Now().Unix() > claims.Expires {
+	//	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	//}
+
+	// Get refresh token from the request body
+	var data struct {
+		RefreshToken string `json:"refreshToken"`
+	}
+
+	if err := c.BodyParser(&data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "invalid request",
+		})
+	}
+
+	// Decode the refresh token
+	fmt.Println(data.RefreshToken)
+	expiresRefreshToken, err := strconv.ParseInt(strings.Split(data.RefreshToken, ".")[1], 0, 64)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+	}
+	//validity, err := utils.DecodeRefreshToken(data.RefreshToken)
+	//if err != nil {
+	//	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+	//		"error": true,
+	//		"msg":   "invalid refresh token 1",
+	//	})
+	//}
+	//fmt.Println(validity)
+	//if !validity {
+	//	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "invalid refresh token 2 "})
+	//}
+
+	// Verify if the refresh token exists in Redis
+	if time.Now().Unix() < expiresRefreshToken {
+		connRedis, err := cache.RedisConnection()
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   "internal server error",
+			})
+		}
+		userId := claims.UserID.String()
+		userRole := claims.UserRole
+
+		storedToken, err := connRedis.Get(context.Background(), userId).Result()
+		if err != nil || storedToken != data.RefreshToken {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"error": true,
+				"msg":   "invalid refresh token",
+			})
+		}
+
+		// Generate new access token
+		newTokens, err := utils.GenerateNewTokens(userId, userRole)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   "could not generate new access token",
+			})
+		}
+
+		// Update the refresh token in Redis (optional, based on your implementation)
+		err = connRedis.Set(context.Background(), userId, newTokens.Refresh, time.Hour*24*7).Err() // Example: 7 days expiration
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": true,
+				"msg":   "could not update refresh token",
+			})
+		}
+
+		// Return the new tokens
+		return c.JSON(fiber.Map{
+			"error": false,
+			"msg":   "new access token generated",
+			"tokens": fiber.Map{
+				"access":       newTokens.Access,
+				"refreshToken": newTokens.Refresh,
+			},
+		})
+	} else {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true,
+			"msg": "unauthorized, your session was ended earlier"})
+	}
 }
 
 func UserSignOut(c *fiber.Ctx) error {
@@ -557,4 +652,16 @@ func GetTokens(c *fiber.Ctx) error {
 		"user_details":  sessionMap["user"],
 		"cart_id":       sessionMap["cart_id"],
 	})
+}
+
+func TokenDetails(c *fiber.Ctx) error {
+	claims, err := middleware.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
+	}
+	if time.Now().Unix() > claims.Expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	}
+	return c.JSON(fiber.Map{"data": claims})
+
 }

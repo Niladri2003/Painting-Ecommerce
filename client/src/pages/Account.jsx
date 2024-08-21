@@ -30,6 +30,7 @@ import {
   Th,
   Td,
 } from "@chakra-ui/react";
+import {apiConnector} from "../services/apiConnector.jsx";
 
 const AccountPage = () => {
   const [selectedTab, setSelectedTab] = useState("delivery-address");
@@ -66,11 +67,12 @@ const AccountPage = () => {
 
   const loadAddresses = async () => {
     try {
-      const response = await axios.get(`${BASEAPI}/get-addresses`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      // const response = await axios.get(`${BASEAPI}/get-addresses`, {
+      //   headers: {
+      //     Authorization: `${token}`,
+      //   },
+      // });
+      const response = await apiConnector('GET','get-addresses',null,null,null,true)
       setAddresses(response.data.address);
     } catch (error) {
       toast({
@@ -84,11 +86,12 @@ const AccountPage = () => {
 
   const loadOrders = async () => {
     try {
-      const response = await axios.get(`${BASEAPI}/get-all-orders`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      // const response = await axios.get(`${BASEAPI}/get-all-orders`, {
+      //   headers: {
+      //     Authorization: `${token}`,
+      //   },
+      // });
+      const response =await apiConnector('GET','/get-all-orders',null,null,null,true)
       setOrders(response.data.orders);
     } catch (error) {
       toast({
@@ -103,10 +106,10 @@ const AccountPage = () => {
   const handleSaveAddress = async () => {
     try {
       const endpoint = editAddress
-        ? `${BASEAPI}/update-address`
-        : `${BASEAPI}/create-address`;
+        ? `/update-address`
+        : `/create-address`;
 
-      const method = editAddress ? "put" : "post";
+      const method = editAddress ? "PUT" : "POST";
 
       const {
         first_name,
@@ -131,14 +134,14 @@ const AccountPage = () => {
         mobile_number,
         email
       };
-      await axios({
-        method: method,
-        url: endpoint,
-        data: data,
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      await apiConnector(
+          method,       // HTTP method (PUT or POST)
+          endpoint,     // API endpoint (update or create address)
+          data,
+          null,// Request body data
+          null,         // URL parameters (none in this case)
+          true          // Use access token (true since the token is required)
+      );
 
       toast({
         title: editAddress
@@ -154,6 +157,7 @@ const AccountPage = () => {
       setEditAddress(null);
       resetFormData();
     } catch (error) {
+      console.log(error)
       toast({
         title: "Error saving address",
         status: "error",
@@ -179,11 +183,15 @@ const AccountPage = () => {
 
   const handleDeleteAddress = async (id) => {
     try {
-      await axios.get(`${BASEAPI}/delete-address/${id}`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      await apiConnector(
+          'DELETE',                           // HTTP method
+          `/delete-address/${id}`, // API endpoint
+          null,                            // No request body data for a GET request
+          null,   // Headers including Authorization token
+          null,                            // URL parameters (none in this case)
+          true                             // Use access token (true since the token is required)
+      );
+
       await loadAddresses();
       toast({
         title: "Address deleted successfully",
@@ -391,15 +399,16 @@ const AccountPage = () => {
           });
         } else {
           try {
-            await axios.post(
-              `${BASEAPI}/reset-password`,
-              { new_password: newPassword },
-              {
-                headers: {
-                  Authorization: `${token}`,
-                },
-              }
-            );
+            // await axios.post(
+            //   `${BASEAPI}/reset-password`,
+            //   { new_password: newPassword },
+            //   {
+            //     headers: {
+            //       Authorization: `${token}`,
+            //     },
+            //   }
+            // );
+            await apiConnector('POST','/reset-password',{new_password:newPassword},null,null,true)
 
             toast({
               title: "Password Updated",
@@ -562,13 +571,15 @@ const AccountPage = () => {
     }
 
     try {
-      const response = await axios.delete(`${BASEAPI}/delete-account`, {
-        data: { password },
-        headers: {
-          Authorization: `${token}`,
-        }
-
-      });
+      // const response = await axios.delete(`${BASEAPI}/delete-account`, {
+      //   data: { password },
+      //   headers: {
+      //     Authorization: `${token}`,
+      //   }
+      //
+      //
+      // });
+      const response = await apiConnector('DELETE','/delete-account',{password},null,null,true)
 
       if (response.status === 200) {
         toast({

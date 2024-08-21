@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
-import { useDispatch } from "react-redux";
-import { useToast } from "@chakra-ui/toast";
-import { BASEAPI } from "../utils/BASE_API";
-import { setToken } from "../slices/authSlice";
-import { restoreCart } from "../slices/cartSlice";
-import { setUser } from "../slices/profileSlice";
-import { setCartId } from "../slices/cartSlice";
+import { useDispatch } from 'react-redux';
+import { useToast } from '@chakra-ui/toast'; 
+import { BASEAPI } from '../utils/BASE_API';
+import {setRefreshToken, setToken} from '../slices/authSlice';
+import { restoreCart } from '../slices/cartSlice';
+import { setUser } from '../slices/profileSlice';
+import { setCartId } from '../slices/cartSlice';
+import {apiConnector} from "../services/apiConnector.jsx";
+
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -43,9 +45,7 @@ const SignIn = () => {
     }
 
     try {
-      const response = await axios.post(`${BASEAPI}/user/sign-in`, formData, {
-        headers: { "Content-Type": "application/json" },
-      });
+       const response = await apiConnector('POST',`/user/sign-in`,formData,{'Content-Type':'application/json'},null,false)
       // console.log('Response:', response);
 
       if (response.status === 201 || response.status === 200) {
@@ -62,6 +62,7 @@ const SignIn = () => {
         };
         dispatch(setUser(user));
         dispatch(setToken(access));
+        dispatch(setRefreshToken(refreshToken));
         dispatch(setCartId(cart_id));
 
         // Restore cart from localStorage after login
