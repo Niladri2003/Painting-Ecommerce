@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom'; // Import useNavigate from react
 import Card from '../components/ShopCard';
 import Footer from '../components/footer/Footer';
 import HomeHero from '../components/Home/HomeHero';
-import axios from 'axios';
-import { BASEAPI } from '../utils/BASE_API.js';
+import {apiConnector} from "../services/apiConnector.jsx";
 
 const Shop = () => {
   const [sortType, setSortType] = useState('');
@@ -13,7 +12,8 @@ const Shop = () => {
 
   const getAllProducts = async () => {
     try {
-      const response = await axios.get(`${BASEAPI}/get-all-product`);
+      // const response = await axios.get(`${BASEAPI}/get-all-product`);
+      const response=await apiConnector('GET','get-all-product',null,null,null,false)
       setProduct(response.data.data);
     } catch (error) {
       console.error('Error fetching products:', error);

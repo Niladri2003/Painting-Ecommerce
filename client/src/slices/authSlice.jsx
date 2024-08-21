@@ -3,6 +3,7 @@ const initialState = {
     loading: false,
     //token: localStorage.getItem("authToken") ? JSON.parse(localStorage.getItem("authToken")).token:null,
     token: localStorage.getItem("authToken") || null,
+    refreshToken: localStorage.getItem("refreshToken") || null,
 }
 const authSlice = createSlice({
     name: 'auth',
@@ -16,7 +17,10 @@ const authSlice = createSlice({
             state.token = action.payload
             localStorage.setItem("authToken", action.payload);
         },
-
+        setRefreshToken(state, action) {
+            state.refreshToken = action.payload;
+            localStorage.setItem("refreshToken", action.payload);
+        },
         logout(state) {
             state.token = null;
             state.cartId = null;
@@ -27,5 +31,5 @@ const authSlice = createSlice({
     }
 })
 
-export const { setLoading, setToken,logout } = authSlice.actions;
+export const { setLoading, setToken,setRefreshToken,logout } = authSlice.actions;
 export default authSlice.reducer;
