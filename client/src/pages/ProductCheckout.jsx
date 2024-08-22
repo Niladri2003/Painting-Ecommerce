@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { BASEAPI } from "../utils/BASE_API";
-import { useToast } from "@chakra-ui/react";
+import {Spinner, useToast} from "@chakra-ui/react";
 import {apiConnector} from "../services/apiConnector.jsx";
 import RelatedProducts from "../components/productCheckout/RelatedProducts.jsx";
 
@@ -239,7 +239,10 @@ const ProductCheckout = () => {
 
   // Loading state
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className={"min-h-screen w-full flex flex-col gap-2 justify-center items-center"}>
+      <Spinner size="xl" />
+      <div>Loading...</div>
+    </div>;
   }
 
   // Error state
@@ -292,12 +295,12 @@ const ProductCheckout = () => {
 
 
             {/* sub images=========================================== */}
-            <div className="w-full flex gap-2 justify-center">
+            <div className="w-full flex gap-2 justify-start items-start">
          
               {product?.images.map((cur, index) => {
                 return (
                     <div
-                        className="w-[7rem] overflow-hidden  cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md"
+                        className="w-[7rem] h-[7rem] overflow-hidden object-contain  cursor-pointer border-2 hover:scale-[1.01] duration-300 rounded-md"
                         key={index}
                     >
                       <img
@@ -345,7 +348,7 @@ const ProductCheckout = () => {
                       : "bg-white text-black"
                   }`}
                 >
-                  {size.size} (+₹{size.charge})
+                  {size.size}
                 </button>
               ))}
             </div>
@@ -367,7 +370,7 @@ const ProductCheckout = () => {
                       : "bg-white text-black"
                   }`}
                 >
-                  {subcategory.subcategory} (+₹{subcategory.charge})
+                  {subcategory.subcategory}
                 </button>
               ))}
             </div>

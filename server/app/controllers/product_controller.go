@@ -195,6 +195,17 @@ func DeleteProduct(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
+	//Fetch product Images
+	productImages, err := db.GetImagesByProduct(productUUID)
+	if err != nil {
+		fmt.Println("cloudinary delete error", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "true", "msg": "Could not retrieve product images"})
+	}
+	for _, image := range productImages {
+		if err := uploader.DeleteImage(image.ImageURL); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": "true", "msg": "Could not delete image from cloudinary"})
+		}
+	}
 
 	// Delete product  images
 	if err := db.DeleteProductImage(productUUID); err != nil {
@@ -205,7 +216,7 @@ func DeleteProduct(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"message": "Product and images deleted successfully"})
+	return c.JSON(fiber.Map{"error": "false", "msg": "Product and images deleted successfully"})
 }
 func GetProductDetails(c *fiber.Ctx) error {
 	id := c.Params("id")

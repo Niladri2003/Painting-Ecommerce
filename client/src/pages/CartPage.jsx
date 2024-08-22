@@ -2,17 +2,16 @@ import React, { useState, useEffect } from "react";
 import { SlTag } from "react-icons/sl";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/toast";
-import axios from "axios";
-import { BASEAPI } from "../utils/BASE_API";
 import { CartItem } from "../components/cart/CartItem";
+import { Spinner } from "@chakra-ui/react";
+import { apiConnector } from "../services/apiConnector.jsx";
 
 const Cart = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
     const [couponVis, setCouponVis] = useState(false);
-    const [coupon, setCoupon] = useState("");
+    const [couponCode, setCouponCode] = useState("");
     const [cartData, setCartData] = useState(null); // Holds the cart data
     const toast = useToast();
-    const token = localStorage.getItem('authToken');
 
     useEffect(() => {
         fetchCartDetails();
@@ -20,9 +19,8 @@ const Cart = () => {
 
     const fetchCartDetails = async () => {
         try {
-            const { data } = await axios.get(`${BASEAPI}/get-cart`, {
-                headers: { Authorization: `${token}` }
-            });
+            const { data } = await apiConnector('GET', '/get-cart', null, null, null, true);
+            console.log("coupon", data.cart.coupon_code);
             setCartData(data.cart);
             toast({
                 title: data.msg || "Cart item retrieved successfully",
@@ -43,16 +41,63 @@ const Cart = () => {
     };
 
     const handleInputChange = (e) => {
-        setCoupon(e.target.value);
+        setCouponCode(e.target.value);
+    };
+
+    const refreshCart = () => {
+        fetchCartDetails();
     };
 
     const handleCheckout = () => {
         navigate("/buynow"); // Redirect to the Buynow page
     };
 
+    const handleApplyCoupon = async () => {
+        try {
+            const response = await apiConnector('POST', '/apply-coupon', { code: couponCode }, null, null, true);
+            console.log("response", response);
+            refreshCart(); // Refresh the cart data after applying the coupon
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+            toast({
+                title: "Failed to apply coupon",
+                description: error.response?.data?.msg || 'Failed to apply coupon.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
+    const handleRemoveCoupon = async () => {
+        try {
+            const response = await apiConnector('POST', '/remove-coupon', null, null, null, true);
+            console.log("response", response);
+            refreshCart(); // Refresh the cart data after removing the coupon
+        } catch (error) {
+            console.error('Error removing coupon:', error);
+            toast({
+                title: "Failed to remove coupon",
+                description: error.response?.data?.msg || 'Failed to remove coupon.',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
+            });
+        }
+    };
+
     if (!cartData) {
-        return <div>Loading...</div>;
+        return (
+            <div className="min-h-screen w-full flex flex-col gap-2 justify-center items-center">
+                <Spinner size="xl" />
+                <div>Loading...</div>
+            </div>
+        );
     }
+
+    const totalPrice = cartData.items.reduce((acc, item) => acc + item.after_discount_total_price, 0);
+    const discount = cartData.discount_percentage ? (totalPrice * cartData.discount_percentage) / 100 : 0;
+    const finalPrice = totalPrice - discount;
 
     return (
         <div className="w-full">
@@ -63,46 +108,75 @@ const Cart = () => {
                         Order Summary
                     </div>
                 </div>
-                <div className="w-full flex flex-col lg:flex-row mt-8">
+                <div className="w-full flex flex-col gap-16 lg:flex-row mt-8">
                     <div className="w-full lg:w-[70%] flex flex-col mb-10">
-                        {cartData.items.map((item) => (
-                            <CartItem key={item.id} item={item} />
-                        ))}
+                        {cartData?.items?.length > 0 ? (
+                            cartData.items.map((item) => (
+                                <CartItem key={item.id} item={item} refreshCart={refreshCart} />
+                            ))
+                        ) : (
+                            <p>Your cart is empty.</p>
+                        )}
                     </div>
                     <div className="w-full lg:w-[25%] pl-0 lg:pl-8">
-                        <div className="bg-gray-100 p-4 rounded-lg">
-                            <h3 className="text-lg font-semibold mb-2">Order summary</h3>
-                            <p className="text-gray-600 mb-2">Total Items: {cartData.items.length}</p>
-                            <h3 className="text-xl font-bold mb-4">Total: ₹{cartData.items.reduce((acc, item) => acc + item.price * item.quantity, 0)}</h3>
-                            <button className="w-full bg-black text-white py-2 rounded" onClick={handleCheckout}>
-                                Checkout
-                            </button>
-                            <p className="text-gray-500 mt-2">🔒 Secure Checkout</p>
+                        <div className="flex-col flex justify-between h-full bg-gray-100 p-4 rounded-lg">
+                            <div className="flex flex-col items-start">
+                                <h3 className="text-lg font-semibold mb-2">Order summary</h3>
+                                <p className="text-gray-600 mb-2">Total Items: {cartData?.items?.length || 0}</p>
+                                {discount > 0 && (
+                                    <h2 className="text-lg mb-2">Discount:₹{totalPrice-finalPrice}</h2>
+                                )}
+                                <h2 className={`text-xl font-bold mb-4`}>
+                                    Total: ₹{finalPrice || 0}
+                                </h2>
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <button className="w-full bg-black text-white py-2 rounded" onClick={handleCheckout}>
+                                    Checkout
+                                </button>
+                                <div className="w-full flex justify-center">
+                                    <p className="text-gray-500 mt-2">🔒 Secure Checkout</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div className="mt-8">
                     <div className="mb-4">
-                        <p
-                            onClick={() => setCouponVis(!couponVis)}
-                            className="flex items-center gap-2 cursor-pointer text-lg"
-                        >
-                            <SlTag /> <span>Enter a promo code</span>
-                        </p>
-                        <div className={`flex items-center ${couponVis ? "flex-row" : "hidden"} mt-2`}>
-                            <input
-                                type="text"
-                                className="border outline-none w-full lg:w-1/4 px-4 py-2 rounded"
-                                value={coupon}
-                                onChange={handleInputChange}
-                            />
-                            <button
-                                className="bg-black text-white py-2 px-4 rounded ml-2 flex-shrink-0 flex items-center justify-center"
-                                disabled={!coupon}
-                            >
-                                Apply
-                            </button>
-                        </div>
+                        {!cartData.is_coupon_applied ? (
+                            <>
+                                <p onClick={() => setCouponVis(!couponVis)} className="flex items-center gap-2 cursor-pointer text-lg">
+                                    <SlTag /> <span>Enter a promo code</span>
+                                </p>
+                                <div className={`flex items-center ${couponVis ? "flex-row" : "hidden"} mt-2`}>
+                                    <input
+                                        type="text"
+                                        className="border outline-none w-full lg:w-1/4 px-4 py-2 rounded"
+                                        value={couponCode}
+                                        onChange={handleInputChange}
+                                    />
+                                    <button
+                                        className="bg-black text-white py-2 px-4 rounded ml-2 flex-shrink-0 flex items-center justify-center"
+                                        disabled={!couponCode}
+                                        onClick={handleApplyCoupon}
+                                    >
+                                        Apply
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div
+                                className=" w-[40%] flex items-center justify-between gap-2 mt-2 p-4 bg-green-100 rounded-lg border border-green-300">
+                                <p className="text-lg font-semibold text-green-800">Coupon "{cartData.coupon_code}"
+                                    applied!</p>
+                                <button
+                                    className="text-red-600  font-medium hover:text-red-800 transition-colors duration-200"
+                                    onClick={handleRemoveCoupon}>
+                                    Remove
+                                </button>
+                            </div>
+
+                        )}
                     </div>
                 </div>
             </div>

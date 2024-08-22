@@ -102,6 +102,18 @@ func (q *CartQueries) GetCartItemByID(cartItemId uuid.UUID) (*models.CartItem, e
 	}
 	return &cartItem, nil
 }
+func (q *CartQueries) GetCartItemByDetails(cartId, productId, productSubCategoryId, productSizeId uuid.UUID) (*models.CartItem, error) {
+	var cartItem models.CartItem
+
+	query := `SELECT * FROM cart_items 
+              WHERE cart_id = $1 AND product_id = $2 AND product_subcategory_id = $3 AND product_size_id = $4 LIMIT 1`
+
+	err := q.Get(&cartItem, query, cartId, productId, productSubCategoryId, productSizeId)
+	if err != nil {
+		return nil, err
+	}
+	return &cartItem, nil
+}
 
 // Apply coupon to cart
 func (q *CartQueries) ApplyCouponTocart(item *models.Cart) error {

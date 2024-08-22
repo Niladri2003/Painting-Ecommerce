@@ -92,6 +92,7 @@ const AccountPage = () => {
       //   },
       // });
       const response =await apiConnector('GET','/get-all-orders',null,null,null,true)
+
       setOrders(response.data.orders);
     } catch (error) {
       toast({
