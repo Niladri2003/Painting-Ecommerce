@@ -10,18 +10,18 @@ const RelatedProducts = ({ relatedProducts, handleNavigate, handleImgClick }) =>
         <div className="w-full">
           <h2 className="text-center text-4xl py-5">Related Products</h2>
         </div>
-        <div className="w-[100%] flex gap-7 border-r-0 border-l-0 py-2 overflow-x-auto">
+        <div className="w-[100%] flex gap-7 border-r-0 border-l-0 py-2 overflow-x-auto p-2 pt-2">
           {relatedProducts.map((cur, index) => (
             <div
-              className="cursor-pointer"
+              className="cursor-pointer shadow-md rounded-md bg-transparent p-2"
               key={index}
               onClick={() => handleNavigate(cur, cur.images[0].image_url)}
             >
-              <div className="h-[12rem] w-[12rem] p-3 rounded-[.2rem] overflow-hidden flex justify-center items-center">
+              <div className="h-[12rem] w-[12rem] p-3  overflow-hidden flex justify-center items-center rounded-md">
                 <img
                   src={cur.images[0].image_url}
                   alt="sub images"
-                  className="max-w-full max-h-full object-contain"
+                  className="max-w-full max-h-full object-contain w-full h-full rounded-md"
                   onClick={(e) => {
                     handleImgClick(e);
                   }}

@@ -1,17 +1,63 @@
 import React, { useState } from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import PropTypes from 'prop-types';
+import {apiConnector} from "../../services/apiConnector.jsx";
+import {useToast} from "@chakra-ui/react";
 
-export const CartItem = ({ item }) => {
+export const CartItem = ({ item,refreshCart }) => {
     const [quantity, setQuantity] = useState(item.quantity);
+    const toast = useToast();
 
-    const handleQuantityChange = (amount) => {
+    const handleQuantityChange = async (amount) => {
+
         setQuantity((prev) => Math.max(1, prev + amount));
+        try{
+            const response=await apiConnector('POST','update-item',
+                {cart_item_id: item.id,quantity:quantity+1},
+                null,
+                null,
+                true
+            )
+            console.log("Quantity change",response)
+            toast({
+                title: response?.data?.msg||"item updated",
+                status: "success",
+                duration: 2500,
+                isClosable: true,
+            });
+            refreshCart();
+        }catch(e){
+            toast({
+                title: e?.data?.msg||"error updating",
+                status: "error",
+                duration: 2500,
+                isClosable: true,
+            });
+        }
         // Here you might want to update the quantity in the backend or global state
     };
 
-    const handleItemDelete = () => {
+    const handleItemDelete =async (id) => {
         // Handle item deletion here, possibly with a dispatch or API call
+       try{
+           const response= await apiConnector('DELETE',`/remove-item/${id}`,null,null,null,true);
+           toast({
+               title: response?.data?.msg||"item removed",
+               status: "success",
+               duration: 2500,
+               isClosable: true,
+           });
+           console.log("itemdelete",response);
+           refreshCart();
+       }catch (e){
+           toast({
+               title: e?.data?.msg||"error removing",
+               status: "error",
+               duration: 2500,
+               isClosable: true,
+           });
+       }
+
     };
 
     return (
@@ -19,7 +65,8 @@ export const CartItem = ({ item }) => {
             <div className="flex items-center w-full md:w-auto">
                 <div className="mr-8">
                     <h3 className="text-lg md:text-xl font-semibold">{item.product_name}</h3>
-                    <p className="text-gray-600">₹{item.price}</p>
+                    <p className="text-gray-600 line-through">₹{item.price / item.quantity}</p>
+                    <p className="text-gray-600">₹{item.after_discount_total_price / item.quantity}</p>
                     <button className="text-blue-500 hover:underline mt-2 md:mt-0">More Details</button>
                 </div>
             </div>
@@ -39,9 +86,9 @@ export const CartItem = ({ item }) => {
                         +
                     </button>
                 </div>
-                <p className="text-lg font-semibold mb-4 md:mb-0 mr-0 md:mr-8">₹{item.price * quantity}</p>
+                <p className="text-lg font-semibold mb-4 md:mb-0 mr-0 md:mr-8">₹{item.after_discount_total_price}</p>
                 <button
-                    onClick={handleItemDelete}
+                    onClick={() =>handleItemDelete(item.id)}
                     className="text-red-500 text-xl"
                 >
                     <RiDeleteBin6Line />
@@ -57,6 +104,7 @@ CartItem.propTypes = {
         product_name: PropTypes.string.isRequired,
         price: PropTypes.number.isRequired,
         quantity: PropTypes.number.isRequired,
+        after_discount_total_price: PropTypes.number.isRequired,
     }).isRequired,
 };
 
