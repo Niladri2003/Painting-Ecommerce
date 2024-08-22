@@ -44,7 +44,7 @@ const ProductCheckout = () => {
       //const { data } = await axios.get(`${BASEAPI}/get-product-details/${id}`);
       const {data}=await apiConnector('GET',`/get-product-details/${id}`,null,null,null,false)
       setProduct(data);
-
+      console.log(data)
       if (data.data.sizes.length > 0) {
         setSelectedSize(data.data.sizes[0]); // Select the first size by default
       }
@@ -294,72 +294,52 @@ const ProductCheckout = () => {
         {/* first raw */}
         <div className="w-full relative ">
           <div>
-            <div className="mb-4 overflow-hidden h-[500px] w-full">
+            <div className="mb-4 overflow-hidden w-full h-[500px] flex justify-center items-center">
               {product.images && product.images.length > 0 ? (
-                <img
-                  src={
-                    subImages
-                      ? subImages
-                      : product.images[selectedImageIndex].image_url
-                  } // Use the product images
-                  alt={product.title || "Product image"} // Use a fallback alt text
-                  className="w-full h-full object-cover rounded-lg border-2 border-sky-500" // Make the image cover the container
-                />
+                  <img
+                      src={
+                        subImages
+                            ? subImages
+                            : product.images[selectedImageIndex].image_url
+                      } // Use the product images
+                      alt={product.title || "Product image"} // Use a fallback alt text
+                      className="max-w-full max-h-full object-contain rounded-lg border-2 border-sky-500" // Improved image styling
+                  />
               ) : (
-                <div>No images available</div> // Fallback content
+                  <div className="text-gray-500">No images available</div> // Fallback content
               )}
             </div>
 
-            {product.images &&
-              product.images.length > 1 && ( // Only show buttons if there is more than 1 image
-                <>
-                  <button
-                    className="absolute left-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                    onClick={handlePreviousImage}
-                    disabled={selectedImageIndex === 0}
-                    aria-label="Previous image"
-                  >
-                    &lt;
-                  </button>
-                  <button
-                    className="absolute right-2 top-[16rem] transform -translate-y-1/2 bg-gray-800 text-white p-2 rounded-full"
-                    onClick={handleNextImage}
-                    disabled={selectedImageIndex === product.images.length - 1}
-                    aria-label="Next image"
-                  >
-                    &gt;
-                  </button>
-                </>
-              )}
+
             {/* sub images=========================================== */}
             <div className="w-full flex gap-2">
               {/* default images */}
-              <div className="w-[3rem] overflow-hidden h-[2.5rem] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md">
-                <img
-                  className="w-full h-full object-cover"
-                  src={product.images[selectedImageIndex].image_url}
-                  alt="sub images"
-                  onClick={(e) => {
-                    handleImgClick(e);
-                  }}
-                />
-              </div>
+              {/*<div className="w-[3rem] overflow-hidden h-[2.5rem] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md">*/}
+              {/*  <img*/}
+              {/*    className="w-full h-full object-cover"*/}
+              {/*    src={product.images[selectedImageIndex].image_url}*/}
+              {/*    alt="sub images"*/}
+              {/*    onClick={(e) => {*/}
+              {/*      handleImgClick(e);*/}
+              {/*    }}*/}
+              {/*  />*/}
+              {/*</div>*/}
               {/* sub image section */}
-              {sub_images.map((cur, index) => {
+              {product?.images.map((cur, index) => {
                 return (
-                  <div
-                    className="w-[3rem] overflow-hidden h-[2.5rem] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md"
-                    key={index}
-                  >
-                    <img
-                      className="w-full h-full object-cover"
-                      src={cur.images}
-                      alt="sub images"
-                      onClick={(e) => {
-                        handleImgClick(e);
-                      }}
-                    />
-                  </div>
+                    <div
+                        className="w-[7rem] overflow-hidden h-[41px]] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md"
+                        key={index}
+                    >
+                      <img
+                          className="w-full h-full object-cover"
+                          src={cur.image_url}
+                          alt="sub images"
+                          onClick={(e) => {
+                            handleImgClick(e);
+                          }}
+                      />
+                    </div>
                 );
               })}
             </div>
@@ -549,34 +529,33 @@ const ProductCheckout = () => {
          <div>
           <div className="w-full"><h2 className="text-center text-4xl py-5">Related Products</h2></div>
          <div className="w-[100%] flex gap-7  border-r-0 border-l-0 py-2 overflow-x-auto">
-            {product.related_products.map((cur, index) => {
-              return (
-                <div
-                  className=" cursor-pointer"
-                  key={index}
-                  onClick={(e) => handleNavigate(cur,(cur.images[0].image_url))}
-                >
-                  <div className=" h-[9rem] w-[12rem] p-3 bg-slate-300 rounded-[.2rem] overflow-hidden">
-                    <img
-                      src={cur.images[0].image_url}
-                      alt="sub images"
-                      className="w-full h-full object-cover"
-                      onClick={(e) => {
-                        handleImgClick(e);
-                      }}
-                    />
-                  </div>
-                  <h3 className="text-lg font-medium my-1">{cur.title}</h3>
-                  <p className="text-md mt-1">
-                   {cur.description}
-                  </p>
-                  <p className="text-sm mt-1">
-                    <span className="font-medium">Price:</span> ₹{cur.price}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+           {product.related_products.map((cur, index) => {
+             return (
+                 <div
+                     className="cursor-pointer"
+                     key={index}
+                     onClick={(e) => handleNavigate(cur, cur.images[0].image_url)}
+                 >
+                   <div className="h-[12rem] w-[12rem] p-3 rounded-[.2rem] overflow-hidden flex justify-center items-center">
+                     <img
+                         src={cur.images[0].image_url}
+                         alt="sub images"
+                         className="max-w-full max-h-full object-contain"
+                         onClick={(e) => {
+                           handleImgClick(e);
+                         }}
+                     />
+                   </div>
+                   <h3 className="text-lg font-medium my-1 text-center">{cur.title}</h3>
+
+                   <p className="text-sm mt-1 text-center">
+                     <span className="font-medium">Price:</span> ₹{cur.original_price}
+                   </p>
+                 </div>
+             );
+           })}
+
+         </div>
          </div>
         </div>
         {/* end related product section */}
