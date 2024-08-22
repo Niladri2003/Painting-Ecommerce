@@ -5,6 +5,7 @@ import axios from "axios";
 import { BASEAPI } from "../utils/BASE_API";
 import { useToast } from "@chakra-ui/react";
 import {apiConnector} from "../services/apiConnector.jsx";
+import RelatedProducts from "../components/productCheckout/RelatedProducts.jsx";
 
 const ProductCheckout = () => {
   const { cartId } = useSelector((state) => state.cart); // Access cart_id from Redux state
@@ -106,19 +107,6 @@ const ProductCheckout = () => {
     }
   }, [selectedSize, selectedSubCategory, product]);
 
-  // const handleNextImage = () => {
-  //   setSelectedImageIndex((prevIndex) =>
-  //     product.data.images && prevIndex < product.data.images.length - 1
-  //       ? prevIndex + 1
-  //       : prevIndex
-  //   );
-  // };
-
-  // const handlePreviousImage = () => {
-  //   setSelectedImageIndex((prevIndex) =>
-  //     prevIndex > 0 ? prevIndex - 1 : prevIndex
-  //   );
-  // };
 
   const toggleSection = (section) => {
     setSections((prev) => ({
@@ -274,15 +262,7 @@ const ProductCheckout = () => {
         )
       : 0;
   console.log(product);
-  const sub_images = [
-    {
-      images: "https://www.bandt.com.au/information/uploads/2015/09/getty3.jpg",
-    },
-    {
-      images:
-        "https://wonderfulengineering.com/wp-content/uploads/2014/10/image-wallpaper-15.jpg",
-    },
-  ];
+
   // Click to change main images
   const handleImgClick=(e)=>{
     setsubImages(e.target.src)
@@ -292,7 +272,7 @@ const ProductCheckout = () => {
     <div className="min-h-screen flex flex-col w-full mb-5">
       <div className=" p-4 grid grid-cols-1 md:grid-cols-2 grid-rows-1 mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl lg:gap-6 mx-auto">
         {/* first raw */}
-        <div className="w-full relative ">
+        <div className="w-full relative">
           <div>
             <div className="mb-4 overflow-hidden w-full h-[500px] flex justify-center items-center">
               {product.images && product.images.length > 0 ? (
@@ -312,23 +292,12 @@ const ProductCheckout = () => {
 
 
             {/* sub images=========================================== */}
-            <div className="w-full flex gap-2">
-              {/* default images */}
-              {/*<div className="w-[3rem] overflow-hidden h-[2.5rem] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md">*/}
-              {/*  <img*/}
-              {/*    className="w-full h-full object-cover"*/}
-              {/*    src={product.images[selectedImageIndex].image_url}*/}
-              {/*    alt="sub images"*/}
-              {/*    onClick={(e) => {*/}
-              {/*      handleImgClick(e);*/}
-              {/*    }}*/}
-              {/*  />*/}
-              {/*</div>*/}
-              {/* sub image section */}
+            <div className="w-full flex gap-2 justify-center">
+         
               {product?.images.map((cur, index) => {
                 return (
                     <div
-                        className="w-[7rem] overflow-hidden h-[41px]] cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md"
+                        className="w-[7rem] overflow-hidden  cursor-pointer border-2 hover:scale-[1.19] duration-300 rounded-md"
                         key={index}
                     >
                       <img
@@ -343,32 +312,7 @@ const ProductCheckout = () => {
                 );
               })}
             </div>
-
-            {/* Related products=================================================================================================================== */}
-            {/* <h1>Related Products</h1>
-            <div className="w-[100%] flex gap-5  border-r-0 border-l-0 py-2 overflow-x-auto">
-
-
-              {product.related_products.map((cur, index) => {
-                return (
-                    <div className=" cursor-pointer" key={index} onClick={() => handleNavigate(cur)}>
-                      <div className=" h-[8rem] w-[8rem] p-3 bg-slate-300 rounded-[.2rem] overflow-hidden">
-                        <img
-                            src={cur.images[0].image_url}
-                            alt="sub images"
-                            className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <h3 className="text-lg font-medium my-1">
-                        {cur.title}
-                      </h3>
-                      <p className="text-sm mt-1">
-                        <span className="font-medium">Price:</span> ₹{cur.price}
-                      </p>
-                    </div>
-                );
-              })}
-            </div> */}
+      
           </div>
         </div>
 
@@ -525,39 +469,11 @@ const ProductCheckout = () => {
           </div>
         </div>
         {/* related product section start */}
-        <div className="w-full  col-span-full row-span-2">
-         <div>
-          <div className="w-full"><h2 className="text-center text-4xl py-5">Related Products</h2></div>
-         <div className="w-[100%] flex gap-7  border-r-0 border-l-0 py-2 overflow-x-auto">
-           {product.related_products.map((cur, index) => {
-             return (
-                 <div
-                     className="cursor-pointer"
-                     key={index}
-                     onClick={(e) => handleNavigate(cur, cur.images[0].image_url)}
-                 >
-                   <div className="h-[12rem] w-[12rem] p-3 rounded-[.2rem] overflow-hidden flex justify-center items-center">
-                     <img
-                         src={cur.images[0].image_url}
-                         alt="sub images"
-                         className="max-w-full max-h-full object-contain"
-                         onClick={(e) => {
-                           handleImgClick(e);
-                         }}
-                     />
-                   </div>
-                   <h3 className="text-lg font-medium my-1 text-center">{cur.title}</h3>
-
-                   <p className="text-sm mt-1 text-center">
-                     <span className="font-medium">Price:</span> ₹{cur.original_price}
-                   </p>
-                 </div>
-             );
-           })}
-
-         </div>
-         </div>
-        </div>
+        <RelatedProducts
+        relatedProducts={product.related_products}
+        handleNavigate={handleNavigate}
+        handleImgClick={handleImgClick}
+      />
         {/* end related product section */}
       </div>
     </div>
