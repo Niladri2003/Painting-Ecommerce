@@ -5,6 +5,7 @@ import { FaBars } from "react-icons/fa";
 import MobileMenu from "./MobileMenu";
 import NavItems from "./NavItems";
 import AvatarDropdown from "./AvatarDropDown";
+import Avatar from "../../assets/avatar/defaultAvatar.jpg"
 import { AiOutlineShoppingCart } from "react-icons/ai";
 
 const Navbar = () => {
@@ -14,7 +15,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useSelector((state) => state.profile);
 
-  const userProfileImage = user.profile_picture
+  const userProfileImage = user ? user.profile_picture : Avatar;
 
 
   useEffect(() => {
