@@ -90,7 +90,7 @@ const Buynow = () => {
                 duration: 3000,
                 isClosable: true,
             });
-            setTimeout(() => navigate('/order-confirmation'), 3000); // Redirect after animation
+            setTimeout(() => navigate('/account'), 3000); // Redirect after animation
 
         } catch (error) {
             console.error('Error placing order:', error);
