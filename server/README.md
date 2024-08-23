@@ -78,3 +78,9 @@ Redis Container start command
 ```bash
 sudo docker run -d   --name my-redis-container   -p 6379:6379   -e REDIS_PASSWORD="redis00"   -e REDIS_DB_NUMBER=0   redis:latest   redis-server --requirepass "redis00"
 ```
+
+before restoring backup run this command to delete tables(if you are starting the server using docker-compose)
+
+```bash
+DROP TABLE IF EXISTS addresses, cart_items, carts, categories, contacts, coupons, order_items, orders, product_images, products, products_size, products_subcategory, schema_migrations, users CASCADE;
+```
