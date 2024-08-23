@@ -55,3 +55,17 @@ func (q *ProductImageQueries) DeleteProductImage(id uuid.UUID) error {
 
 	return nil
 }
+
+// Get the first uploaded single image of a product
+func (q *ProductImageQueries) GetProductImageForCart(id uuid.UUID) (*models.ProductImage, error) {
+	images := []models.ProductImage{}
+	query := `SELECT * FROM product_images WHERE product_id = $1 ORDER BY created_at LIMIT 1`
+	err := q.Select(&images, query, id)
+	if err != nil {
+		return nil, err
+	}
+	if len(images) == 0 {
+		return nil, nil
+	}
+	return &images[0], nil
+}

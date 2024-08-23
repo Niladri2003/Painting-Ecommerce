@@ -244,10 +244,10 @@ func RefreshToken(c *fiber.Ctx) error {
 	}
 
 	// Decode the refresh token
-	fmt.Println(data.RefreshToken)
+	fmt.Println("recived token", data.RefreshToken)
 	expiresRefreshToken, err := strconv.ParseInt(strings.Split(data.RefreshToken, ".")[1], 0, 64)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token data extraction failed"})
 	}
 	//validity, err := utils.DecodeRefreshToken(data.RefreshToken)
 	//if err != nil {
@@ -274,6 +274,7 @@ func RefreshToken(c *fiber.Ctx) error {
 		userRole := claims.UserRole
 
 		storedToken, err := connRedis.Get(context.Background(), userId).Result()
+		fmt.Println("stored token", storedToken)
 		if err != nil || storedToken != data.RefreshToken {
 			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 				"error": true,

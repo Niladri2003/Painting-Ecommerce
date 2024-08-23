@@ -12,7 +12,7 @@ func ProtectedRoutes(a *fiber.App) {
 	//Routes for user
 	route.Post("/reset-password", middleware.Protected(), controllers.ResetPassword)
 	route.Delete("/delete-account", middleware.Protected(), controllers.DeleteAccount)
-	route.Post("/renew-access-token", middleware.Protected(), controllers.RefreshToken)
+
 	route.Get("/token-data", middleware.Protected(), controllers.TokenDetails)
 
 	//Routes for POST method

@@ -31,6 +31,7 @@ import {
   Td,
 } from "@chakra-ui/react";
 import {apiConnector} from "../services/apiConnector.jsx";
+import {logout} from "../slices/authSlice.jsx";
 
 const AccountPage = () => {
   const [selectedTab, setSelectedTab] = useState("delivery-address");
@@ -91,9 +92,10 @@ const AccountPage = () => {
       //     Authorization: `${token}`,
       //   },
       // });
-      const response =await apiConnector('GET','/get-all-orders',null,null,null,true)
-
-      setOrders(response.data.orders);
+      const {data} =await apiConnector('GET','/get-all-orders',null,null,null,true)
+      await console.log("orders",data)
+      setOrders(data);
+      await console.log("orders",orders)
     } catch (error) {
       toast({
         title: "Error loading orders",
@@ -288,88 +290,92 @@ const AccountPage = () => {
     </div>
   );
 
-  // const renderOrders = () => (
-  //   <div className="h-[40rem] overflow-auto scrollbar-thin">
-  //     <div className="bg-gray-100 p-4 sticky top-0 z-10">
-  //       <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
-  //     </div>
-  //     <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
-  //       <Thead>
-  //         <Tr>
-  //           <Th>Product</Th>
-  //           <Th>Total</Th>
-  //           <Th>Status</Th>
-  //           <Th>Created At</Th>
-  //         </Tr>
-  //       </Thead>
-  //       <Tbody>
-  //         {/* {orders?.length > 0 ? (
-  //           orders.map((order) => (
-  //             <Tr key={order.order_id}>
-  //               <Td>{order.order_id}</Td>
-  //               <Td>{order.total}</Td>
-  //               <Td>{order.order_status}</Td>
-  //               <Td>{new Date(order.order_created_at).toLocaleString()}</Td>
-  //             </Tr>
-  //           ))
-  //         ) : (
-  //           <Tr>
-  //             <Td colSpan="4" textAlign="center">No orders found.</Td>
-  //           </Tr>
-  //         )} */}
-  //         <Tr >
-  //               <Td>Krishna Talapatra With frame10*12</Td>
-  //               <Td>₹3999</Td>
-  //               <Td>
+  const RenderOrders = () => {
+    // State to track which orders are expanded
+    const [expandedOrderId, setExpandedOrderId] = useState(null);
 
-  //               <span className="text-green-700 font-bold ">Delivered</span>
-  //               </Td>
-  //               <Td>12-08-2024</Td>
-  //             </Tr>
-  //       </Tbody>
-  //     </Table>
-  //   </div>
-  // );
-  const renderOrders = () => (
-    <div className="h-[40rem] overflow-auto scrollbar-thin">
-      <div className="bg-gray-100 p-4 sticky top-0 z-10">
-        <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
-      </div>
-      <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
-        <Thead>
-          <Tr>
-            <Th>Product</Th>
-            <Th>Total</Th>
-            <Th>Status</Th>
-            <Th>Created At</Th>
-            <Th>Invoice</Th> {/* New column for the invoice download button */}
-          </Tr>
-        </Thead>
-        <Tbody>
-          <Tr >
-            <Td>Krishna Talapatra With frame10*12</Td>
-            <Td>₹3999</Td>
-            <Td>
+    // Toggle function to expand/collapse order details
+    const toggleOrderDetails = (orderId) => {
+      setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
+    };
+    // Check if orders and orders.data are present
+    if (!orders || !Array.isArray(orders.data) || orders.data.length === 0) {
+      return (
+          <div className="h-[40rem] flex items-center justify-center">
+            <p className="text-xl font-bold text-gray-500">No orders found.</p>
+          </div>
+      );
+    }
 
-              <span className="text-green-700 font-bold ">Delivered</span>
-            </Td>
-            <Td>12-08-2024</Td>
-            <Td>
-              {/* Dummy Download Invoice Button */}
-              <button
-                className="border-2 border-black p-2 rounded-[1rem] bg-black group duration-300 hover:bg-transparent hover:text-black cursor-pointer text-white "
-                onClick={() => alert('Download invoice feature coming soon!')}
-              >
-                Invoice
-              </button>
-            </Td>
-          </Tr>
-        </Tbody>
-      </Table>
-    </div>
-  );
+    return (
+        <div className="h-[40rem] overflow-auto scrollbar-thin">
+          <div className="bg-gray-100 p-4 sticky top-0 z-10">
+            <h1 className="text-2xl font-bold mb-4">Your Orders</h1>
+          </div>
+          <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
+            <Thead>
+              <Tr>
+                <Th>Product</Th>
+                <Th>Total</Th>
+                <Th>Status</Th>
+                <Th>Created At</Th>
+                <Th>Invoice</Th> {/* New column for the invoice download button */}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {orders.data.map((order) => (
+                  <>
+                    {/* Order Summary Row */}
+                    <Tr key={order.order_id} onClick={() => toggleOrderDetails(order.order_id)} className="cursor-pointer">
+                      <Td>{order.order_items[0].product_name}</Td>
+                      <Td>₹{order.total}</Td>
+                      <Td>
+                  <span className={`font-bold ${order.order_status === 'Delivered' ? 'text-green-700' : 'text-yellow-700'}`}>
+                    {order.order_status}
+                  </span>
+                      </Td>
+                      <Td>{new Date(order.order_created_at).toLocaleDateString('en-GB')}</Td>
+                      <Td>
+                        <button
+                            className="border-2 border-black p-2 rounded-[1rem] bg-black group duration-300 hover:bg-transparent hover:text-black cursor-pointer text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              alert('Download invoice feature coming soon!');
+                            }}
+                        >
+                          Invoice
+                        </button>
+                      </Td>
+                    </Tr>
 
-
+                    {/* Expanded Order Details */}
+                    {expandedOrderId === order.order_id && (
+                        <Tr>
+                          <Td colSpan="5" className="bg-gray-50">
+                            <div className="p-4">
+                              <h3 className="font-bold text-lg mb-2">Order Details</h3>
+                              <p><strong>Address:</strong> {`${order.addresses[0].street_address}, ${order.addresses[0].town_city}, ${order.addresses[0].state}, ${order.addresses[0].country} - ${order.addresses[0].pin_code}`}</p>
+                              <p><strong>Email:</strong> {order.addresses[0].email}</p>
+                              <p><strong>Mobile:</strong> {order.addresses[0].mobile_number}</p>
+                              <p><strong>Items:</strong></p>
+                              <ul className="list-disc pl-5">
+                                {order.order_items.map((item) => (
+                                    <li key={item.id}>
+                                      {item.product_name} - {item.size} - {item.subcategory} - Qty: {item.quantity} - ₹{item.quantity_price}
+                                    </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </Td>
+                        </Tr>
+                    )}
+                  </>
+              ))}
+            </Tbody>
+          </Table>
+        </div>
+    );
+  };
   const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -490,73 +496,6 @@ const AccountPage = () => {
     );
   };
 
-
-  // const handleDeleteAccount = async (e) => {
-  //   e.preventDefault();
-  //   const password = e.target.password.value;
-
-  //   if (!password) {
-  //     toast({
-  //       title: "Validation Error",
-  //       description: "Please enter your password.",
-  //       status: "warning",
-  //       duration: 2500,
-  //       isClosable: true,
-  //     });
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.delete(`${BASEAPI}/delete-account`, {
-  //       headers: {
-  //         Authorization: `${token}`,
-  //       },
-  //       data: { password },
-  //     });
-
-  //     if (response.status === 200) {
-  //       toast({
-  //         title: "Account Deleted",
-  //         description: "Your account has been deleted successfully.",
-  //         status: "success",
-  //         duration: 2500,
-  //         isClosable: true,
-  //       });
-  //       localStorage.removeItem("authToken");
-  //       navigate("/login");
-  //     } else {
-  //       throw new Error("Failed to delete account");
-  //     }
-  //   } catch (error) {
-  //     toast({
-  //       title: "Error",
-  //       description:
-  //         error.response?.data?.message ||
-  //         "Failed to delete account. Please try again.",
-  //       status: "error",
-  //       duration: 3000,
-  //       isClosable: true,
-  //     });
-  //   }
-  // };
-
-  // const DeleteAccount = () => (
-  //   <div className="p-4 md:p-0">
-  //     <h1 className="text-2xl font-bold mb-6 text-red-600">Delete Account</h1>
-  //     <form  onSubmit={handleDeleteAccount}>
-  //       <div className="mb-4">
-  //         <label className="block text-sm font-medium mb-1">Password</label>
-  //         <Input
-  //           type="password"
-  //           className="w-full p-2 border border-gray-300 rounded"
-  //         />
-  //       </div>
-  //       <Button type="submit" colorScheme="red">
-  //         Delete Account
-  //       </Button>
-  //     </form>
-  //   </div>
-  // );
   const handleDeleteAccount = async (e) => {
     e.preventDefault();
 
@@ -629,7 +568,6 @@ const AccountPage = () => {
       </form>
     </div>
   );
-
 
   const renderModal = () => (
     <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
@@ -722,7 +660,7 @@ const AccountPage = () => {
       case "change-password":
         return <ChangePassword />; // Changed to include API call for resetting password
       case "orders":
-        return renderOrders(); // Display the user's orders
+        return <RenderOrders/>; // Display the user's orders
       case "delete-account":
         return <DeleteAccount />;
       default:
@@ -731,9 +669,9 @@ const AccountPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen my-16 w-full md:w-4/5 bg-gray-100 flex-col md:flex-row">
+    <div className="flex min-h-screen my-16 w-full lg:w-full lg:ml-4 lg:mr-4 md:w-4/5 bg-gray-100 flex-col md:flex-row">
       {/* Sidebar */}
-      <aside className="w-full md:w-1/3 bg-white shadow-md">
+      <aside className="w-full lg:w-[20%] md:w-1/3 bg-white shadow-md">
         <div className="flex flex-col items-center p-6">
           <img
             src={user?.profile_picture || defaultAvatar}
@@ -785,7 +723,7 @@ const AccountPage = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 md:p-8 bg-gray-100">{renderContent()}</main>
+      <main className="flex-1 md:p-8 lg:p-2 bg-gray-100">{renderContent()}</main>
 
       {/* Address Modal */}
       {renderModal()}

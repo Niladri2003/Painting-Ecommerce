@@ -25,9 +25,9 @@ func (q *CartQueries) CreateCart(cart *models.Cart) error {
 // AddItemToCart inserts a new item into the cart_items table.
 func (q *CartQueries) AddItemToCart(item *models.CartItem) error {
 	query := `
-		INSERT INTO cart_items (id, cart_id, product_id, product_name, quantity,quantity_price,after_discount_total_price,total_price,product_size_id,product_subcategory_id,size,subcategory, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9,$10,$11,$12,$13,$14)`
-	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.ProductName, item.Quantity, item.QuantityPrice, item.AfterDiscountTotalPrice, item.TotalPrice, item.ProductSizeId, item.ProductSubCategoryId, item.Size, item.Subcategory, item.CreatedAt, item.UpdatedAt)
+		INSERT INTO cart_items (id, cart_id, product_id, product_name,product_image, quantity,quantity_price,after_discount_total_price,total_price,product_size_id,product_subcategory_id,size,subcategory, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7,$8,$9,$10,$11,$12,$13,$14,$15)`
+	_, err := q.Exec(query, item.ID, item.CartID, item.ProductID, item.ProductName, item.ProductImage, item.Quantity, item.QuantityPrice, item.AfterDiscountTotalPrice, item.TotalPrice, item.ProductSizeId, item.ProductSubCategoryId, item.Size, item.Subcategory, item.CreatedAt, item.UpdatedAt)
 	if err != nil {
 		fmt.Println("Item add to cart error", err)
 		return err

@@ -94,10 +94,17 @@ const Cart = () => {
             </div>
         );
     }
+// Initialize prices with 0
+    let totalPrice = 0;
+    let discount = 0;
+    let finalPrice = 0;
 
-    const totalPrice = cartData.items.reduce((acc, item) => acc + item.after_discount_total_price, 0);
-    const discount = cartData.discount_percentage ? (totalPrice * cartData.discount_percentage) / 100 : 0;
-    const finalPrice = totalPrice - discount;
+    if (cartData) {
+        const items = cartData.items || [];
+        totalPrice = items.reduce((acc, item) => acc + item.after_discount_total_price, 0);
+        discount = cartData.discount_percentage ? (totalPrice * cartData.discount_percentage) / 100 : 0;
+        finalPrice = totalPrice - discount;
+    }
 
     return (
         <div className="w-full">
@@ -131,7 +138,7 @@ const Cart = () => {
                                 </h2>
                             </div>
                             <div className="flex flex-col items-start">
-                                <button className="w-full bg-black text-white py-2 rounded" onClick={handleCheckout}>
+                                <button className={`w-full ${cartData.items ? 'bg-black':'bg-gray-500'} text-white py-2 rounded`} onClick={handleCheckout} disabled={!cartData.items}>
                                     Checkout
                                 </button>
                                 <div className="w-full flex justify-center">
@@ -157,7 +164,7 @@ const Cart = () => {
                                     />
                                     <button
                                         className="bg-black text-white py-2 px-4 rounded ml-2 flex-shrink-0 flex items-center justify-center"
-                                        disabled={!couponCode}
+                                        disabled={!couponCode && !cartData.items}
                                         onClick={handleApplyCoupon}
                                     >
                                         Apply

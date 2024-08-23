@@ -260,6 +260,18 @@ func GetAllProducts(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": allProducts})
 
 }
+func GetTop6Products(c *fiber.Ctx) error {
+	// Create database connection
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	allProducts, err := db.GetTop6Products()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
+	}
+	return c.JSON(fiber.Map{"msg": "Product details retrieved successfully", "data": allProducts})
+}
 func GetTop5ProductsCategoryWise(c *fiber.Ctx) error {
 	// Create database connection
 	db, err := database.OpenDbConnection()

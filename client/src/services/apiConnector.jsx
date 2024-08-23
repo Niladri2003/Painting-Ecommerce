@@ -7,23 +7,33 @@ export const axiosInstance = axios.create({
     withCredentials: true, // Ensure cookies (e.g., refresh tokens) are sent
     baseURL:BASEAPI,
 });
-
+let isRefreshing = false;
 // Function to refresh the access token
 const refreshToken = async () => {
-    const dispatch = useDispatch();
-    try {
-        const response = await axiosInstance.post('/renew-access-token', {
-            refreshToken: localStorage.getItem('refreshToken'),
-        });
-        const { access,refreshToken } = response.data.tokens;
+     const   refreshTokendata= localStorage.getItem('refreshToken')
+    const token = localStorage.getItem("authToken");
+    console.log('refresh token',refreshTokendata);
+    if(refreshTokendata){
+        try {
+            const response = await axiosInstance.post('/renew-access-token',
+                { refreshToken: refreshTokendata },
+                { headers: { Authorization: `${token}` } }
+            );
 
-        // Store the new access token
-        dispatch(setToken(access));
-        dispatch(setRefreshToken(refreshToken));
-        return access;
-    } catch (error) {
-        console.error("Failed to refresh token", error);
-        throw error;
+            const { access,refreshToken } = response.data.tokens;
+            console.log(access)
+            localStorage.setItem("authToken",access);
+            localStorage.setItem("refreshToken", refreshToken);
+            // Store the new access token
+            // dispatch(setToken(access));
+            // dispatch(setRefreshToken(refreshToken));
+            return access;
+        } catch (error) {
+            console.error("Failed to refresh token", error);
+            throw error;
+        }
+    }else {
+        alert('no token found');
     }
 };
 
@@ -31,22 +41,38 @@ const refreshToken = async () => {
 axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
+        console.log('apiconnector',error);
         const originalRequest = error.config;
-
+        console.log("status",error.response?.status)
         if (error.response?.status === 401 && !originalRequest._retry) {
+            if (isRefreshing) {
+                return Promise.reject(error);
+            }
+
+            isRefreshing = true;
             originalRequest._retry = true;
 
+
             try {
+                console.log('try again')
                 const newAccessToken = await refreshToken();
+                console.log(newAccessToken);
                 axiosInstance.defaults.headers.common['Authorization'] = `${newAccessToken}`;
                 originalRequest.headers['Authorization'] = `${newAccessToken}`;
 
                 // Retry the original request with the new token
                 return axiosInstance(originalRequest);
             } catch (refreshError) {
+                isRefreshing = false;
+                // Handle the failure of token refresh, such as logging out the user
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('refreshToken');
+                // Optionally redirect to the login page
+                window.location.href = '/signin';
                 return Promise.reject(refreshError);
             }
         }
+        console.log('outside')
 
         return Promise.reject(error);
     }

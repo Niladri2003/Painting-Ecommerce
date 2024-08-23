@@ -14,9 +14,10 @@ func PublicRoutes(a *fiber.App) {
 	route.Get("/user/google/login", controllers.GoogleLogin)
 	route.Get("/user/google/callback", controllers.GoogleCallback)
 	route.Get("/user/get-tokens", controllers.GetTokens)
+	route.Post("/renew-access-token", controllers.RefreshToken)
 
 	route.Get("/get-all-category", controllers.GetAllCategory)
-
+	route.Get("/get-top-home", controllers.GetTop6Products)
 	route.Get("/get-product-details/:id", controllers.GetProductDetails)
 	route.Get("/get-all-product", controllers.GetAllProducts)
 	route.Get("/get-product-categorise", controllers.GetTop5ProductsCategoryWise)

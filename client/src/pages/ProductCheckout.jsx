@@ -133,11 +133,12 @@ const ProductCheckout = () => {
     }
 
     try {
-      const response = await axios.get(`${BASEAPI}/get-cart`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      // const response = await axios.get(`${BASEAPI}/get-cart`, {
+      //   headers: {
+      //     Authorization: `${token}`,
+      //   },
+      // });
+      const response = await apiConnector('GET','/get-cart',null,null,null,true)
 
       const cartItems = response.data.items || [];
 
@@ -153,19 +154,23 @@ const ProductCheckout = () => {
         // If the item is already in the cart, update its quantity
         const updatedQuantity = existingItem.quantity + quantity;
 
-        await axios.put(
-          `${BASEAPI}/update-item`,
-          {
-            cart_item_id: existingItem.id, // Use the existing cart item ID
-            quantity: updatedQuantity, // New quantity
-          },
-          {
-            headers: {
-              Authorization: `${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        // await axios.put(
+        //   `${BASEAPI}/update-item`,
+        //   {
+        //     cart_item_id: existingItem.id, // Use the existing cart item ID
+        //     quantity: updatedQuantity, // New quantity
+        //   },
+        //   {
+        //     headers: {
+        //       Authorization: `${token}`,
+        //       "Content-Type": "application/json",
+        //     },
+        //   }
+        // );
+        await apiConnector('PUT','/update-item',{
+          cart_item_id: existingItem.id, // Use the existing cart item ID
+          quantity: updatedQuantity, // New quantity
+        },null,null,true)
 
         toast({
           title: "Cart Updated",
@@ -184,13 +189,13 @@ const ProductCheckout = () => {
           quantity,
         };
 
-        await axios.post(`${BASEAPI}/add-item`, cartItem, {
-          headers: {
-            Authorization: `${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-
+        // await axios.post(`${BASEAPI}/add-item`, cartItem, {
+        //   headers: {
+        //     Authorization: `${token}`,
+        //     "Content-Type": "application/json",
+        //   },
+        // });
+        await apiConnector('POST','/add-item',cartItem,null,null,true)
         toast({
           title: "Added to Cart",
           description: "The item has been added to your cart.",
@@ -217,11 +222,12 @@ const ProductCheckout = () => {
   // Function to check if the product is already in the cart
   const presentInCart = async (productId) => {
     try {
-      const response = await axios.get(`${BASEAPI}/get-cart`, {
-        headers: {
-          Authorization: `${token}`, // Send auth token in the request headers
-        },
-      });
+      // const response = await axios.get(`${BASEAPI}/get-cart`, {
+      //   headers: {
+      //     Authorization: `${token}`, // Send auth token in the request headers
+      //   },
+      // });
+      const response=await apiConnector('GET','/get-cart',null,null,null,true)
 
       const cartItems = response.data.items || []; // Ensure this is an array
 

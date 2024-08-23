@@ -88,6 +88,11 @@ func AddItemToCart(c *fiber.Ctx) error {
 		fmt.Println("Error while finding product", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
+	//Fetch most first uploaded image of a product
+	productImage, err := db.GetProductImageForCart(item.ProductID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "unable to find product image"})
+	}
 	// Check if an item with the same ProductID, ProductSubCategoryId, and ProductSizeId already exists in the cart
 	existingItem, err := db.GetCartItemByDetails(item.CartID, item.ProductID, item.ProductSubCategoryId, item.ProductSizeId)
 	if err == nil && existingItem != nil {
@@ -113,6 +118,7 @@ func AddItemToCart(c *fiber.Ctx) error {
 
 	item.ID = uuid.New()
 	item.ProductName = product.Title
+	item.ProductImage = productImage.ImageURL
 	item.QuantityPrice = product.OriginalPrice
 	item.TotalPrice = float64(item.Quantity)*product.OriginalPrice + (sizeInfo.Charge + subcategory.Charge)
 	item.AfterDiscountTotalPrice = float64(item.Quantity)*product.DiscountedPrice + (sizeInfo.Charge + subcategory.Charge)
