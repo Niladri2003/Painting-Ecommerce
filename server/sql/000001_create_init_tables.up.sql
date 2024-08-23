@@ -157,6 +157,7 @@ CREATE TABLE cart_items (
                             cart_id UUID NOT NULL,
                             product_id UUID NOT NULL,
                             product_name VARCHAR(255) NOT NULL,
+                            product_image TEXT NOT NULL,
                             quantity INT NOT NULL CHECK (quantity > 0),
                             quantity_price DECIMAL(10, 2) NOT NULL,
                             after_discount_total_price DECIMAL(10, 2) NOT NULL,

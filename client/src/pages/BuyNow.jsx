@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Button, useToast } from '@chakra-ui/react';
+import {Button, Spinner, useToast} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
-import { BASEAPI } from '../utils/BASE_API';
+import { apiConnector } from "../services/apiConnector.jsx";
+
 const Buynow = () => {
     const [defaultAddress, setDefaultAddress] = useState(null);
     const [paymentMethod] = useState('Cash on Delivery');
+    const [cartData, setCartData] = useState(null);
     const [isOrderPlaced, setIsOrderPlaced] = useState(false);
     const [orderLoading, setOrderLoading] = useState(false);
     const toast = useToast();
@@ -16,13 +16,37 @@ const Buynow = () => {
 
     useEffect(() => {
         fetchAddresses();
+        fetchCartDetails();
     }, []);
+
+    const fetchCartDetails = async () => {
+        try {
+            const { data } = await apiConnector('GET', '/get-cart', null, null, null, true);
+            setCartData(data.cart);
+            // toast({
+            //     title: data.msg || "Cart item retrieved successfully",
+            //     status: 'success',
+            //     duration: 3000,
+            //     isClosable: true,
+            // });
+        } catch (error) {
+            console.error('Error fetching cart:', error);
+            // toast({
+            //     title: "Failed to fetch cart.",
+            //     description: error.response?.data?.msg || 'Failed to fetch cart.',
+            //     status: 'error',
+            //     duration: 3000,
+            //     isClosable: true,
+            // });
+        }
+    };
 
     const fetchAddresses = async () => {
         try {
-            const response = await axios.get(`${BASEAPI}/get-addresses`, {
-                headers: { Authorization: `${token}` }
-            });
+            // const response = await axios.get(`${BASEAPI}/get-addresses`, {
+            //     headers: { Authorization: `${token}` }
+            // });
+            const response=await apiConnector('GET','/get-addresses',null,null, null, true);
 
             const addresses = response.data.address || [];
             const defaultAddr = addresses.find(addr => addr.set_as_default);
@@ -53,9 +77,10 @@ const Buynow = () => {
     const handleOrderNow = async () => {
         setOrderLoading(true);
         try {
-            const response = await axios.post(`${BASEAPI}/create-order`, {}, {
-                headers: { Authorization: `${token}` }
-            });
+            // const response = await axios.post(`${BASEAPI}/create-order`, {}, {
+            //     headers: { Authorization: `${token}` }
+            // });
+            const response=await apiConnector('POST','/create-order',null,null,null,true)
 
             setIsOrderPlaced(true);
             toast({
@@ -80,7 +105,24 @@ const Buynow = () => {
             setOrderLoading(false);
         }
     };
+    let totalPrice = 0;
+    let discount = 0;
+    let finalPrice = 0;
 
+    if (cartData) {
+        const items = cartData.items || [];
+        totalPrice = items.reduce((acc, item) => acc + item.after_discount_total_price, 0);
+        discount = cartData.discount_percentage ? (totalPrice * cartData.discount_percentage) / 100 : 0;
+        finalPrice = totalPrice - discount;
+    }
+if(!cartData && !defaultAddress){
+    return (
+        <div className="min-h-screen w-full flex flex-col gap-2 justify-center items-center">
+            <Spinner size="xl" />
+            <div>Loading...</div>
+        </div>
+    );
+}
     return (
         <div className=' mt-28 mb-28 w-full mx-auto'>
             <div className="max-w-7xl mx-auto p-4 flex flex-col sm:flex-row justify-between">
@@ -98,7 +140,7 @@ const Buynow = () => {
                                     <p>{`${defaultAddress.street_address}, ${defaultAddress.town_city}, ${defaultAddress.state} -  ${defaultAddress.pin_code}`}</p>
                                     <p>{`Mobile: ${defaultAddress.mobile_number}`}</p>
                                     <p className="text-sm text-gray-500 mt-2">
-                                        To change the default address, navigate to 
+                                        To change the default address, navigate to
                                         <span className="text-blue-500 cursor-pointer" onClick={() => navigate('/account')}> Profile {'->'} Account {'->'} Address</span>.
                                     </p>
                                 </div>
@@ -131,42 +173,42 @@ const Buynow = () => {
                         </h2>
                         <div className="px-4 py-4 flex gap-6">
                             <button
-                                onClick={handleOrderNow}
-                                className="bg-yellow-500 hover:bg-yellow-600 border-black text-white px-6 py-2 rounded"
-                                disabled={orderLoading}
+                                onClick={ handleOrderNow}
+                                className={`border-black text-white px-6 py-2 rounded ${defaultAddress ? 'bg-yellow-500 hover:bg-yellow-600' : "bg-gray-500"}`}
+                                disabled={!defaultAddress || orderLoading}
                             >
                                 {orderLoading ? 'Placing Order...' : 'Order Now'}
                             </button>
                             <button className="bg-lime-500 hover:bg-lime-600 border-black text-white px-6 py-2 rounded" onClick={() => navigate('/cart')}>
-                                 Go back to Cart
+                                Go back to Cart
                             </button>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Side Summary Box */}
-                <div className="p-4 shadow-lg border lg:ml-6 border-black rounded-lg w-full sm:w-1/3">
-                    <div className="text-lg font-semibold mb-4">Order Summary</div>
-                    <p className="flex justify-between mb-2">
-                        <span>Items:</span>
-                        <span>₹4,957.00</span>
-                    </p>
-                    <p className="flex justify-between mb-2">
-                        <span>Delivery:</span>
-                        <span>₹200.00</span>
-                    </p>
-                    <p className="flex justify-between mb-2">
-                        <span>Total:</span>
-                        <span>₹5,157.00</span>
-                    </p>
-                    <p className="flex justify-between mb-4">
-                        <span>Promotion Applied:</span>
-                        <span>-₹200.00</span>
-                    </p>
-                    <div className="text-xl text-red-600 font-bold">
-                        Order Total: ₹4,957.00
+                {cartData && (
+                    <div className="p-4 shadow-lg border lg:ml-6 border-black rounded-lg w-full sm:w-1/3">
+                        <div className="text-lg font-semibold mb-4">Order Summary</div>
+                        <p className="flex justify-between mb-2">
+                            <span>Total Items:</span>
+                            <span>{cartData?.items?.length || 0}</span>
+                        </p>
+                        {/*<p className="flex justify-between mb-2">*/}
+                        {/*    <span>Delivery:</span>*/}
+                        {/*    <span>₹200.00</span>*/}
+                        {/*</p>*/}
+                        {cartData.is_coupon_applied && (
+                            <p className="flex justify-between mb-2">
+                                <span>Coupon Applied:</span>
+                                <span>-₹{totalPrice-finalPrice}</span>
+                            </p>
+                        )}
+                        <div className="text-xl text-red-600 font-bold">
+                            Order Total: ₹{finalPrice || 0}
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Order Success Animation */}
                 {isOrderPlaced && (

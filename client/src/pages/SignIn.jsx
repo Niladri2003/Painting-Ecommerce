@@ -49,7 +49,9 @@ const SignIn = () => {
       // console.log('Response:', response);
 
       if (response.status === 201 || response.status === 200) {
-        const { tokens,refreshToken } = response.data;
+        const { tokens} = response.data;
+        const refreshToken=tokens.refreshToken;
+        console.log(refreshToken)
 
         const { access, cart_id } = tokens;
         console.log("cart_id:", cart_id);

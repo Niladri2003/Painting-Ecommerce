@@ -459,6 +459,150 @@ func (q *ProductQueries) GetProduct(id uuid.UUID) (models.AllProduct, error) {
 	return product, nil
 }
 
+func (q *ProductQueries) GetTop6Products() ([]models.AllProduct, error) {
+	query := `
+        SELECT
+            p.id AS product_id,
+            p.title,
+            p.description,
+            p.original_price,
+            p.discounted_price,
+            p.is_active,
+            p.category_id,
+            to_char(p.created_at, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS created_at,
+            to_char(p.updated_at, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') AS updated_at,
+            c.id AS category_id,
+            c.name AS category_name,
+            array_agg(DISTINCT pi.id) FILTER (WHERE pi.id IS NOT NULL) AS image_ids,
+            array_agg(DISTINCT pi.image_url) FILTER (WHERE pi.id IS NOT NULL) AS image_urls,
+            array_agg(DISTINCT ps.id) FILTER (WHERE ps.id IS NOT NULL) AS size_ids,
+            array_agg(DISTINCT COALESCE(ps.size, '')) AS sizes,
+            array_agg(DISTINCT COALESCE(ps.charge, 0)) AS size_charges,
+            array_agg(DISTINCT sc.id) FILTER (WHERE sc.id IS NOT NULL) AS subcategory_ids,
+            array_agg(DISTINCT COALESCE(sc.subcategory, '')) AS subcategories,
+            array_agg(DISTINCT COALESCE(sc.charge, 0)) AS subcategory_charges
+        FROM
+            products p
+        LEFT JOIN
+            product_images pi ON p.id = pi.product_id
+        LEFT JOIN
+            categories c ON p.category_id = c.id
+        LEFT JOIN
+            products_size ps ON p.id = ps.product_id
+        LEFT JOIN
+            products_subcategory sc ON p.id = sc.product_id
+        WHERE
+            p.is_active = true
+        GROUP BY
+            p.id, c.id
+        ORDER BY
+            p.created_at DESC
+        LIMIT 6;
+    `
+
+	rows, err := q.DB.Queryx(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var products []models.AllProduct
+	for rows.Next() {
+		var product models.AllProduct
+		var category models.ProductCategory
+		var imageIDs []uuid.UUID
+		var imageURLs []string
+		var sizeIDs []uuid.UUID
+		var sizes []string
+		var sizeCharges []float64
+		var subcategoryIDs []uuid.UUID
+		var subcategories []string
+		var subcategoryCharges []float64
+		var createdAtStr, updatedAtStr string
+
+		err := rows.Scan(
+			&product.ID,
+			&product.Title,
+			&product.Description,
+			&product.OriginalPrice,
+			&product.DiscountedPrice,
+			&product.IsActive,
+			&product.CategoryID,
+			&createdAtStr,
+			&updatedAtStr,
+			&category.ID,
+			&category.Name,
+			pq.Array(&imageIDs),
+			pq.Array(&imageURLs),
+			pq.Array(&sizeIDs),
+			pq.Array(&sizes),
+			pq.Array(&sizeCharges),
+			pq.Array(&subcategoryIDs),
+			pq.Array(&subcategories),
+			pq.Array(&subcategoryCharges),
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		// Parse the timestamps
+		product.CreatedAt, err = time.Parse("2006-01-02T15:04:05Z07:00", createdAtStr)
+		if err != nil {
+			return nil, err
+		}
+
+		product.UpdatedAt, err = time.Parse("2006-01-02T15:04:05Z07:00", updatedAtStr)
+		if err != nil {
+			return nil, err
+		}
+
+		// Assign images (check lengths)
+		if len(imageIDs) == len(imageURLs) {
+			for i := range imageIDs {
+				product.Images = append(product.Images, models.ProductImage{
+					ID:        imageIDs[i],
+					ProductID: product.ID,
+					ImageURL:  imageURLs[i],
+				})
+			}
+		}
+
+		// Assign sizes (check lengths)
+		if len(sizeIDs) == len(sizes) && len(sizeIDs) == len(sizeCharges) {
+			for i := range sizeIDs {
+				product.Sizes = append(product.Sizes, models.ProductSize{
+					ID:     sizeIDs[i],
+					Size:   sizes[i],
+					Charge: sizeCharges[i],
+				})
+			}
+		}
+
+		// Assign subcategories (check lengths)
+		if len(subcategoryIDs) == len(subcategories) && len(subcategoryIDs) == len(subcategoryCharges) {
+			for i := range subcategoryIDs {
+				product.SubCategory = append(product.SubCategory, models.ProductSubCategory{
+					ID:          subcategoryIDs[i],
+					ProductID:   product.ID,
+					Subcategory: subcategories[i],
+					Charge:      subcategoryCharges[i],
+				})
+			}
+		}
+
+		// Assign category
+		product.Category = category
+
+		products = append(products, product)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return products, nil
+}
+
 // Get top 5 products in each category
 func (q *ProductQueries) GetTopProductsByCategory() ([]models.CategoryWithProducts, error) {
 	query := `

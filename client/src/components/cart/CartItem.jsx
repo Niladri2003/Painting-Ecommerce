@@ -2,18 +2,21 @@ import React, { useState } from 'react';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import PropTypes from 'prop-types';
 import {apiConnector} from "../../services/apiConnector.jsx";
-import {useToast} from "@chakra-ui/react";
+import {Image, useToast} from "@chakra-ui/react";
+import {Link} from "react-router-dom";
 
 export const CartItem = ({ item,refreshCart }) => {
     const [quantity, setQuantity] = useState(item.quantity);
     const toast = useToast();
 
     const handleQuantityChange = async (amount) => {
+        const newQuantity = Math.max(1, quantity + amount);
 
-        setQuantity((prev) => Math.max(1, prev + amount));
+
         try{
+            setQuantity(newQuantity);
             const response=await apiConnector('POST','update-item',
-                {cart_item_id: item.id,quantity:quantity+1},
+                {cart_item_id: item.id,quantity:newQuantity},
                 null,
                 null,
                 true
@@ -62,12 +65,19 @@ export const CartItem = ({ item,refreshCart }) => {
 
     return (
         <div className="w-full flex flex-col md:flex-row justify-between items-center p-5 border-b-2">
-            <div className="flex items-center w-full md:w-auto">
-                <div className="mr-8">
-                    <h3 className="text-lg md:text-xl font-semibold">{item.product_name}</h3>
-                    <p className="text-gray-600 line-through">₹{item.price / item.quantity}</p>
-                    <p className="text-gray-600">₹{item.after_discount_total_price / item.quantity}</p>
-                    <button className="text-blue-500 hover:underline mt-2 md:mt-0">More Details</button>
+            <div className={"flex-row flex  gap-4"}>
+                <div>
+                    <Image src={item.product_image} className={"h-[120px] rounded-sm"}/>
+                </div>
+                <div className="flex items-center w-full md:w-auto">
+                    <div className="mr-8">
+                        <h3 className="text-lg md:text-xl font-semibold">{item.product_name}</h3>
+                        <p className="text-gray-600 line-through">₹{item.price / item.quantity}</p>
+                        <p className="text-gray-600">₹{item.after_discount_total_price / item.quantity}</p>
+                        <Link to={`/product/${item.product_id}`}>
+                        <button className="text-blue-500 hover:underline mt-2 md:mt-0">More Details</button>
+                        </Link>
+                    </div>
                 </div>
             </div>
             <div className="flex flex-col md:flex-row items-center w-full md:w-auto mt-4 md:mt-0">
@@ -105,6 +115,8 @@ CartItem.propTypes = {
         price: PropTypes.number.isRequired,
         quantity: PropTypes.number.isRequired,
         after_discount_total_price: PropTypes.number.isRequired,
+        product_id:PropTypes.string.isRequired,
+        product_image:PropTypes.string.isRequired,
     }).isRequired,
 };
 
