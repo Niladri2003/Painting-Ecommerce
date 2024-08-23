@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import HomeHero from '../components/Home/HomeHero';
 import girl from "../assets/Contact/girl.jpg";
-import Footer from '../components/footer/Footer';
-import { BASEAPI } from '../utils/BASE_API';
 import AOS from 'aos';
 import { useToast } from '@chakra-ui/react';  
 import 'aos/dist/aos.css';
@@ -41,11 +38,7 @@ export default function Contact() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // const response = await axios.post(`${BASEAPI}/contact-us`, formData, {
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
+ 
             const response=await apiConnector('POST','/contact-us',formData,null,null,false)
             if (response.status === 200) {
                 // Display success toast
@@ -129,7 +122,6 @@ export default function Contact() {
                     </div>
                 </div>
             </div>
-            <Footer />
         </div>
     );
 }

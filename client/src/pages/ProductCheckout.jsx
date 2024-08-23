@@ -133,11 +133,7 @@ const ProductCheckout = () => {
     }
 
     try {
-      // const response = await axios.get(`${BASEAPI}/get-cart`, {
-      //   headers: {
-      //     Authorization: `${token}`,
-      //   },
-      // });
+  
       const response = await apiConnector('GET','/get-cart',null,null,null,true)
 
       const cartItems = response.data.items || [];
@@ -153,20 +149,6 @@ const ProductCheckout = () => {
       if (existingItem) {
         // If the item is already in the cart, update its quantity
         const updatedQuantity = existingItem.quantity + quantity;
-
-        // await axios.put(
-        //   `${BASEAPI}/update-item`,
-        //   {
-        //     cart_item_id: existingItem.id, // Use the existing cart item ID
-        //     quantity: updatedQuantity, // New quantity
-        //   },
-        //   {
-        //     headers: {
-        //       Authorization: `${token}`,
-        //       "Content-Type": "application/json",
-        //     },
-        //   }
-        // );
         await apiConnector('PUT','/update-item',{
           cart_item_id: existingItem.id, // Use the existing cart item ID
           quantity: updatedQuantity, // New quantity
@@ -189,12 +171,6 @@ const ProductCheckout = () => {
           quantity,
         };
 
-        // await axios.post(`${BASEAPI}/add-item`, cartItem, {
-        //   headers: {
-        //     Authorization: `${token}`,
-        //     "Content-Type": "application/json",
-        //   },
-        // });
         await apiConnector('POST','/add-item',cartItem,null,null,true)
         toast({
           title: "Added to Cart",
@@ -218,6 +194,86 @@ const ProductCheckout = () => {
       });
     }
   };
+
+  const handleBuyNow = async()=>{
+    if (!selectedSize || !selectedSubCategory) {
+      toast({
+        title: "Selection Error",
+        description:
+          "Please select a size and subcategory before adding to cart.",
+        status: "warning",
+        duration: 2500,
+        isClosable: true,
+      });
+      return;
+    }
+
+
+    try {
+  
+      const response = await apiConnector('GET','/get-cart',null,null,null,true)
+
+      const cartItems = response.data.items || [];
+
+      // Check if the current product is already in the cart
+      const existingItem = cartItems.find(
+        (item) =>
+          item.product_id === product.data.id &&
+          item.product_size_id === selectedSize.id &&
+          item.product_sub_category === selectedSubCategory.id
+      );
+
+      if (existingItem) {
+        // If the item is already in the cart, update its quantity
+        const updatedQuantity = existingItem.quantity + quantity;
+        await apiConnector('PUT','/update-item',{
+          cart_item_id: existingItem.id, // Use the existing cart item ID
+          quantity: updatedQuantity, // New quantity
+        },null,null,true)
+
+        toast({
+          title: "Cart Updated",
+          description: "The item quantity has been updated in your cart.",
+          status: "success",
+          duration: 2500,
+          isClosable: true,
+        });
+      } else {
+        // If the item is not in the cart, add it as a new item
+        const cartItem = {
+          cart_id: cartId,
+          product_id: product.data.id,
+          product_size_id: selectedSize.id,
+          product_sub_category: selectedSubCategory.id,
+          quantity,
+        };
+
+        await apiConnector('POST','/add-item',cartItem,null,null,true)
+        toast({
+          title: "Added to Cart",
+          description: "The item has been added to your cart.",
+          status: "success",
+          duration: 2500,
+          isClosable: true,
+        });
+
+        setIsInCart(true);
+
+        navigate("/cart");
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error.response?.data?.message ||
+          "Failed to add item to cart. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+
+  }
 
   // Function to check if the product is already in the cart
   const presentInCart = async (productId) => {
@@ -421,7 +477,9 @@ const ProductCheckout = () => {
                 Add to Cart
               </button>
             )}
-            <button className="border border-black text-black px-6 py-2 w-full sm:w-auto">
+            <button
+            onClick={handleBuyNow}
+             className="border border-black text-black px-6 py-2 w-full sm:w-auto">
               Buy Now
             </button>
           </div>

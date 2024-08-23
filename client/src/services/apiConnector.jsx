@@ -1,6 +1,4 @@
 import axios from 'axios';
-import {useDispatch} from "react-redux";
-import {setRefreshToken, setToken} from "../slices/authSlice.jsx";
 import {BASEAPI} from "../utils/BASE_API.js";
 
 export const axiosInstance = axios.create({
