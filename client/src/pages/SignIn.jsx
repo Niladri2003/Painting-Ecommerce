@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
-import { useDispatch } from 'react-redux';
-import { useToast } from '@chakra-ui/toast'; 
-import { BASEAPI } from '../utils/BASE_API';
-import {setRefreshToken, setToken} from '../slices/authSlice';
-import { restoreCart } from '../slices/cartSlice';
-import { setUser } from '../slices/profileSlice';
-import { setCartId } from '../slices/cartSlice';
-import {apiConnector} from "../services/apiConnector.jsx";
-
+import { useDispatch } from "react-redux";
+import { useToast } from "@chakra-ui/toast";
+import { BASEAPI } from "../utils/BASE_API";
+import { setRefreshToken, setToken } from "../slices/authSlice";
+import { setUser } from "../slices/profileSlice";
+import { setCartId } from "../slices/cartSlice";
+import { apiConnector } from "../services/apiConnector.jsx";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -45,13 +43,20 @@ const SignIn = () => {
     }
 
     try {
-       const response = await apiConnector('POST',`/user/sign-in`,formData,{'Content-Type':'application/json'},null,false)
+      const response = await apiConnector(
+        "POST",
+        `/user/sign-in`,
+        formData,
+        { "Content-Type": "application/json" },
+        null,
+        false
+      );
       // console.log('Response:', response);
 
       if (response.status === 201 || response.status === 200) {
-        const { tokens} = response.data;
-        const refreshToken=tokens.refreshToken;
-        console.log(refreshToken)
+        const { tokens } = response.data;
+        const refreshToken = tokens.refreshToken;
+        console.log(refreshToken);
 
         const { access, cart_id } = tokens;
         console.log("cart_id:", cart_id);
