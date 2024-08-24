@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import  { useState, useEffect } from "react";
 import {
   FaKey,
   FaTruck,
@@ -11,7 +10,6 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import defaultAvatar from "../assets/avatar/defaultAvatar.jpg"; // Replace with your actual image path
-import { BASEAPI } from "../utils/BASE_API.js";
 import {
   Modal,
   ModalOverlay,
@@ -31,7 +29,6 @@ import {
   Td,
 } from "@chakra-ui/react";
 import {apiConnector} from "../services/apiConnector.jsx";
-import {logout} from "../slices/authSlice.jsx";
 
 const AccountPage = () => {
   const [selectedTab, setSelectedTab] = useState("delivery-address");
@@ -53,8 +50,6 @@ const AccountPage = () => {
   });
 
   const toast = useToast();
-  const userProfileImage = null;
-  const token = localStorage.getItem("authToken"); // Assuming the token is stored in localStorage
 
   const user = useSelector((state) => state.profile.user);
 
@@ -93,9 +88,9 @@ const AccountPage = () => {
       //   },
       // });
       const {data} =await apiConnector('GET','/get-all-orders',null,null,null,true)
-      await console.log("orders",data)
+      console.log("orders",data)
       setOrders(data);
-      await console.log("orders",orders)
+      console.log("orders",orders)
     } catch (error) {
       toast({
         title: "Error loading orders",
@@ -327,8 +322,8 @@ const AccountPage = () => {
                   <>
                     {/* Order Summary Row */}
                     <Tr key={order.order_id} onClick={() => toggleOrderDetails(order.order_id)} className="cursor-pointer">
-                      <Td>{order.order_items[0].product_name}</Td>
-                      <Td>₹{order.total}</Td>
+                      <Td>{order ?.order_items[0] ?.product_name}</Td>
+                      <Td>₹{order?.total}</Td>
                       <Td>
                   <span className={`font-bold ${order.order_status === 'Delivered' ? 'text-green-700' : 'text-yellow-700'}`}>
                     {order.order_status}
