@@ -309,7 +309,7 @@ const AccountPage = () => {
           </div>
           <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
             <Thead>
-              <Tr>
+              <Tr className="text-8xl ">
                 <Th>Product</Th>
                 <Th>Total</Th>
                 <Th>Status</Th>
