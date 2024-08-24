@@ -173,11 +173,11 @@ const Cart = () => {
                             </>
                         ) : (
                             <div
-                                className=" w-[40%] flex items-center justify-between gap-2 mt-2 p-4 bg-green-100 rounded-lg border border-green-300">
-                                <p className="text-lg font-semibold text-green-800">Coupon "{cartData.coupon_code}"
+                                className=" w-full md:w-[40%] flex items-center justify-between gap-2 mt-2 p-4 bg-green-50 rounded-lg border border-green-400">
+                                <p className=" text-sd md:text-lg font-semibold text-black">Coupon "{cartData.coupon_code}"
                                     applied!</p>
                                 <button
-                                    className="text-red-600  font-medium hover:text-red-800 transition-colors duration-200"
+                                    className="border-2 border-red-500 bg-red-500 hover:text-red-500 font-medium text-white transition-colors hover:bg-transparent duration-[.3s] px-4 py-1 rounded-[.2rem]"
                                     onClick={handleRemoveCoupon}>
                                     Remove
                                 </button>

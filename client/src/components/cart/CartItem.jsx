@@ -62,26 +62,25 @@ export const CartItem = ({ item,refreshCart }) => {
        }
 
     };
-
     return (
-        <div className="w-full flex flex-col md:flex-row justify-between items-center p-5 border-b-2">
-            <div className={"flex-row flex  gap-4"}>
+        <div className="w-full flex flex-col md:flex-row md:justify-between md:items-center p-5 border-b-2">
+            <div className={"flex-col md:flex-row flex  gap-4"}>
                 <div>
-                    <Image src={item.product_image} className={"h-[120px] rounded-sm"}/>
+                    <Image src={item.product_image} className={"w-[30%] md:w-[10rem] rounded-sm"}/>
                 </div>
-                <div className="flex items-center w-full md:w-auto">
-                    <div className="mr-8">
+                <div className="flex md:items-center">
+                    <div className="">
                         <h3 className="text-lg md:text-xl font-semibold">{item.product_name}</h3>
-                        <p className="text-gray-600 line-through">₹{item.price / item.quantity}</p>
-                        <p className="text-gray-600">₹{item.after_discount_total_price / item.quantity}</p>
+                        <p className="text-grey-600 line-through">₹{item.price / item.quantity}</p>
+                        <p className="text-gray-600">₹{item.after_discount_total_price / item.quantity} <span className="text-green-600">({Math.floor(((item.price-item.after_discount_total_price)/item.price)*100)}% off)</span></p> 
                         <Link to={`/product/${item.product_id}`}>
                         <button className="text-blue-500 hover:underline mt-2 md:mt-0">More Details</button>
                         </Link>
                     </div>
                 </div>
             </div>
-            <div className="flex flex-col md:flex-row items-center w-full md:w-auto mt-4 md:mt-0">
-                <div className="flex items-center mb-4 md:mb-0 mr-0 md:mr-8">
+            <div className="flex justify-between items-center w-full md:w-auto mt-3">
+                <div className="flex items-center md:mr-8">
                     <button
                         onClick={() => handleQuantityChange(-1)}
                         className="px-2 py-1 bg-gray-200 rounded"
@@ -96,7 +95,7 @@ export const CartItem = ({ item,refreshCart }) => {
                         +
                     </button>
                 </div>
-                <p className="text-lg font-semibold mb-4 md:mb-0 mr-0 md:mr-8">₹{item.after_discount_total_price}</p>
+                <p className="text-lg font-semibold md:mb-0 mr-0 md:mr-8">₹{item.after_discount_total_price}</p>
                 <button
                     onClick={() =>handleItemDelete(item.id)}
                     className="text-red-500 text-xl"
