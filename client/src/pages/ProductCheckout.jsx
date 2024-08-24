@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import { BASEAPI } from "../utils/BASE_API";
-import {Spinner, useToast} from "@chakra-ui/react";
-import {apiConnector} from "../services/apiConnector.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import { Spinner, useToast } from "@chakra-ui/react";
+import { apiConnector } from "../services/apiConnector.jsx";
 import RelatedProducts from "../components/productCheckout/RelatedProducts.jsx";
+import { setTotalItems } from "../slices/cartSlice.jsx";
 
 const ProductCheckout = () => {
   const { cartId } = useSelector((state) => state.cart); // Access cart_id from Redux state
   const { id } = useParams();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [product, setProduct] = useState(null);
-  const [subImages, setsubImages] = useState(null)
+  const [subImages, setsubImages] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [calculatedOriginalPrice, setCalculatedOriginalPrice] = useState(0);
   const [calculatedDiscountedPrice, setCalculatedDiscountedPrice] = useState(0);
@@ -28,24 +27,29 @@ const ProductCheckout = () => {
   const [isInCart, setIsInCart] = useState(false); // State to track if the product is in the cart
   const navigate = useNavigate();
   const toast = useToast(); // Chakra UI toast for notifications
-  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
+  const dispatch = useDispatch();
 
-  const handleNavigate = (cur,image) => {
-  
-  // Navigate to the new product page
-  navigate(`/product/${cur.id}`);
-  
-  setsubImages(image)
-   
+  const handleNavigate = (cur, image) => {
+    // Navigate to the new product page
+    navigate(`/product/${cur.id}`);
+
+    setsubImages(image);
   };
 
   const getProductDetails = async () => {
     try {
       setLoading(true);
       //const { data } = await axios.get(`${BASEAPI}/get-product-details/${id}`);
-      const {data}=await apiConnector('GET',`/get-product-details/${id}`,null,null,null,false)
+      const { data } = await apiConnector(
+        "GET",
+        `/get-product-details/${id}`,
+        null,
+        null,
+        null,
+        false
+      );
       setProduct(data);
-      console.log(data)
+      console.log(data);
       if (data.data.sizes.length > 0) {
         setSelectedSize(data.data.sizes[0]); // Select the first size by default
       }
@@ -107,7 +111,6 @@ const ProductCheckout = () => {
     }
   }, [selectedSize, selectedSubCategory, product]);
 
-
   const toggleSection = (section) => {
     setSections((prev) => ({
       ...prev,
@@ -115,8 +118,18 @@ const ProductCheckout = () => {
     }));
   };
 
+  // const handleQuantityChange = (change) => {
+  //   setQuantity((prevQuantity) => Math.max(1, prevQuantity + change));
+  // };
+
   const handleQuantityChange = (change) => {
-    setQuantity((prevQuantity) => Math.max(1, prevQuantity + change));
+    setQuantity((prevQuantity) => {
+      const newQuantity = prevQuantity + change;
+      if (newQuantity < 6 && newQuantity > 0) {
+        return newQuantity;
+      }
+      return prevQuantity;
+    });
   };
 
   const handleAddToCart = async () => {
@@ -133,10 +146,16 @@ const ProductCheckout = () => {
     }
 
     try {
-  
-      const response = await apiConnector('GET','/get-cart',null,null,null,true)
+      const response = await apiConnector(
+        "GET",
+        "/get-cart",
+        null,
+        null,
+        null,
+        true
+      );
 
-      const cartItems = response.data.items || [];
+      const cartItems = response.data.cart.items || [];
 
       // Check if the current product is already in the cart
       const existingItem = cartItems.find(
@@ -149,10 +168,29 @@ const ProductCheckout = () => {
       if (existingItem) {
         // If the item is already in the cart, update its quantity
         const updatedQuantity = existingItem.quantity + quantity;
-        await apiConnector('PUT','/update-item',{
-          cart_item_id: existingItem.id, // Use the existing cart item ID
-          quantity: updatedQuantity, // New quantity
-        },null,null,true)
+        if (!(updatedQuantity < 6 && updatedQuantity > 0)) {
+          toast({
+            title: "Quantity Limit Reached",
+            description:
+              "You cannot add more than 5 of this item to your cart.",
+            status: "warning",
+            duration: 2500,
+            isClosable: true,
+          });
+          return;
+        }
+        // const updatedQuantity = existingItem.quantity + quantity;
+        await apiConnector(
+          "POST",
+          "/update-item",
+          {
+            cart_item_id: existingItem.id, // Use the existing cart item ID
+            quantity: updatedQuantity, // New quantity
+          },
+          null,
+          null,
+          true
+        );
 
         toast({
           title: "Cart Updated",
@@ -161,6 +199,7 @@ const ProductCheckout = () => {
           duration: 2500,
           isClosable: true,
         });
+        setIsInCart(true);
       } else {
         // If the item is not in the cart, add it as a new item
         const cartItem = {
@@ -171,7 +210,7 @@ const ProductCheckout = () => {
           quantity,
         };
 
-        await apiConnector('POST','/add-item',cartItem,null,null,true)
+        await apiConnector("POST", "/add-item", cartItem, null, null, true);
         toast({
           title: "Added to Cart",
           description: "The item has been added to your cart.",
@@ -182,6 +221,18 @@ const ProductCheckout = () => {
 
         setIsInCart(true);
       }
+
+      // Update Redux state with the new total items count
+      const { data } = await apiConnector(
+        "GET",
+        "/get-cart",
+        null,
+        null,
+        null,
+        true
+      );
+      const totalItems = data?.cart?.items?.length || 0;
+      dispatch(setTotalItems(totalItems));
     } catch (error) {
       toast({
         title: "Error",
@@ -195,7 +246,7 @@ const ProductCheckout = () => {
     }
   };
 
-  const handleBuyNow = async()=>{
+  const handleBuyNow = async () => {
     if (!selectedSize || !selectedSubCategory) {
       toast({
         title: "Selection Error",
@@ -208,12 +259,17 @@ const ProductCheckout = () => {
       return;
     }
 
-
     try {
-  
-      const response = await apiConnector('GET','/get-cart',null,null,null,true)
+      const response = await apiConnector(
+        "GET",
+        "/get-cart",
+        null,
+        null,
+        null,
+        true
+      );
 
-      const cartItems = response.data.items || [];
+      const cartItems = response.data.cart.items || [];
 
       // Check if the current product is already in the cart
       const existingItem = cartItems.find(
@@ -226,10 +282,29 @@ const ProductCheckout = () => {
       if (existingItem) {
         // If the item is already in the cart, update its quantity
         const updatedQuantity = existingItem.quantity + quantity;
-        await apiConnector('PUT','/update-item',{
-          cart_item_id: existingItem.id, // Use the existing cart item ID
-          quantity: updatedQuantity, // New quantity
-        },null,null,true)
+        if (!(updatedQuantity < 6 && updatedQuantity > 0)) {
+          toast({
+            title: "Quantity Limit Reached",
+            description:
+              "You cannot add more than 5 of this item to your cart.",
+            status: "warning",
+            duration: 2500,
+            isClosable: true,
+          });
+          
+          return;
+        }
+        await apiConnector(
+          "POST",
+          "/update-item",
+          {
+            cart_item_id: existingItem.id, // Use the existing cart item ID
+            quantity: updatedQuantity, // New quantity
+          },
+          null,
+          null,
+          true
+        );
 
         toast({
           title: "Cart Updated",
@@ -248,7 +323,7 @@ const ProductCheckout = () => {
           quantity,
         };
 
-        await apiConnector('POST','/add-item',cartItem,null,null,true)
+        await apiConnector("POST", "/add-item", cartItem, null, null, true);
         toast({
           title: "Added to Cart",
           description: "The item has been added to your cart.",
@@ -272,8 +347,7 @@ const ProductCheckout = () => {
         isClosable: true,
       });
     }
-
-  }
+  };
 
   // Function to check if the product is already in the cart
   const presentInCart = async (productId) => {
@@ -283,7 +357,14 @@ const ProductCheckout = () => {
       //     Authorization: `${token}`, // Send auth token in the request headers
       //   },
       // });
-      const response=await apiConnector('GET','/get-cart',null,null,null,true)
+      const response = await apiConnector(
+        "GET",
+        "/get-cart",
+        null,
+        null,
+        null,
+        true
+      );
 
       const cartItems = response.data.items || []; // Ensure this is an array
 
@@ -301,10 +382,16 @@ const ProductCheckout = () => {
 
   // Loading state
   if (loading) {
-    return <div className={"min-h-screen w-full flex flex-col gap-2 justify-center items-center"}>
-      <Spinner size="xl" />
-      <div>Loading...</div>
-    </div>;
+    return (
+      <div
+        className={
+          "min-h-screen w-full flex flex-col gap-2 justify-center items-center"
+        }
+      >
+        <Spinner size="xl" />
+        <div>Loading...</div>
+      </div>
+    );
   }
 
   // Error state
@@ -329,9 +416,9 @@ const ProductCheckout = () => {
   console.log(product);
 
   // Click to change main images
-  const handleImgClick=(e)=>{
-    setsubImages(e.target.src)
-  }
+  const handleImgClick = (e) => {
+    setsubImages(e.target.src);
+  };
 
   return (
     <div className="min-h-screen flex flex-col w-full mb-5">
@@ -341,43 +428,40 @@ const ProductCheckout = () => {
           <div>
             <div className="mb-4 overflow-hidden w-full h-[500px] flex justify-center items-center">
               {product.images && product.images.length > 0 ? (
-                  <img
-                      src={
-                        subImages
-                            ? subImages
-                            : product.images[selectedImageIndex].image_url
-                      } // Use the product images
-                      alt={product.title || "Product image"} // Use a fallback alt text
-                      className="max-w-full max-h-full object-contain rounded-lg border-2 border-sky-500" // Improved image styling
-                  />
+                <img
+                  src={
+                    subImages
+                      ? subImages
+                      : product.images[selectedImageIndex].image_url
+                  } // Use the product images
+                  alt={product.title || "Product image"} // Use a fallback alt text
+                  className="max-w-full max-h-full object-contain rounded-lg border-2 border-sky-500" // Improved image styling
+                />
               ) : (
-                  <div className="text-gray-500">No images available</div> // Fallback content
+                <div className="text-gray-500">No images available</div> // Fallback content
               )}
             </div>
 
-
             {/* sub images=========================================== */}
             <div className="w-full flex gap-2 justify-start items-start">
-         
               {product?.images.map((cur, index) => {
                 return (
-                    <div
-                        className="w-[7rem] h-[7rem] overflow-hidden object-contain  cursor-pointer border-2 hover:scale-[1.01] duration-300 rounded-md"
-                        key={index}
-                    >
-                      <img
-                          className="w-full h-full object-cover"
-                          src={cur.image_url}
-                          alt="sub images"
-                          onClick={(e) => {
-                            handleImgClick(e);
-                          }}
-                      />
-                    </div>
+                  <div
+                    className="w-[7rem] h-[7rem] overflow-hidden object-contain  cursor-pointer border-2 hover:scale-[1.01] duration-300 rounded-md"
+                    key={index}
+                  >
+                    <img
+                      className="w-full h-full object-cover"
+                      src={cur.image_url}
+                      alt="sub images"
+                      onClick={(e) => {
+                        handleImgClick(e);
+                      }}
+                    />
+                  </div>
                 );
               })}
             </div>
-      
           </div>
         </div>
 
@@ -478,8 +562,9 @@ const ProductCheckout = () => {
               </button>
             )}
             <button
-            onClick={handleBuyNow}
-             className="border border-black text-black px-6 py-2 w-full sm:w-auto">
+              onClick={handleBuyNow}
+              className="border border-black text-black px-6 py-2 w-full sm:w-auto"
+            >
               Buy Now
             </button>
           </div>
@@ -537,10 +622,10 @@ const ProductCheckout = () => {
         </div>
         {/* related product section start */}
         <RelatedProducts
-        relatedProducts={product.related_products}
-        handleNavigate={handleNavigate}
-        handleImgClick={handleImgClick}
-      />
+          relatedProducts={product.related_products}
+          handleNavigate={handleNavigate}
+          handleImgClick={handleImgClick}
+        />
         {/* end related product section */}
       </div>
     </div>
