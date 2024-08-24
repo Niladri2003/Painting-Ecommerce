@@ -26,7 +26,7 @@ const Footer = () => {
 
   return (
     <div className="w-full">
-      <footer className="bg-gray-800 text-white py-8 px-2">
+      <footer className="bg-black text-white py-8 px-2">
         <div className="container mx-auto flex flex-wrap justify-between px-4 md:flex-col gap-5">
           <div className="w-full md:w-1/3 lg:w-1/5 mb-4 md:mb-0 flex justify-start md:justify-start">
             <img

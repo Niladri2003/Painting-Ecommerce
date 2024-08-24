@@ -39,18 +39,16 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 w-full transition-colors duration-300 z-50 ${
-        isScrolled ? "bg-gray-800" : "bg-transparent"
-      }`}
+      className={`fixed top-0 w-full transition-colors duration-300 z-50 ${isScrolled ? "bg-black" : "bg-transparent"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-3 h-16">
           <div className="grid place-content-center text-2xl font-normal justify-start md:justify-center">
             <Link
               to="/"
-              className={`font-bold cursor-pointer ${
-                isScrolled ? "text-white" : "text-black"
-              }`}
+              className={`font-bold cursor-pointer ${isScrolled ? "text-white" : "text-black"
+                }`}
             >
               Trivart
             </Link>
@@ -58,7 +56,7 @@ const Navbar = () => {
           <div className="flex items-center md:hidden justify-end">
             <button
               onClick={toggleMenu}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 "
             >
               <FaBars size={24} />
             </button>
@@ -72,26 +70,23 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/signin"
-                className={`${
-                  isScrolled ? "text-white" : "text-black"
-                } hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}
+                className={`${isScrolled ? "text-white" : "text-black"
+                  } hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium`}
               >
                 Sign In
               </Link>
             )}
             <Link to="/cart" className="relative">
               <AiOutlineShoppingCart
-                className={`text-2xl ${
-                  isScrolled ? "text-white" : "text-black"
-                }`}
+                className={`text-2xl ${isScrolled ? "text-white" : "text-black"
+                  }`}
               />
               {totalItems > 0 && (
                 <span
-                  className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${
-                    isScrolled
+                  className={`absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold ${isScrolled
                       ? "bg-red-600  text-white"
                       : "bg-red-600 text-white"
-                  }`}
+                    }`}
                 >
                   {totalItems}
                 </span>
