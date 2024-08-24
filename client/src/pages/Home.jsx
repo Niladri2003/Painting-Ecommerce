@@ -4,8 +4,16 @@ import { Link } from "react-router-dom";
 import HomeHero from "../components/Home/HomeHero.jsx";
 import Footer from "../components/footer/Footer.jsx";
 import FeatureProducts from "./FeatureProducts.jsx";
+import home_bottom from "../assets/Home/home_bottom_img.png"
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+    const navigate = useNavigate(); // Initialize useNavigate hook
+
+
+    const handleClick = () => {
+        navigate("/shop"); // Redirect to the shop page
+    };
     return (
         <div className="w-full overflow-hidden">
             <HomeHero />
@@ -18,7 +26,7 @@ const Home = () => {
                     <div className="flex flex-col sm:flex-row gap-10">
                         {/*  */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full md:py-10">
-                            <FeatureProducts/>
+                            <FeatureProducts />
                             {/* <div className="relative overflow-hidden rounded-lg group border">
                                 <Link to="#" className="absolute inset-0 z-10">
                                     <span className="sr-only">View Product</span>
@@ -155,6 +163,23 @@ const Home = () => {
 
                 </div>
             </div>
+
+            
+            <div className="flex flex-col lg:flex-row items-center justify-between px-10 py-8">
+                <div className="flex flex-col items-center lg:items-start lg:w-1/2 lg:mr-8 text-center lg:text-left">
+                    <h4 className="text-lg font-semibold mb-2">Trivart - culture on your walls</h4>
+                    <h3 className="text-2xl font-bold mb-4">PREMIUM ART FOR YOUR WALL</h3>
+                    <p className="text-sm mb-4">
+                        Buy The Highest Grade Museum Art That will Last For Decade And Look As Real As The Original Artwork.
+                    </p>
+                    <button onClick={handleClick} className="bg-black text-white text-lg px-5 py-2 rounded">
+                        Shop Now
+                    </button>
+                </div>
+                <img src={home_bottom} className="w-full lg:w-1/2 h-auto mt-4 lg:mt-0" alt="Home Bottom" />
+            </div>
+
+
             <div className={"grid grid-cols-1 md:grid-cols-2 mt-[40px] px-3 md:px-0"}>
                 <div>
                     <img src={CardImg} alt="Hero" className="w-full h-full rounded-[10px]" />
@@ -214,7 +239,7 @@ const Home = () => {
                 </div>
             </div>
 
-       
+
 
         </div>
     );
