@@ -112,7 +112,7 @@ const Buynow = () => {
         duration: 3000,
         isClosable: true,
       });
-      setTimeout(() => navigate("/account"), 3000); // Redirect after animation
+      setTimeout(() => navigate("/account/orders"), 3000); // Redirect after animation
       const { data } = await apiConnector(
         "GET",
         "/get-cart",
