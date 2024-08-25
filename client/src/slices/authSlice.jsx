@@ -27,7 +27,7 @@ const authSlice = createSlice({
             localStorage.removeItem("authToken");
             localStorage.removeItem("cart_id"); 
             localStorage.removeItem("totalItems"); 
-            localStorage.removeItem("totalItems"); 
+            localStorage.removeItem("user"); 
         }
 
     }
