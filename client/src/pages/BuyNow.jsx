@@ -90,6 +90,16 @@ const Buynow = () => {
   };
 
   const handleOrderNow = async () => {
+    if (!defaultAddress) {
+      toast({
+        title: "No Default Address Found",
+        description: "Please set a default address in your profile.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
     setOrderLoading(true);
     try {
       // const response = await axios.post(`${BASEAPI}/create-order`, {}, {
@@ -223,7 +233,7 @@ const Buynow = () => {
                     ? "bg-yellow-500 hover:bg-yellow-600"
                     : "bg-gray-500"
                 }`}
-                disabled={!defaultAddress || orderLoading}
+                disabled={ orderLoading}
               >
                 {orderLoading ? "Placing Order..." : "Order Now"}
               </button>
