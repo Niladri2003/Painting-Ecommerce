@@ -1,15 +1,18 @@
-import React, { useState } from "react";
-import { Button, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, useToast } from "@chakra-ui/react";
+import React from "react";
+import { Button,  Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, useToast } from "@chakra-ui/react";
 import { apiConnector } from "../../services/apiConnector.jsx";
+import { useDispatch } from "react-redux";
+import { logout } from "../../slices/authSlice.jsx";
 
 const DeleteAccount = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [password, setPassword] = useState("");
     const toast = useToast();
+    const dispatch = useDispatch();
+
 
     const handleAccountDeletion = async () => {
         try {
-            await apiConnector('POST', '/delete-account', { password }, null, null, true);
+            await apiConnector('DELETE', '/delete-account', null, null, null, true);
             toast({
                 title: "Account Deleted",
                 description: "Your account has been deleted successfully.",
@@ -18,10 +21,11 @@ const DeleteAccount = () => {
                 isClosable: true,
             });
             onClose();
+            dispatch(logout());
         } catch (error) {
             toast({
                 title: "Deletion Failed",
-                description: "Failed to delete account. Please check your password and try again.",
+                description: "Failed to delete account.",
                 status: "error",
                 duration: 2500,
                 isClosable: true,
@@ -48,12 +52,12 @@ const DeleteAccount = () => {
                     <ModalCloseButton />
                     <ModalBody>
                         <p className="text-gray-700 mb-4">Are you sure you want to delete your account? This action cannot be undone.</p>
-                        <Input
+                        {/* <Input
                             type="password"
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                        />
+                        /> */}
                     </ModalBody>
 
                     <ModalFooter>
@@ -67,6 +71,7 @@ const DeleteAccount = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            
         </>
     );
 };

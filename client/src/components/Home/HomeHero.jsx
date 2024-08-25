@@ -7,7 +7,7 @@ const HomeHero = ({ title, showShopNowButton = true }) => {
 
     const handleClick = () => {
         navigate("/shop"); // Redirect to the shop page
-      };
+    };
 
     return (
         <div className="w-screen h-[50%] flex flex-col items-center justify-center relative">

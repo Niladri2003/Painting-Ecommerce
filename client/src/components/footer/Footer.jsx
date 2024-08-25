@@ -106,8 +106,13 @@ const Footer = () => {
             <ul>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white">
-                  Shipping & Returns
+                  Shipping
                 </a>
+              </li>
+              <li>
+                <Link to="/return-policy" className="text-gray-400 hover:text-white">
+                  Returns
+                </Link>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-white">

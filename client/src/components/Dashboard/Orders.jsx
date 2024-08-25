@@ -54,11 +54,11 @@ const Orders = () => {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {orders.data.map((order) => (
+                    {orders && orders.data.map((order) => (
                         <>
-                            <Tr key={order.order_id} onClick={() => toggleOrderDetails(order.order_id)} className="cursor-pointer">
-                                <Td>{order.order_items[0].product_name}</Td>
-                                <Td>₹{order.total}</Td>
+                            <Tr key={order?.order_id} onClick={() => toggleOrderDetails(order?.order_id)} className="cursor-pointer">
+                                <Td>{order?.order_items[0]?.product_name}</Td>
+                                <Td>₹{order?.total}</Td>
                                 <Td><span className={`font-bold ${order.order_status === 'Delivered' ? 'text-green-700' : 'text-yellow-700'}`}>{order.order_status}</span></Td>
                                 <Td>{new Date(order.order_created_at).toLocaleDateString('en-GB')}</Td>
                                 <Td>

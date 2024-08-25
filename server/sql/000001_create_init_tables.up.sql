@@ -46,7 +46,7 @@ CREATE TABLE addresses (
                            set_as_default BOOLEAN NOT NULL DEFAULT FALSE,
                            created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                            updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                           FOREIGN KEY (user_id) REFERENCES users(id)
+                           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 CREATE TABLE categories (
                             id UUID PRIMARY KEY,
@@ -94,13 +94,14 @@ CREATE TABLE product_images (
                                 image_url TEXT NOT NULL,
                                 created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
 CREATE TABLE orders (
                         id UUID PRIMARY KEY,
-                        user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+                        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
                         total DECIMAL(10, 2) NOT NULL,
                         coupon_code       VARCHAR(50),
                         status VARCHAR(50) NOT NULL, -- e.g., 'pending', 'completed', 'shipped'
-                        address_id UUID REFERENCES addresses(id) ON DELETE SET NULL,
+                        address_id UUID REFERENCES addresses(id) ON DELETE CASCADE,
                         invoice_url TEXT NOT NULL,
                         created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
