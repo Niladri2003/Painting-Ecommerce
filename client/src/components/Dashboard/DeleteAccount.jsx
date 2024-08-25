@@ -9,7 +9,7 @@ const DeleteAccount = () => {
 
     const handleAccountDeletion = async () => {
         try {
-            await apiConnector('POST', '/delete-account', { password }, null, null, true);
+            await apiConnector('POST', '/delete-account', null, null, null, true);
             toast({
                 title: "Account Deleted",
                 description: "Your account has been deleted successfully.",
@@ -48,12 +48,12 @@ const DeleteAccount = () => {
                     <ModalCloseButton />
                     <ModalBody>
                         <p className="text-gray-700 mb-4">Are you sure you want to delete your account? This action cannot be undone.</p>
-                        <Input
+                        {/* <Input
                             type="password"
                             placeholder="Enter your password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                        />
+                        /> */}
                     </ModalBody>
 
                     <ModalFooter>
@@ -67,6 +67,7 @@ const DeleteAccount = () => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
+            
         </>
     );
 };

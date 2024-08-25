@@ -6,6 +6,11 @@ import Footer from "../components/footer/Footer.jsx";
 import FeatureProducts from "./FeatureProducts.jsx";
 import home_bottom from "../assets/Home/home_bottom_img.png"
 import { useNavigate } from "react-router-dom";
+import art_advisory from "../assets/Home/art_advisory.png"
+import cash_on_delivery from "../assets/Home/cash-on-delivery.png"
+import return_icon from "../assets/Home/return.png"
+import premium from "../assets/Home/premium.png"
+import odissa from "../assets/Home/odissa.png"
 
 const Home = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -14,6 +19,11 @@ const Home = () => {
     const handleClick = () => {
         navigate("/shop"); // Redirect to the shop page
     };
+
+    const handleClick2 = () => {
+        navigate("/about"); // Redirect to the shop page
+      };
+
     return (
         <div className="w-full overflow-hidden">
             <HomeHero />
@@ -164,7 +174,7 @@ const Home = () => {
                 </div>
             </div>
 
-            
+
             <div className="flex flex-col lg:flex-row items-center justify-between px-10 py-8">
                 <div className="flex flex-col items-center lg:items-start lg:w-1/2 lg:mr-8 text-center lg:text-left">
                     <h4 className="text-lg font-semibold mb-2">Trivart - culture on your walls</h4>
@@ -182,15 +192,15 @@ const Home = () => {
 
             <div className={"grid grid-cols-1 md:grid-cols-2 mt-[40px] px-3 md:px-0"}>
                 <div>
-                    <img src={CardImg} alt="Hero" className="w-full h-full rounded-[10px]" />
+                    <img src={odissa} alt="Hero" className="w-full h-full rounded-[10px]" />
                 </div>
                 <div className={"w-full flex flex-col items-center justify-around md:p-10"}>
                     <div className={"flex flex-col items-start justify-center gap-4 md:p-10 max-w-2xl"}>
-                        <p className={"text-[25px] font-[600]"}>About</p>
-                        <p>This is a paragraph. Click to edit and add your own text. Add any information you want to
+                        <p className={"text-[25px] font-[600] font-mono"}>About Trivart</p>
+                        <p className="font-mono text-sm ">This is a paragraph. Click to edit and add your own text. Add any information you want to
                             share. You can use this space to tell users a story about the company or describe a special
                             service it offers. Change the font, size or scale to get the look you want.</p>
-                        <button className="bg-black text-white text-lg px-5 py-2">
+                        <button className="bg-black text-white text-lg px-5 py-2" onClick={handleClick2}>
                             Learn More
                         </button>
                     </div>
@@ -202,39 +212,35 @@ const Home = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div className="flex flex-col gap-4 items-center">
                         <div className="w-10 h-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
-                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
-                            </svg>
+                            <img src={art_advisory} className="w-full h-auto max-w-[48px] max-h-[48px] " viewBox="0 0 48 48"
+                            />
                         </div>
-                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
-                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Art Advisory</p>
+                        <p className="text-xs font-light text-center max-w-md">You can reach us from contact us page to get free art advisory from us.</p>
                     </div>
                     <div className="flex flex-col gap-4 items-center">
                         <div className="w-10 h-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
-                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
-                            </svg>
+                            <img src={cash_on_delivery} className="w-full h-auto max-w-[48px] max-h-[48px] " viewBox="0 0 48 48"
+                            />
                         </div>
-                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
-                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Cash On Delivery</p>
+                        <p className="text-xs font-light text-center max-w-md">No problem about online payment we have cash on delivery facility on every product across the country</p>
                     </div>
                     <div className="flex flex-col gap-4 items-center">
                         <div className="w-10 h-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
-                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
-                            </svg>
+                            <img src={return_icon} className="w-full h-auto max-w-[48px] max-h-[48px] " viewBox="0 0 48 48"
+                            />
                         </div>
-                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
-                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Return Policy</p>
+                        <p className="text-xs font-light text-center max-w-md">Read our return policy carefull available on page .. </p>
                     </div>
                     <div className="flex flex-col gap-4 items-center">
                         <div className="w-10 h-10">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 42 42" fill="none">
-                                <path d="M41 20.9399C41 31.9857 32.0457 40.9399 21 40.9399C9.95425 40.9399 1 31.9857 1 20.9399C1 9.89419 9.95425 0.939941 21 0.939941C32.0457 0.939941 41 9.89419 41 20.9399Z" stroke="black" strokeWidth="0.24375" />
-                            </svg>
+                            <img src={premium} className="w-full h-auto max-w-[48px] max-h-[48px] " viewBox="0 0 48 48"
+                            />
                         </div>
-                        <p className="text-lg font-medium leading-6 text-center">Title One</p>
-                        <p className="text-xs font-light text-center max-w-md">Click to edit and add your own text. Change the font, size, or scale to get the look you want.</p>
+                        <p className="text-lg font-medium leading-6 text-center">Premium Quality</p>
+                        <p className="text-xs font-light text-center max-w-md">We use premium quality papers , glass , frame so that it gives your wall a premium looks.</p>
                     </div>
                 </div>
             </div>
