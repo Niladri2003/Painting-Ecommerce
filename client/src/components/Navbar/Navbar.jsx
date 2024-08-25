@@ -56,7 +56,7 @@ const Navbar = () => {
           <div className="flex items-center md:hidden justify-end">
             <button
               onClick={toggleMenu}
-              className="text-gray-700"
+              className="text-white"
             >
               <FaBars size={24} />
             </button>
