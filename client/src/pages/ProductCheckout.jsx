@@ -5,6 +5,11 @@ import { Spinner, useToast } from "@chakra-ui/react";
 import { apiConnector } from "../services/apiConnector.jsx";
 import RelatedProducts from "../components/productCheckout/RelatedProducts.jsx";
 import { setTotalItems } from "../slices/cartSlice.jsx";
+import calender from "../assets/product-checkout-page/calender.png"
+import truck from "../assets/product-checkout-page/truck.png"
+import box from "../assets/product-checkout-page/box.png"
+import DescriptionAboveTheRelatedProduct from "../components/productCheckout/DescriptionAboveTheRelatedProduct.jsx";
+import ShowCase from "../components/productCheckout/ShowCase.jsx";
 
 const ProductCheckout = () => {
   const { cartId } = useSelector((state) => state.cart); // Access cart_id from Redux state
@@ -291,7 +296,7 @@ const ProductCheckout = () => {
             duration: 2500,
             isClosable: true,
           });
-          
+
           return;
         }
         await apiConnector(
@@ -408,10 +413,10 @@ const ProductCheckout = () => {
   const discountPercentage =
     calculatedOriginalPrice > 0
       ? Math.round(
-          ((calculatedOriginalPrice - calculatedDiscountedPrice) /
-            calculatedOriginalPrice) *
-            100
-        )
+        ((calculatedOriginalPrice - calculatedDiscountedPrice) /
+          calculatedOriginalPrice) *
+        100
+      )
       : 0;
   console.log(product);
 
@@ -488,11 +493,10 @@ const ProductCheckout = () => {
                 <button
                   key={size.id}
                   onClick={() => setSelectedSize(size)}
-                  className={`px-4 py-2 rounded-full border ${
-                    selectedSize?.id === size.id
-                      ? "bg-black text-white"
-                      : "bg-white text-black"
-                  }`}
+                  className={`px-4 py-2 rounded-full border ${selectedSize?.id === size.id
+                    ? "bg-black text-white"
+                    : "bg-white text-black"
+                    }`}
                 >
                   {size.size}
                 </button>
@@ -510,11 +514,10 @@ const ProductCheckout = () => {
                 <button
                   key={subcategory.id}
                   onClick={() => setSelectedSubCategory(subcategory)}
-                  className={`px-4 py-2 rounded-full border ${
-                    selectedSubCategory?.id === subcategory.id
-                      ? "bg-black text-white"
-                      : "bg-white text-black"
-                  }`}
+                  className={`px-4 py-2 rounded-full border ${selectedSubCategory?.id === subcategory.id
+                    ? "bg-black text-white"
+                    : "bg-white text-black"
+                    }`}
                 >
                   {subcategory.subcategory}
                 </button>
@@ -619,7 +622,55 @@ const ProductCheckout = () => {
               </p>
             )}
           </div>
+
+          {/* Timeline section  */}
+          <div className="flex items-center justify-between mt-8 ">
+            <div className="flex flex-col items-center">
+              <div className="bg-gray-200 rounded-full p-2 mb-2">
+                <img src={calender} alt="calender" className="w-8 h-8 fill-none" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-black">Order placed</p>
+              </div>
+            </div>
+
+            <div>
+              <div className="h-0.5 w-16 bg-black"></div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="bg-gray-200 rounded-full p-2 mb-2">
+                <img src={truck} alt="calender" className="w-8 h-8 fill-none" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-black">Art Ready</p>
+              </div>
+            </div>
+
+            <div>
+              <div className="h-0.5 w-16 bg-black"></div>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <div className="bg-gray-200 rounded-full p-2 mb-2">
+                <img src={box} alt="calender" className="w-8 h-8 fill-none" />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-black ">Delivered!</p>
+              </div>
+            </div>
+          </div>
+
         </div>
+
+
+      </div>
+      <div className="p-8 ">
+        <DescriptionAboveTheRelatedProduct className="mb-8"/>
+
+
+        <ShowCase/>
+
         {/* related product section start */}
         <RelatedProducts
           relatedProducts={product.related_products}
@@ -633,3 +684,12 @@ const ProductCheckout = () => {
 };
 
 export default ProductCheckout;
+{/* <DescriptionAboveTheRelatedProduct/> */ }
+
+{/* related product section start */ }
+{/* <RelatedProducts
+  relatedProducts={product.related_products}
+  handleNavigate={handleNavigate}
+  handleImgClick={handleImgClick}
+/> */}
+{/* end related product section */ }

@@ -14,6 +14,10 @@ import Account from "./pages/Account.jsx";
 import AuthCallback from "./pages/AuthCallback.jsx";
 import Buynow from "./pages/BuyNow.jsx"
 import ExtraProducts from "./pages/ExtraProducts.jsx";
+import Addresses from "./components/Dashboard/Addresses.jsx";
+import Orders from "./components/Dashboard/Orders.jsx";
+import ChangePassword from "./components/Dashboard/ChnagePassword.jsx";
+import DeleteAccount from "./components/Dashboard/DeleteAccount.jsx";
 
 function App() {
 
@@ -31,7 +35,12 @@ function App() {
         <Route path="/signup" element={<SignUp/>} />
         <Route path="/signin" element={<SignIn/>} />
         <Route path="/cart" element={<Cart/>} />
-        <Route path="/account" element={<Account/>}/>
+          <Route path="/account" element={<Account/>}>
+              <Route path="delivery-address" element={<Addresses/>} />
+              <Route path="orders" element={<Orders/>} />
+              <Route path="change-password" element={<ChangePassword/>} />
+              <Route path="delete-account" element={<DeleteAccount/>} />
+          </Route>
         <Route path="/auth/callback" element={<AuthCallback/>}/>
         <Route path="/buynow" element={<Buynow/>}/>
         
