@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import { Button, Input, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, useToast } from "@chakra-ui/react";
+import React from "react";
+import { Button,  Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, useToast } from "@chakra-ui/react";
 import { apiConnector } from "../../services/apiConnector.jsx";
 
 const DeleteAccount = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [password, setPassword] = useState("");
     const toast = useToast();
 
     const handleAccountDeletion = async () => {
         try {
-            await apiConnector('POST', '/delete-account', null, null, null, true);
+            await apiConnector('DELETE', '/delete-account', null, null, null, true);
             toast({
                 title: "Account Deleted",
                 description: "Your account has been deleted successfully.",
@@ -21,7 +20,7 @@ const DeleteAccount = () => {
         } catch (error) {
             toast({
                 title: "Deletion Failed",
-                description: "Failed to delete account. Please check your password and try again.",
+                description: "Failed to delete account.",
                 status: "error",
                 duration: 2500,
                 isClosable: true,
