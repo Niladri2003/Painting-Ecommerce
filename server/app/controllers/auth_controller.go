@@ -423,19 +423,6 @@ func DeleteAccount(c *fiber.Ctx) error {
 		})
 	}
 
-	// Parse the request body to get the provided password.
-	type PasswordRequest struct {
-		Password string `json:"password"`
-	}
-	var passwordReq PasswordRequest
-
-	if err := c.BodyParser(&passwordReq); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   "invalid request body",
-		})
-	}
-
 	// Create a database connection.
 	db, err := database.OpenDbConnection()
 	if err != nil {
@@ -445,26 +432,10 @@ func DeleteAccount(c *fiber.Ctx) error {
 		})
 	}
 
-	// Fetch the user's stored hashed password from the database.
-	existingUser, err := db.GetUserByID(claims.UserID)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   "failed to fetch user details",
-		})
-	}
-
-	// Compare the provided password with the stored hashed password.
-	err = bcrypt.CompareHashAndPassword([]byte(existingUser.PasswordHash), []byte(passwordReq.Password))
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "password mismatch",
-		})
-	}
 
 	// Delete the user from the database.
 	if err := db.DeleteUserByID(claims.UserID); err != nil {
+		fmt.Println("Error", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
 			"msg":   "failed to delete the user",
