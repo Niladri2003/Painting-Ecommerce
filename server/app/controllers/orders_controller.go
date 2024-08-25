@@ -356,8 +356,9 @@ func GetAllOrders(c *fiber.Ctx) error {
 	}
 
 	// Get all orders using the GetOrders query
-	orders, err := db.GetOrders()
+	orders, err := db.GetAllOrders()
 	if err != nil {
+		fmt.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to retrieve orders"})
 	}
 
