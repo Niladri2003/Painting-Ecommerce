@@ -153,7 +153,7 @@ const Cart = () => {
                 <CartItem key={item.id} item={item} refreshCart={refreshCart} />
               ))
             ) : (
-              <p>Your cart is empty.</p>
+              <p className="flex text-center justify-center ">Your cart is empty.</p>
             )}
           </div>
           <div className="w-full lg:w-[25%] pl-0 lg:pl-8">

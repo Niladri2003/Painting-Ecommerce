@@ -1,10 +1,14 @@
 import React from "react";
 import { Button,  Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure, useToast } from "@chakra-ui/react";
 import { apiConnector } from "../../services/apiConnector.jsx";
+import { useDispatch } from "react-redux";
+import { logout } from "../../slices/authSlice.jsx";
 
 const DeleteAccount = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const toast = useToast();
+    const dispatch = useDispatch();
+
 
     const handleAccountDeletion = async () => {
         try {
@@ -17,6 +21,7 @@ const DeleteAccount = () => {
                 isClosable: true,
             });
             onClose();
+            dispatch(logout());
         } catch (error) {
             toast({
                 title: "Deletion Failed",
