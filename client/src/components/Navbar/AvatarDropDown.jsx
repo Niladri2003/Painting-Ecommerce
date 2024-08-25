@@ -4,10 +4,9 @@ import { useDispatch } from "react-redux";
 import { Avatar } from "@chakra-ui/react";
 import { MdLogout } from "react-icons/md";
 import { logout } from "../../slices/authSlice";
-import defaultAvatar from "../../assets/avatar/defaultAvatar.jpg";
 import { useToast } from "@chakra-ui/react";
 
-const AvatarDropdown = ({ userProfileImage ,size = "sm" }) => {
+const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const dispatch = useDispatch();
@@ -26,7 +25,9 @@ const AvatarDropdown = ({ userProfileImage ,size = "sm" }) => {
       duration: 2500,
       isClosable: true,
     });
-    navigate("/signin");
+
+    navigate("/signin", { replace: true });
+    window.location.reload();
   };
 
   useEffect(() => {
