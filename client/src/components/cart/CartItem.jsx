@@ -4,16 +4,9 @@ import PropTypes from "prop-types";
 import { apiConnector } from "../../services/apiConnector.jsx";
 import { Image, useToast } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { debounce } from "../../utils/debounce.js";
 
-function debounce(func, delay) {
-  let timeoutId;
-  return (...args) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      func(...args);
-    }, delay);
-  };
-}
+
 export const CartItem = ({ item, refreshCart }) => {
   const [quantity, setQuantity] = useState(item.quantity);
   const toast = useToast();
