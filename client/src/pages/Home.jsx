@@ -11,6 +11,7 @@ import cash_on_delivery from "../assets/Home/cash-on-delivery.png"
 import return_icon from "../assets/Home/return.png"
 import premium from "../assets/Home/premium.png"
 import odissa from "../assets/Home/odissa.png"
+import FrequentlyAskQuestion from "./FrequentlyAskQuestion.jsx";
 
 const Home = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -245,7 +246,7 @@ const Home = () => {
                 </div>
             </div>
 
-
+            <FrequentlyAskQuestion/>
 
         </div>
     );

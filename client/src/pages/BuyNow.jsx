@@ -186,10 +186,10 @@ const Buynow = () => {
                     To change the default address, navigate to
                     <span
                       className="text-blue-500 cursor-pointer"
-                      onClick={() => navigate("/account")}
+                      onClick={() => navigate("/account/delivery-address")}
                     >
                       {" "}
-                      Profile {"->"} Account {"->"} Address
+                      Add Address
                     </span>
                     .
                   </p>
@@ -197,7 +197,13 @@ const Buynow = () => {
               ) : (
                 <p className="text-gray-500">
                   No default address found. Please set a default address in your
-                  profile.
+                  profile<span
+                    className="text-blue-500 cursor-pointer"
+                    onClick={() => navigate("/account")}
+                  >
+                    {" "}
+                    Profile {"->"} Account {"->"} Address
+                  </span>.
                 </p>
               )}
             </div>
@@ -228,12 +234,11 @@ const Buynow = () => {
             <div className="px-4 py-4 flex gap-6">
               <button
                 onClick={handleOrderNow}
-                className={`border-black text-white px-6 py-2 rounded ${
-                  defaultAddress
+                className={`border-black text-white px-6 py-2 rounded ${defaultAddress
                     ? "bg-yellow-500 hover:bg-yellow-600"
                     : "bg-gray-500"
-                }`}
-                disabled={ orderLoading}
+                  }`}
+                disabled={orderLoading}
               >
                 {orderLoading ? "Placing Order..." : "Order Now"}
               </button>
