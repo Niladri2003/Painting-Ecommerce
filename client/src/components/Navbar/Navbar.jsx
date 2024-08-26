@@ -156,7 +156,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 w-full bg-black transition-transform duration-300 z-50 ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
+      className={`fixed top-0 w-full bg-black transition-transform duration-300 z-50 `}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-3 h-16">
