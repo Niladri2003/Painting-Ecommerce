@@ -35,7 +35,7 @@ const MobileMenu = ({ isOpen, toggleMenu, token, cartCount }) => {
 
   return (
     <div
-      className={`fixed top-0 right-0 h-full py-3 bg-black text-white w-72 transition-transform transform ${
+      className={`fixed top-0 right-0 h-full py-3 bg-black text-white w-72 transition-transform transform z-50 ${
         isOpen ? "translate-x-0" : "translate-x-full"
       } md:hidden`}
     >
