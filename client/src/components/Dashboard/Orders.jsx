@@ -1,10 +1,12 @@
 import  {useEffect, useState} from "react";
 import { Table, Thead, Tbody, Tr, Th, Td, useToast } from "@chakra-ui/react";
 import {apiConnector} from "../../services/apiConnector.jsx";
+import { Link } from "react-router-dom";
 
 const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [expandedOrderId, setExpandedOrderId] = useState(null);
+    
     const toast = useToast();
 
     const loadOrders = async () => {
@@ -55,8 +57,9 @@ const Orders = () => {
                 </Thead>
                 <Tbody>
                     {orders && orders.data.map((order) => (
-                        <>
-                            <Tr key={order?.order_id} onClick={() => toggleOrderDetails(order?.order_id)} className="cursor-pointer">
+                        < >
+                        <Link to={`/account/order-details/${order.order_id}`} key={order?.order_id}>
+                            <Tr onClick={() => toggleOrderDetails(order?.order_id)} className="cursor-pointer">
                                 <Td>{order?.order_items[0]?.product_name}</Td>
                                 <Td>₹{order?.total}</Td>
                                 <Td><span className={`font-bold ${order.order_status === 'Delivered' ? 'text-green-700' : 'text-yellow-700'}`}>{order.order_status}</span></Td>
@@ -73,8 +76,8 @@ const Orders = () => {
                                     </button>
                                 </Td>
                             </Tr>
-
-                            {expandedOrderId === order.order_id && (
+                        </Link>
+                            {/* {expandedOrderId === order.order_id && (
                                 <Tr>
                                     <Td colSpan="5" className="bg-gray-50">
                                         <div className="p-4">
@@ -91,7 +94,7 @@ const Orders = () => {
                                         </div>
                                     </Td>
                                 </Tr>
-                            )}
+                            )} */}
                         </>
                     ))}
                 </Tbody>

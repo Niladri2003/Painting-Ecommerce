@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+
+
 import { useSelector } from "react-redux";
 import { Suspense, lazy } from "react";
 
@@ -69,6 +71,7 @@ function App() {
         </Routes>
         <Footer />
       </Suspense>
+
     </div>
   );
 }
