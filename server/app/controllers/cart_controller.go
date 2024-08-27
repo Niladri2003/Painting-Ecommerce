@@ -134,7 +134,7 @@ func AddItemToCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"error": false, "msg": "Item added to cart successfully"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "msg": "Item added to cart successfully"})
 }
 
 // UpdateCartItem updates an existing item in the cart.
@@ -200,7 +200,7 @@ func UpdateCartItem(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"error": false, "msg": "Cart item updated successfully"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "msg": "Cart item updated successfully"})
 }
 
 // RemoveItemFromCart handles removing an item from a cart.
@@ -229,7 +229,7 @@ func RemoveItemFromCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"error": false, "msg": "Item removed from cart successfully"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "msg": "Item removed from cart successfully"})
 }
 
 // GetCartByUserID retrieves a cart for a specific user ID.
@@ -251,7 +251,7 @@ func GetCartByUserID(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"error": false, "msg": "Cart retrieved successfully", "cart": cart})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "msg": "Cart retrieved successfully", "cart": cart})
 }
 
 // DeleteCart deletes a cart for a specific user ID.
@@ -276,5 +276,5 @@ func DeleteCart(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{"error": false, "msg": "Cart deleted successfully"})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "msg": "Cart deleted successfully"})
 }

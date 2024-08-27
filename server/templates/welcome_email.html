@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to TrivArt</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      .container {
+        width: 80%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #007bff;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .cta {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+      .cta:hover {
+        background-color: #0056b3;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome to [Your Company Name]!</h1>
+      <p>Hi {{.Name}},</p>
+      <p>
+        We're excited to have you as a part of our community! Thank you for
+        registering with us. Your account has been successfully created.
+      </p>
+      <p>
+        To get started, click the button below to log in to your account and
+        explore our services.
+      </p>
+      <a href="{{.LoginLink}}" target="__blank" class="cta">Log in to your account</a>
+      <p>
+        If you have any questions or need assistance, feel free to reply to this
+        email or contact our support team at [Support Email] or [Support Phone
+        Number].
+      </p>
+      <p>Thank you for joining us!</p>
+      <p>Best regards,<br />The [Your Company Name] Team</p>
+      <div class="footer">
+        <p>If you did not register for this account, please contact us immediately.</p>
+      </div>
+    </div>
+  </body>
+</html>
