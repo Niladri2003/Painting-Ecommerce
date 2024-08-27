@@ -160,7 +160,7 @@ const Navbar = () => {
     <>
       {/* Coupon Banner */}
       {isHomePage && (
-        <div className="w-full bg-blue-500 text-white text-center p-4 fixed top-0 z-30">
+        <div className="w-full bg-blue-500 text-white text-center p-3 fixed top-0 z-30">
           <p>Use code <strong>SAVE10</strong> to get 10% off on your first purchase!</p>
         </div>
       )}
@@ -168,7 +168,7 @@ const Navbar = () => {
       {/* Navbar */}
       <nav
         className={`fixed w-full bg-black transition-transform duration-300 z-40 ${isVisible ? "translate-y-0" : "-translate-y-full"
-          } ${isHomePage ? "mt-16" : ""}`}  // Added margin to make space for the banner
+          } ${isHomePage ? "mt-12" : ""}`}  // Added margin to make space for the banner
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-3 h-16">
