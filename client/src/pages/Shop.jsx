@@ -51,7 +51,7 @@ const Shop = () => {
 
   return (
     <div className="container mx-auto">
-      <HomeHero title='Shop' showShopNowButton={false} />
+      {/*<HomeHero title='Shop' showShopNowButton={false} />*/}
       <div className="flex justify-end mb-4 mt-4 mr-4">
         <select value={sortType} onChange={handleSort} className="border p-2 rounded">
           <option value="">Sort by</option>

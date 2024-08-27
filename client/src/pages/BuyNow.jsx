@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Button, Spinner, useToast } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import {  Spinner, useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { apiConnector } from "../services/apiConnector.jsx";
 import { useDispatch } from "react-redux";
@@ -7,7 +7,7 @@ import { setTotalItems } from "../slices/cartSlice.jsx";
 
 const Buynow = () => {
   const [defaultAddress, setDefaultAddress] = useState(null);
-  const [paymentMethod] = useState("Cash on Delivery");
+  //const [paymentMethod] = useState("Cash on Delivery");
   const [cartData, setCartData] = useState(null);
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
