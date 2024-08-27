@@ -22,13 +22,13 @@ func CreateContactUs(c *fiber.Ctx) error {
 		})
 	}
 
-	if (contact.FirstName == "" || contact.LastName == "" || contact.Email == "" || contact.Message == "" || contact.Phone == "" || contact.Subject == "") {
+	if contact.FirstName == "" || contact.LastName == "" || contact.Email == "" || contact.Message == "" || contact.Phone == "" || contact.Subject == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   "All fields are required",
 		})
 	}
-	
+
 	// Validate contact fields
 	validate := utils.NewValidator()
 	if err := validate.Struct(contact); err != nil {
@@ -51,7 +51,7 @@ func CreateContactUs(c *fiber.Ctx) error {
 	}
 
 	// Create a new contact message in the database
-	
+
 	id, err := db.CreateContact(contact) // Handle both return values
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -63,13 +63,24 @@ func CreateContactUs(c *fiber.Ctx) error {
 	// Print the created contact ID for debugging
 	// fmt.Printf("Created contact ID: %s\n", id.String())
 
+	// err := utils.SendEmail(
+	// 	"John Doe",
+	// 	"johndoe@example.com",
+	// 	"Thank You for Contacting Us!",
+	// 	"templates/contact_us.html",
+	// 	struct{ Name string }{Name: "John Doe"},
+	// )
+
 	// Send a confirmation email to the contact
-	recipientName :=  contact.FirstName + " " + contact.LastName
+	recipientName := contact.FirstName + " " + contact.LastName
 	recipientEmail := contact.Email
+	subject := "Thank You for Contacting Us!"
+	mailTemplatePath := "templates/email_confirmation.html"
+	emailData := struct{ Name string }{Name: recipientName}
 
 	// Launch a goroutine to send the email asynchronously
 	go func() {
-		err := utils.SendConfirmationEmail(recipientName, recipientEmail)
+		err := utils.SendConfirmationEmail(recipientEmail, subject, mailTemplatePath, emailData)
 		if err != nil {
 			fmt.Printf("Failed to send confirmation email: %v \n", err)
 		} else {
@@ -118,7 +129,6 @@ func GetAllContacts(c *fiber.Ctx) error {
 // GetContactByID handles retrieving a contact message by its ID.
 func GetContactByID(c *fiber.Ctx) error {
 	id := c.Params("id")
-	
 
 	// Parse the ID as uuid.UUID
 	contactID, err := uuid.Parse(id)
@@ -156,37 +166,36 @@ func GetContactByID(c *fiber.Ctx) error {
 
 // UpdateContactReplyStatus handles updating the replied status of a contact message.
 func UpdateContactReplyStatus(c *fiber.Ctx) error {
-		// Extract and validate contact ID from URL params
-		id := c.Params("id")
-		contactID, err := uuid.Parse(id)
-		if err != nil {
-			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-				"error": true,
-				"msg":   "Invalid contact ID",
-			})
-		}
-	
-		// Open database connection
-		db, err := database.OpenDbConnection()
-		if err != nil {
-			fmt.Printf("Database connection error: %v", err)
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   "Internal server error",
-			})
-		}
+	// Extract and validate contact ID from URL params
+	id := c.Params("id")
+	contactID, err := uuid.Parse(id)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Invalid contact ID",
+		})
+	}
 
-		// defer db.Close()
-	
-		// Update the contact status to true in the database
-		if err := db.UpdateContact(contactID, true); err != nil {
-			fmt.Printf("Error updating contact status: %v", err)
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": true,
-				"msg":   "Failed to update contact status",
-			})
-		}
-	
+	// Open database connection
+	db, err := database.OpenDbConnection()
+	if err != nil {
+		fmt.Printf("Database connection error: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Internal server error",
+		})
+	}
+
+	// defer db.Close()
+
+	// Update the contact status to true in the database
+	if err := db.UpdateContact(contactID, true); err != nil {
+		fmt.Printf("Error updating contact status: %v", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Failed to update contact status",
+		})
+	}
 
 	// Return success response
 	return c.JSON(fiber.Map{
@@ -221,13 +230,13 @@ func DeleteContact(c *fiber.Ctx) error {
 	if err := db.DeleteContact(contactID); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": true,
-			"msg":  err.Error(),
+			"msg":   err.Error(),
 		})
 	}
 
 	// Return success response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"error": false,
-		"msg": "Message deleted successfully",
+		"msg":   "Message deleted successfully",
 	})
 }

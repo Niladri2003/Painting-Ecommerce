@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-func SendConfirmationEmail(recipientName, recipientEmail string) error {
+func SendConfirmationEmail(recipientEmail, subject, mailTemplatePath string, templateData interface{}) error {
 	// Get environment variables
 	from := os.Getenv("EMAIL_FROM")
 	smtpHost := os.Getenv("SMTP_HOST")
@@ -24,17 +24,20 @@ func SendConfirmationEmail(recipientName, recipientEmail string) error {
 	}
 
 	// Email details
-	subject := "Thank You for Contacting Us!"
-
-	
+	// subject := "Thank You for Contacting Us!"
 
 	// Load the HTML template
 	var body bytes.Buffer
-	t, err := template.ParseFiles("templates/email_confirmation.html")
+	t, err := template.ParseFiles(mailTemplatePath)
 	if err != nil {
 		return fmt.Errorf("error parsing template: %v", err)
 	}
-	err = t.Execute(&body, struct{ Name string }{Name: recipientName})
+	// err = t.Execute(&body, struct{ Name string }{Name: recipientName})
+	// if err != nil {
+	// 	return fmt.Errorf("error executing template: %v", err)
+	// }
+
+	err = t.Execute(&body, templateData)
 	if err != nil {
 		return fmt.Errorf("error executing template: %v", err)
 	}
