@@ -109,7 +109,7 @@
 // export default Navbar;
 
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FaBars } from "react-icons/fa";
 import MobileMenu from "./MobileMenu";
@@ -127,6 +127,9 @@ const Navbar = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const userProfileImage = user ? user.profile_picture : Avatar;
+
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -155,12 +158,19 @@ const Navbar = () => {
 
   return (
     <>
+      {/* Coupon Banner */}
+      {isHomePage && (
+        <div className="w-full bg-blue-500 text-white text-center p-4 fixed top-0 z-30">
+          <p>Use code <strong>SAVE10</strong> to get 10% off on your first purchase!</p>
+        </div>
+      )}
+
+      {/* Navbar */}
       <nav
-        className={`fixed top-0 w-full bg-black transition-transform duration-300 z-50 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
+        className={`fixed w-full bg-black transition-transform duration-300 z-40 ${isVisible ? "translate-y-0" : "-translate-y-full"
+          } ${isHomePage ? "mt-16" : ""}`}  // Added margin to make space for the banner
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-3 h-16">
             <div className="grid place-content-center text-2xl font-normal justify-start md:justify-center">
               <Link to="/" className="font-bold cursor-pointer text-white">
