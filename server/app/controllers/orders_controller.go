@@ -181,6 +181,40 @@ func CreateOrder(c *fiber.Ctx) error {
 		c.Status(500).JSON(fiber.Map{"error": true, "msg": "Failed to Clear cart"})
 	}
 
+
+		// Get User Details by Order ID
+	user, err := db.GetUserByID(claims.UserID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get user details"})
+	}
+
+	// Email details
+	recipientName := user.FirstName + " " + user.LastName
+	recipientEmail := user.Email
+	subject := "Your Order Has Been Placed!"
+	mailTemplatePath := "templates/order_confirmation.html"
+	emailData := struct {
+		Name        string
+		OrderId     string
+		OrderDate   string
+		TotalAmount string
+	}{
+		Name:        recipientName,
+		OrderId:     orderId.String(),
+		OrderDate:   time.Now().Format("02 Jan 2006 15:04 MST"),
+		TotalAmount: fmt.Sprintf("%.2f", order.Total), // Assuming order.Total is of type float64
+	}
+
+	// Send confirmation email asynchronously
+	go func() {
+		err := utils.SendConfirmationEmail(recipientEmail, subject, mailTemplatePath, emailData)
+		if err != nil {
+			fmt.Printf("Failed to send confirmation email: %v \n", err)
+		} else {
+			fmt.Println("Confirmation email sent successfully!")
+		}
+	}()
+
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"data": order})
 }
 
@@ -244,7 +278,7 @@ func UploadOrderStatusToShipped(c *fiber.Ctx) error {
 	}
 
 
-	user, err := db.GetUserByID(claims.UserID)
+	user, err := db.GetUserByOrderId(orderID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get user details in order shipped controller"})
 	}
@@ -309,7 +343,7 @@ func UploadOrderStatusToDelivered(c *fiber.Ctx) error {
 	}
 
 
-	user, err := db.GetUserByID(claims.UserID)
+	user, err := db.GetUserByOrderId(orderID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get user details in order Delivered controller"})
 	}
@@ -430,7 +464,6 @@ func GetAllOrders(c *fiber.Ctx) error {
 
 	// Return the orders in the response
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "orders": orders})
-
 }
 
 // Helper function to calculate the total price from cart items

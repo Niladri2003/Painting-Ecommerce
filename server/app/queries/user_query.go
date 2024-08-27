@@ -85,6 +85,19 @@ func (q *UserQueries) DeleteUserByID(id uuid.UUID) error {
     return err
 }
 
+func (q *UserQueries) GetUserByOrderId(orderId uuid.UUID) (models.User, error) {
+	user := models.User{}
+
+	query := `SELECT users.* FROM users JOIN orders ON users.id = orders.user_id WHERE orders.id = $1`
+
+	err := q.Get(&user, query, orderId)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
+}
+
 
 // UpdateUserProfilePicture updates the user's profile picture and updated_at timestamp in the database.
 func (q *UserQueries) UpdateUserProfilePicture(user *models.User) error {

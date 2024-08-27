@@ -118,6 +118,34 @@ func UserSignUp(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
 	}
 
+
+
+	recipientName := signUp.FirstName + " " + signUp.LastName
+	recipientEmail := signUp.Email
+	subject := "Thanks for registering with us!"
+	mailTemplatePath := "templates/welcome_email.html"
+	
+
+	emailData := struct {
+		Name      string
+		LoginLink string
+	}{
+		Name:      recipientName,
+		LoginLink: "https://painting-ecommerce.vercel.app/signin",
+	}
+	
+
+	
+	// Send confirmation email asynchronously
+	go func() {
+		err := utils.SendConfirmationEmail(recipientEmail, subject, mailTemplatePath, emailData)
+		if err != nil {
+			fmt.Printf("Failed to send confirmation email: %v \n", err)
+		} else {
+			fmt.Println("Confirmation email sent successfully!")
+		}
+	}()
+
 	// Return status 200 OK.
 	return c.JSON(fiber.Map{
 		"error":   false,

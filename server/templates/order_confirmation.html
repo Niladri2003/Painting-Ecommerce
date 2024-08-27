@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Confirmation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      .container {
+        width: 80%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #28a745;
+      }
+      p {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .order-details {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+      }
+      .order-details p {
+        margin: 5px 0;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 14px;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Order Confirmation</h1>
+      <p>Hi {{.Name}},</p>
+      <p>
+        Thank you for your order! We're excited to let you know that your order
+        #{{.OrderId}} has been successfully placed on {{.OrderDate}}. Our team
+        is now processing your order and will notify you as soon as it is
+        shipped.
+      </p>
+
+      <div class="order-details">
+        <h2>Order Summary</h2>
+        <p><strong>OrderId:</strong> {{.OrderId}}</p>
+        <p><strong>Order Date:</strong> {{.OrderDate}}</p>
+        <p><strong>Total Amount:</strong> {{.TotalAmount}}</p>
+      </div>
+
+      <p>
+        You can view your order details and track its status by logging into
+        your account on our website.
+      </p>
+      <p>
+        If you have any questions or need assistance, feel free to reply to this
+        email or contact our support team at [Support Email] or [Support Phone
+        Number].
+      </p>
+
+      <p>Thank you for shopping with us!</p>
+      <p>Best regards,<br />The Trivart Team</p>
+
+      <div class="footer">
+        <p>If you did not place this order, please contact us immediately.</p>
+      </div>
+    </div>
+  </body>
+</html>
