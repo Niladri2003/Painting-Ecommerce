@@ -19,6 +19,7 @@ import Orders from "./components/Dashboard/Orders.jsx";
 import ChangePassword from "./components/Dashboard/ChnagePassword.jsx";
 import DeleteAccount from "./components/Dashboard/DeleteAccount.jsx";
 import ReturnPolicy from "./pages/ReturnPolicy.jsx";
+import OrderDetails from "./components/Dashboard/OrderDetails.jsx";
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="orders" element={<Orders />} />
           <Route path="change-password" element={<ChangePassword />} />
           <Route path="delete-account" element={<DeleteAccount />} />
+          <Route path="order-details/:orderTrack" element={<OrderDetails/>} />
         </Route>
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/buynow" element={<Buynow />} />
