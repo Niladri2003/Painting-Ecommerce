@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from "react-redux";
 import { useToast } from "@chakra-ui/toast";
 import { BASEAPI } from "../utils/BASE_API";
-import { setRefreshToken, setToken } from "../slices/authSlice";
+import { setLoading, setRefreshToken, setToken } from "../slices/authSlice";
 import { setUser } from "../slices/profileSlice";
 import { setCartId, setTotalItems } from "../slices/cartSlice";
 import { apiConnector } from "../services/apiConnector.jsx";
@@ -16,7 +16,6 @@ const SignIn = () => {
     email: "",
     password: "",
   });
-  
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -31,7 +30,7 @@ const SignIn = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!formData.email || !formData.password) {
       toast({
         title: "Missing Information",
@@ -42,6 +41,8 @@ const SignIn = () => {
       });
       return;
     }
+
+    dispatch(setLoading(true));
 
     try {
       const response = await apiConnector(
@@ -127,6 +128,8 @@ const SignIn = () => {
         duration: 2500,
         isClosable: true,
       });
+    } finally{
+      dispatch(setLoading(false));
     }
   };
 

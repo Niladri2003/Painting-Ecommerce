@@ -98,7 +98,7 @@ const Shop = () => {
                 <div className="border px-4 py-2 rounded-[5rem] bg-slate-800 cursor-pointer">
                   <h3 className="text-white">{categoryName}</h3>
                 </div>
-                <Link to={`/extraproducts/${categoryId}`}>
+                <Link to={`/product-list`}>
                   <div className="border-2 border-black w-[6.3rem] h-[2rem] flex justify-center items-center rounded-sm cursor-pointer font-semibold">
                     view more
                   </div>
