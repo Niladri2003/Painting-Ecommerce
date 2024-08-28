@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { apiConnector } from "../services/apiConnector.jsx";
 import ProductCard from "../components/Product/ProductCard.jsx";
+import {useNavigate} from "react-router-dom";
 
 const ProductList = () => {
     const [products, setProducts] = useState([]); // All products from API
@@ -11,13 +12,18 @@ const ProductList = () => {
         sizes: [],
         priceRange: 5000,
     });
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const [categories, setCategories] = useState([]);
     const [subcategories, setSubcategories] = useState([]);
     const [sizes, setSizes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const navigate = useNavigate();
 
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
     // Fetch all products on component mount
     useEffect(() => {
         const fetchProducts = async () => {
@@ -154,6 +160,9 @@ const ProductList = () => {
             sizes: [],
             priceRange: 5000,
         });
+    };
+    const handleCardClick = (productId) => {
+        navigate(`/product/${productId}`);
     };
 
     return (
@@ -312,7 +321,7 @@ const ProductList = () => {
                 ) : filteredProducts.length > 0 ? (
                     <div className="product-listing font-Poppins lg:mt-10 flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                         {filteredProducts.map((product) => (
-                            <ProductCard key={product.id} product={product} />
+                            <ProductCard key={product.id} product={product}  showDiscountPercentage={true} showOriginalPrice={true} />
                         ))}
                     </div>
                 ) : (

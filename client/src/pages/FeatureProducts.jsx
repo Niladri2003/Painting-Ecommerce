@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import CardImg from "../assets/Home/cardImg.png";
 import { Link } from "react-router-dom";
-import { apiConnector } from "../services/apiConnector.jsx"; // Import the API connector function
+import { apiConnector } from "../services/apiConnector.jsx";
+import ProductCard from "../components/Product/ProductCard.jsx";
+import HomeProductCard from "../components/Product/HomeProductCard.jsx"; // Import the API connector function
 
 const FeatureProducts = () => {
   const [featureProducts, setFeatureProducts] = useState([]);
@@ -25,33 +27,12 @@ const FeatureProducts = () => {
   return (
     <>
       {featureProducts.length > 0 ? (
-        featureProducts.map((cur, index) => {
-          console.log(cur);
+        featureProducts.map((product) => {
+       //   console.log(cur);
           // Assuming API response fields are named product_Title, product_Description, products_images, product_Price
           return (
-            <Link to={`/product/${cur.id}`} key={cur.id}>
-              <div className="relative overflow-hidden group" key={index}>
+              <HomeProductCard key={product.id} product={product} showDiscountPercentage={true} showOriginalPrice={false}/>
 
-                <img
-                  src={cur.images[0].image_url || CardImg} // Fallback to CardImg if products_images is not available
-                  width={400}
-                  height={300}
-                  alt={cur.title || "Product Image"}
-                  className="object-cover w-[300px] h-[170px] md:h-[320px] md:w-full group-hover:opacity-50 transition-opacity rounded-md" />
-
-                <div className="py-4 bg-background">
-                  <h3 className="text-lg font-bold capitalize">
-                    {cur.title || "Title Not Available"}
-                  </h3>
-                  
-                  <h4 className="text-base font-semibold">
-                    ₹{cur.original_price + (cur.sub_category[0].charge + cur.sizes[0].charge) || "Price Not Available"}
-                  </h4>
-
-                </div>
-                
-              </div>
-            </Link>
           );
         })
       ) : (

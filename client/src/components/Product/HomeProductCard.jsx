@@ -1,6 +1,8 @@
-import { Link } from "react-router-dom";
 
-const ProductCard = ({ product, showDiscountPercentage,showOriginalPrice }) => {
+import {Link} from 'react-router-dom'
+
+
+const HomeProductCard = ({ product, showDiscountPercentage,showOriginalPrice }) => {
     // Calculate discount percentage
     const discountPercentage = Math.round(
         ((product.original_price - product.discounted_price) / product.original_price) * 100
@@ -8,7 +10,7 @@ const ProductCard = ({ product, showDiscountPercentage,showOriginalPrice }) => {
 
     return (
         <Link to={`/product/${product.id}`}>
-            <div className="product-card relative border rounded-lg p-4">
+            <div className="product-card relative  rounded-lg p-4">
                 <div className="image-container">
                     {showDiscountPercentage && (
                         <span className="discount-badge z-10 absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
@@ -21,12 +23,12 @@ const ProductCard = ({ product, showDiscountPercentage,showOriginalPrice }) => {
                         className="rounded-t-lg hover:scale-105 transition-transform duration-300"
                     />
                 </div>
-                <div className="product-details mt-4 font-Poppins">
-                    <h3 className="text-lg">{product.title}</h3>
+                <div className="product-details mt-2 font-Poppins">
+                    <h3 className="text-lg  text-[22px] leading-[20px] font-[400]">{product.title}</h3>
                     {/*<p className="text-gray-600">{product.description}</p>*/}
                     {showOriginalPrice &&    ( <p className="line-through text-red-600">₹{product.original_price}</p>)}
-                  <p className="text-gray-800 font-semibold">
-                        ₹{product.discounted_price}
+                    <p className="text-gray-800">
+                      From Rs. ₹{product.discounted_price}
                     </p>
                     {/* Sizes and sub-categories can be added here */}
                     {/*<div className="sizes mt-2">*/}
@@ -47,6 +49,5 @@ const ProductCard = ({ product, showDiscountPercentage,showOriginalPrice }) => {
             </div>
         </Link>
     );
-};
-
-export default ProductCard;
+}
+export default HomeProductCard;
