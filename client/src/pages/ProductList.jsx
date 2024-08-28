@@ -12,6 +12,7 @@ const ProductList = () => {
         sizes: [],
         priceRange: 5000,
     });
+    const [sortOption, setSortOption] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [categories, setCategories] = useState([]);
     const [subcategories, setSubcategories] = useState([]);
@@ -110,13 +111,32 @@ const ProductList = () => {
                 );
             }
 
+            // Sort products
+            if (sortOption) {
+                console.log(updatedProducts)
+                updatedProducts.sort((a, b) => {
+                    switch (sortOption) {
+                        case "newest":
+                            return new Date(b.createdAt) - new Date(a.createdAt);
+                        case "oldest":
+                            return new Date(a.createdAt) - new Date(b.createdAt);
+                        case "price-low-high":
+                            return a.discounted_price - b.discounted_price;
+                        case "price-high-low":
+                            return b.discounted_price - a.discounted_price;
+                        default:
+                            return 0;
+                    }
+                });
+            }
+
             setFilteredProducts(updatedProducts);
         };
 
         if (!loading) {
             applyFilters();
         }
-    }, [products, filters, loading]);
+    }, [products, filters, loading,sortOption]);
 
     // Handler functions for filter changes
     const handleCategoryChange = (category) => {
@@ -151,6 +171,10 @@ const ProductList = () => {
             priceRange: price,
         }));
     };
+    const handleSortChange = (e) => {
+        console.log("hello")
+        setSortOption(e.target.value);
+    };
 
     // Clear all filters
     const clearFilters = () => {
@@ -160,6 +184,7 @@ const ProductList = () => {
             sizes: [],
             priceRange: 5000,
         });
+        setSortOption("");
     };
 
     const handleCardClick = (productId) => {
@@ -275,7 +300,7 @@ const ProductList = () => {
 
                         className=" w-[48%] text-black border border-black p-2 rounded-lg"
                     >
-                        <select className=" bg-white font-Poppins rounded">
+                        <select id="sort" value={sortOption} onChange={handleSortChange} className=" bg-white font-Poppins rounded">
                             <option value="">Sort by</option>
                             <option value="newest">Newest</option>
                             <option value="oldest">Oldest</option>
@@ -406,7 +431,7 @@ const ProductList = () => {
                         )}
 
                         {/* Clear Filters Button */}
-                        <div className={"lg:block hidden"} ><select  className=" border bg-white font-Poppins p-2 rounded">
+                        <div className={"lg:block hidden"} ><select id="sort" value={sortOption} onChange={handleSortChange}  className=" border bg-white font-Poppins p-2 rounded">
                             <option value="">Sort by</option>
                             <option value="newest">Newest</option>
                             <option value="oldest">Oldest</option>
