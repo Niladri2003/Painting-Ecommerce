@@ -33,6 +33,9 @@ func main() {
 
 	utils.GoogleOauthInit()
 
+	// Initialize Mailgun
+	utils.InitializeMailgun()
+
 	//Routes
 	routes.PublicRoutes(app)
 	routes.ProtectedRoutes(app)

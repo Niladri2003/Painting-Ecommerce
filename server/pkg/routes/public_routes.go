@@ -32,4 +32,7 @@ func PublicRoutes(a *fiber.App) {
 
 	//Routes for address
 	route.Get("/get-all-addresses", controllers.GetAllAddresses)
+
+
+	route.Get("/get-all-coupons",  controllers.GetAllCoupon)
 }
