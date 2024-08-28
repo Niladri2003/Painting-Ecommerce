@@ -13,9 +13,11 @@ const AuthCallback = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchTokens = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${BASEAPI}/user/get-tokens`, {
           withCredentials: true, // Ensure cookies are sent with the request
@@ -33,13 +35,11 @@ const AuthCallback = () => {
               `https://api.dicebear.com/5.x/initials/svg?seed=${user_details.first_name} ${user_details.last_name}`,
           };
 
-
           // Dispatch to redux store if needed
           dispatch(setToken(access_token));
           dispatch(setRefreshToken(refresh_token));
           dispatch(setUser(user));
           dispatch(setCartId(cart_id));
-
 
           const { data } = await apiConnector(
             "GET",
@@ -58,8 +58,6 @@ const AuthCallback = () => {
             duration: 2500,
             isClosable: true,
           });
-
-
 
           // Redirect to home or dashboard
           navigate("/");
@@ -83,13 +81,15 @@ const AuthCallback = () => {
           isClosable: true,
         });
         navigate("/signin");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchTokens();
   }, [navigate, dispatch, toast]);
 
-  return <Loader/>;
+  return isLoading ? <Loader /> : null;
 };
 
 export default AuthCallback;
