@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
@@ -19,24 +18,38 @@ import {
     Td,
     Select,
     useDisclosure,
-    useToast, // Import useToast from Chakra UI
+    useToast,
 } from "@chakra-ui/react";
 import { BASEAPI } from "../../utils/BASEAPI";
 
 const OrdersList = () => {
     const [orders, setOrders] = useState([]);
+    const [filteredOrders, setFilteredOrders] = useState([]);
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [status, setStatus] = useState(""); // State for tracking status change
+    const [status, setStatus] = useState("");
+    const [filterStatus, setFilterStatus] = useState("");
+    const [noOrdersMessage, setNoOrdersMessage] = useState(""); // State for no orders message
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const toast = useToast(); // Initialize useToast
+    const toast = useToast();
 
     useEffect(() => {
         fetchOrders();
     }, []);
 
+    useEffect(() => {
+        if (filterStatus) {
+            const ordersForStatus = orders.filter(order => order.order_status === filterStatus);
+            setFilteredOrders(ordersForStatus);
+            setNoOrdersMessage(ordersForStatus.length === 0 ? `No ${filterStatus} orders available` : "");
+        } else {
+            setFilteredOrders(orders);
+            setNoOrdersMessage(""); // Clear message if no filter is applied
+        }
+    }, [filterStatus, orders]);
+
     const fetchOrders = async () => {
         try {
-            const token = JSON.parse(localStorage.getItem("token")); // Retrieve token from localStorage
+            const token = JSON.parse(localStorage.getItem("token"));
 
             if (!token) {
                 throw new Error("No token found");
@@ -44,12 +57,12 @@ const OrdersList = () => {
 
             const response = await axios.get(`${BASEAPI}/v1/get-all-orders-admin`, {
                 headers: {
-                    Authorization: `${token}`, // Add the Authorization header
+                    Authorization: `${token}`,
                 },
             });
-            
+
             setOrders(response.data.orders);
-            console.log(orders)
+            setFilteredOrders(response.data.orders);
         } catch (error) {
             console.error("Error fetching orders:", error);
         }
@@ -57,7 +70,7 @@ const OrdersList = () => {
 
     const openModal = (order) => {
         setSelectedOrder(order);
-        setStatus(order.order_status); // Set the initial status
+        setStatus(order.order_status);
         onOpen();
     };
 
@@ -70,15 +83,18 @@ const OrdersList = () => {
         setStatus(e.target.value);
     };
 
+    const handleFilterChange = (e) => {
+        setFilterStatus(e.target.value);
+    };
+
     const updateOrderStatus = async () => {
         try {
-            const token = JSON.parse(localStorage.getItem("token")); // Retrieve token from localStorage
+            const token = JSON.parse(localStorage.getItem("token"));
 
             if (!token) {
                 throw new Error("No token found");
             }
 
-            // Check if the order has been delivered or cancelled
             if (selectedOrder.order_status === "delivered") {
                 toast({
                     title: "Action not allowed.",
@@ -136,12 +152,11 @@ const OrdersList = () => {
                 {},
                 {
                     headers: {
-                        Authorization: `${token}`, // Add the Authorization header
+                        Authorization: `${token}`,
                     },
                 }
             );
 
-            // Update the status in the local state
             setOrders((prevOrders) =>
                 prevOrders.map((order) =>
                     order.order_id === selectedOrder.order_id
@@ -150,7 +165,6 @@ const OrdersList = () => {
                 )
             );
 
-            // Show a success toast notification
             toast({
                 title: `Order ${status}.`,
                 description: `The order has been marked as ${status}.`,
@@ -163,7 +177,6 @@ const OrdersList = () => {
             closeModal();
         } catch (error) {
             console.error("Error updating order status:", error);
-            // Show an error toast notification if the API call fails
             toast({
                 title: "Error updating status.",
                 description: "There was an issue updating the order status.",
@@ -178,6 +191,20 @@ const OrdersList = () => {
     return (
         <div className="w-full p-5">
             <h2 className="text-2xl font-semibold mb-4">Orders</h2>
+            <div className="mb-4">
+                <Select value={filterStatus} onChange={handleFilterChange}>
+                    <option value="">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="canceled">Cancelled</option>
+                </Select>
+            </div>
+            {noOrdersMessage && (
+                <div className="mb-4">
+                    <p className="text-lg text-red-500">{noOrdersMessage}</p>
+                </div>
+            )}
             <div className="overflow-x-auto">
                 <Table variant="simple" bg="white" border="1px" borderColor="gray.300">
                     <Thead>
@@ -191,7 +218,7 @@ const OrdersList = () => {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        {orders && orders.map((order) => (
+                        {filteredOrders.map((order) => (
                             <Tr key={order.order_id} onClick={() => openModal(order)} cursor="pointer" _hover={{ bg: "gray.100" }}>
                                 <Td>{order.order_items[0]?.product_name}</Td>
                                 <Td>{order.addresses[0]?.first_name}</Td>
