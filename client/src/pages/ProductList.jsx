@@ -194,11 +194,11 @@ const ProductList = () => {
     return (
         <div className="flex flex-col lg:flex-row lg:mt-24 mt-14 w-full lg:p-10">
             {/* Sidebar for large screens */}
-            <div className="hidden lg:block w-[20%] p-4">
+            <div className="hidden lg:block w-[20%] p-4 shadow-md rounded-lg">
                 <h2 className="text-xl font-Poppins text-[20px] leading-[28px]">
                     Categories
                 </h2>
-                <div className="h-[1px] bg-draw-color mt-[2px]" />
+                <div className="h-[1px] bg-draw-color mt-[2px]"/>
                 <ul className="font-Poppins text-[16px] flex flex-col gap-1 lg:mt-2">
                     {categories.map((category, index) => (
                         <li
@@ -214,12 +214,13 @@ const ProductList = () => {
                 </ul>
 
                 {/* Price Filter */}
-                <h3 className="text-sm font-Poppins mt-10">Filter by</h3>
+                <h3 className="text-md font-Poppins mt-10">Filter by</h3>
+                <div className="h-[1px] bg-draw-color mt-[10px]"/>
                 <div className="mt-2">
                     <div className="flex flex-col justify-start">
                         <label
                             htmlFor="price-range"
-                            className="block mb-2 text-sm font-medium text-gray-900"
+                            className="block mb-2 text-md font-medium text-gray-900"
                         >
                             Price
                         </label>
@@ -233,17 +234,16 @@ const ProductList = () => {
                             onChange={(e) =>
                                 handlePriceChange(Number(e.target.value))
                             }
-                            className="w-full h-1 rounded-lg appearance-none cursor-pointer bg-gray-500"
+                            className="w-[70%] h-1 rounded-lg appearance-none cursor-pointer bg-gray-500"
                         />
-                        <div>Up to ₹{filters.priceRange}</div>
+                        <div className={"text-sm"}>Up to ₹{filters.priceRange}</div>
                     </div>
                 </div>
 
-                <div className="h-[1px] bg-draw-color mt-[20px]" />
 
                 {/* Subcategory Filter */}
                 <div className="mt-2">
-                    <h4 className="text-sm font-Poppins mb-2">Subcategory</h4>
+                    <h4 className="text-md font-Poppins mb-2">Subcategory</h4>
                     <div className="space-y-1 font-Poppins text-[13px] max-h-40 overflow-y-auto">
                         {subcategories.map((subcategory, index) => (
                             <label
@@ -300,7 +300,7 @@ const ProductList = () => {
 
                         className=" w-[48%] text-black border border-black p-2 rounded-lg"
                     >
-                        <select id="sort" value={sortOption} onChange={handleSortChange} className=" bg-white font-Poppins rounded">
+                        <select id="sort" value={sortOption} onChange={handleSortChange} className=" bg-white font-Poppins rounded text-sm">
                             <option value="">Sort by</option>
                             <option value="newest">Newest</option>
                             <option value="oldest">Oldest</option>
@@ -313,10 +313,10 @@ const ProductList = () => {
                 {/* Sidebar modal for small screens */}
                 {isSidebarOpen && (
                     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-40 flex justify-end">
-                        <div className="bg-white w-64 h-full p-4">
+                        <div className="bg-white w-60 h-full p-4">
                             <button
                                 onClick={toggleSidebar}
-                                className="text-white font-Poppins p-2 rounded-md mb-4 bg-red-600"
+                                className="text-white text-sm font-Poppins p-2 rounded-md mb-4 bg-red-600"
                             >
                                 Close
                             </button>
@@ -342,7 +342,7 @@ const ProductList = () => {
                                 </ul>
 
                                 {/* Price Filter */}
-                                <h3 className="text-sm font-Poppins mt-10">Filter by</h3>
+                                <h3 className="text-md font-Poppins mt-5">Filter by</h3>
                                 <div className="mt-2">
                                     <div className="flex flex-col justify-start">
                                         <label
@@ -361,9 +361,9 @@ const ProductList = () => {
                                             onChange={(e) =>
                                                 handlePriceChange(Number(e.target.value))
                                             }
-                                            className="w-full h-1 rounded-lg appearance-none cursor-pointer bg-gray-500"
+                                            className="w-[70%] h-1 rounded-lg appearance-none cursor-pointer bg-gray-500"
                                         />
-                                        <div>Up to ₹{filters.priceRange}</div>
+                                        <div className={"text-sm mt-1"}>Up to ₹{filters.priceRange}</div>
                                     </div>
                                 </div>
 
@@ -485,7 +485,7 @@ const ProductList = () => {
                         </div>
                     ) : filteredProducts.length > 0 ? (
                         <div
-                            className="product-listing font-Poppins lg:mt-10 flex-grow grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                            className="product-listing font-Poppins lg:mt-10 flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                             {filteredProducts.map((product) => (
                                 <ProductCard key={product.id} product={product} showDiscountPercentage={true}
                                              showOriginalPrice={true}/>
