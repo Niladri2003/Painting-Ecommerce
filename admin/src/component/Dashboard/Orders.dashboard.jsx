@@ -21,6 +21,7 @@ import {
     useToast,
 } from "@chakra-ui/react";
 import { BASEAPI } from "../../utils/BASEAPI";
+import { Link } from "react-router-dom";
 
 const OrdersList = () => {
     const [orders, setOrders] = useState([]);
@@ -219,21 +220,23 @@ const OrdersList = () => {
                     </Thead>
                     <Tbody>
                         {filteredOrders.map((order) => (
-                            <Tr key={order.order_id} onClick={() => openModal(order)} cursor="pointer" _hover={{ bg: "gray.100" }}>
-                                <Td>{order.order_items[0]?.product_name}</Td>
-                                <Td>{order.addresses[0]?.first_name}</Td>
-                                <Td>{order.addresses[0]?.last_name}</Td>
-                                <Td>{order.total}</Td>
-                                <Td color={
-                                    order.order_status === "pending" ? "yellow.600" :
-                                        order.order_status === "shipped" ? "blue.600" :
-                                            order.order_status === "delivered" ? "green.600" :
-                                                "red.600"
-                                }>
-                                    {order.order_status}
-                                </Td>
-                                <Td>{dayjs(order.order_updated_at).format("DD-MM-YYYY HH:mm")}</Td>
-                            </Tr>
+                            <Link to={`/dashboard/admin-order-details/${order?.order_id}`} key={order?.order_id}>
+                                <Tr key={order.order_id} onClick={() => openModal(order)} cursor="pointer" _hover={{ bg: "gray.100" }}>
+                                    <Td>{order.order_items[0]?.product_name}</Td>
+                                    <Td>{order.addresses[0]?.first_name}</Td>
+                                    <Td>{order.addresses[0]?.last_name}</Td>
+                                    <Td>{order.total}</Td>
+                                    <Td color={
+                                        order.order_status === "pending" ? "yellow.600" :
+                                            order.order_status === "shipped" ? "blue.600" :
+                                                order.order_status === "delivered" ? "green.600" :
+                                                    "red.600"
+                                    }>
+                                        {order.order_status}
+                                    </Td>
+                                    <Td>{dayjs(order.order_updated_at).format("DD-MM-YYYY HH:mm")}</Td>
+                                </Tr>
+                            </Link>
                         ))}
                     </Tbody>
                 </Table>

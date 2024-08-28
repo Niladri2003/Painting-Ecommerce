@@ -21,9 +21,9 @@ const OrderDetails = () => {
         null,
         true
       );
-      await console.log("orders", data);
+      console.log("orders", data);
       setOrders(data);
-      await console.log("orders", orders);
+      console.log("orders", orders);
     } catch (error) {
       toast({
         title: "Error loading orders",

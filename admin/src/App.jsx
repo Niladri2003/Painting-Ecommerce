@@ -16,6 +16,7 @@ import {Home} from "lucide-react";
 import NotFound from "./Pages/NotFound.jsx";
 import Products from "./component/Dashboard/Products.jsx";
 import Orders from "./component/Dashboard/Orders.dashboard.jsx";
+import AdminOrderDetails from "./component/Dashboard/MoreDetailsAboutOrder.jsx";
 
 
 
@@ -45,6 +46,7 @@ function App() {
                  <Route path="dashboard/contact-us" element={<ContactUs/>} />
                  <Route path="dashboard/all-products" element={<Products/>} />
                  <Route path="dashboard/all-orders" element={<Orders/>} />
+                 <Route path="dashboard/admin-order-details/:orderTrack" element={<AdminOrderDetails/>} />
              </Route>
          </Routes>
      </div>
