@@ -189,28 +189,23 @@ func CreateOrder(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get user details"})
 	}
 
-	// Email details
-	recipientName := user.FirstName + " " + user.LastName
-	recipientEmail := user.Email
-	subject := "Your Order Has Been Placed!"
-	mailTemplatePath := "templates/order_confirmation.html"
+	
 	emailData := struct {
 		Name        string
 		OrderId     string
 		OrderDate   string
 		TotalAmount string
 	}{
-		Name:        recipientName,
+		Name:        user.FirstName + " " + user.LastName,
 		OrderId:     orderId.String(),
 		OrderDate:   time.Now().Format("02 Jan 2006 15:04 MST"),
 		TotalAmount: fmt.Sprintf("%.2f", order.Total),
 	}
 
-	// Send confirmation email asynchronously
 	go func() {
-		err := utils.SendConfirmationEmail(recipientEmail, subject, mailTemplatePath, emailData)
+		err := utils.SendEmailUsingMailgun(user.Email, "Your Order Has Been Placed!", "templates/order_confirmation.html", emailData)
 		if err != nil {
-			fmt.Printf("Failed to send confirmation email: %v \n", err)
+			fmt.Printf("Failed to send confirmation email: %v\n", err)
 		} else {
 			fmt.Println("Confirmation email sent successfully!")
 		}
@@ -301,7 +296,7 @@ func UploadOrderStatusToShipped(c *fiber.Ctx) error {
 
 	// Launch a goroutine to send the email asynchronously
 	go func() {
-		err := utils.SendConfirmationEmail(recipientEmail,subject, mailTemplatePath,emailData)
+		err := utils.SendEmailUsingMailgun(recipientEmail,subject, mailTemplatePath,emailData)
 		if err != nil {
 			fmt.Printf("Failed to send confirmation email: %v \n", err)
 		} else {
@@ -365,7 +360,7 @@ func UploadOrderStatusToDelivered(c *fiber.Ctx) error {
 
 	// Launch a goroutine to send the email asynchronously
 	go func() {
-		err := utils.SendConfirmationEmail(recipientEmail,subject, mailTemplatePath,emailData)
+		err := utils.SendEmailUsingMailgun(recipientEmail,subject, mailTemplatePath,emailData)
 		if err != nil {
 			fmt.Printf("Failed to send confirmation email: %v \n", err)
 		} else {
