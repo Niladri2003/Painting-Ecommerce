@@ -11,6 +11,7 @@ export default {
         Cormorant:["Cormorant Garamond","sans-serif"],
         Roboto:["Roboto","sans-serif"],
         Poppins: ["Poppins", "sans-serif"],
+        OldStandard:["Old Standard TT","sans-serif"],
       },
       fontWeight: {
         thin: 100,

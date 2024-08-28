@@ -5,6 +5,7 @@ import CardImg from "../assets/Home/cardImg.png";
 import { apiConnector } from "../services/apiConnector.jsx";
 import { useNavigate, Link } from "react-router-dom";
 import { Spinner } from "@chakra-ui/react";
+import ProductCard from "../components/Product/ProductCard.jsx";
 // import axios from 'axios';
 // import { BASEAPI } from '../utils/BASE_API.js';
 
@@ -91,35 +92,31 @@ const Shop = () => {
           const products = sortedProducts(category.products);
 
           return (
-            <div className="container pb-[2.5rem]" key={index}>
-              <hr />
+            <div className=" pb-[2.5rem] " key={index}>
+
               {/* Category header */}
               <header className="flex justify-between pt-3 lg:w-[98%]">
-                <div className="border px-4 py-2 rounded-[5rem] bg-slate-800 cursor-pointer">
-                  <h3 className="text-white">{categoryName}</h3>
+                <div className=" px-4 py-2 flex flex-col gap-2  lg:w-[86%] w-[96%]  cursor-pointer">
+                  <h3 className="text-black font-Poppins text-[30px]">{categoryName}</h3>
+                  <div className={"h-[2px]  bg-black"}>{""}</div>
                 </div>
-                <Link to={`/product-list`}>
-                  <div className="border-2 border-black w-[6.3rem] h-[2rem] flex justify-center items-center rounded-sm cursor-pointer font-semibold">
-                    view more
-                  </div>
-                </Link>
+                {/*<Link to={`/product-list`}>*/}
+                {/*  <div className="border-2 border-black w-[6.3rem] h-[2rem] flex justify-center items-center rounded-sm cursor-pointer font-semibold">*/}
+                {/*    view more*/}
+                {/*  </div>*/}
+                {/*</Link>*/}
               </header>
 
               {/* Products list */}
-              <section className="w-full mt-5 grid lg:grid-cols-5 grid-cols-2 place-items-center md:grid-cols-3 gap-2">
-                {products.map((product, prodIndex) => (
-                  <div className="p-2 max-w-max cursor-pointer" key={prodIndex} onClick={() => handleCardClick(product.id)}>
-                    <div className="lg:w-[16rem] w-[9.5rem] md:w-[15rem] overflow-hidden">
-                      <img className="w-full" src={product.images[0]?.image_url || CardImg} alt={product.title} />
-                    </div>
-                    <h2 className="font-semibold text-black text-[1rem] mt-1 ml-2">
-                      {product.title}
-                    </h2>
-                    <p className="font-semibold text-black text-[1rem] ml-2">
-                      ₹{product.discounted_price}
-                    </p>
-                  </div>
+              <section className="w-full mt-5 grid lg:grid-cols-6 grid-cols-2 place-items-center md:grid-cols-3 gap-2">
+                {products.map((product) => (
+                 <ProductCard key={product.id} product={product}  showDiscountPercentage={true} showOriginalPrice={true} />
                 ))}
+                <div className={"font-Poppins text-[20px] cursor-pointer bg-black text-white text-lg px-5 py-2"}>
+                  <Link to={`/product-list`}>
+                    View More
+                  </Link>
+                </div>
               </section>
             </div>
           );

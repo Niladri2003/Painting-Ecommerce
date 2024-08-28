@@ -1,6 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-
-
 import { useSelector } from "react-redux";
 import { Suspense, lazy } from "react";
 
@@ -28,6 +26,7 @@ const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy.jsx"));
 const ProductList = lazy(() => import("./pages/ProductList.jsx"));
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute.jsx"));
 const Loader = lazy(() => import("./components/Loader.jsx"));
+const OrderDetails =lazy(()=>import("./components/Dashboard/OrderDetails.jsx"));
 
 function App() {
   const { user } = useSelector((state) => state.profile);
@@ -61,7 +60,9 @@ function App() {
               <Route path="delivery-address" element={<Addresses />} />
               <Route path="orders" element={<Orders />} />
               <Route path="change-password" element={<ChangePassword />} />
-              <Route path="delete-account" element={<DeleteAccount />} />
+              <Route path="delete-account" element={<DeleteAccount />}/>
+              <Route path="order-details/:orderTrack" element={<OrderDetails/>}/>
+
             </Route>
             <Route path="/buynow" element={<Buynow />} />
           </Route>
