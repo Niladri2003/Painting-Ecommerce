@@ -202,7 +202,7 @@ func CreateOrder(c *fiber.Ctx) error {
 		Name:        recipientName,
 		OrderId:     orderId.String(),
 		OrderDate:   time.Now().Format("02 Jan 2006 15:04 MST"),
-		TotalAmount: fmt.Sprintf("%.2f", order.Total), // Assuming order.Total is of type float64
+		TotalAmount: fmt.Sprintf("%.2f", order.Total),
 	}
 
 	// Send confirmation email asynchronously
