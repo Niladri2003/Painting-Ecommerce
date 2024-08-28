@@ -138,7 +138,7 @@ func UserSignUp(c *fiber.Ctx) error {
 	
 	// Send confirmation email asynchronously
 	go func() {
-		err := utils.SendConfirmationEmail(recipientEmail, subject, mailTemplatePath, emailData)
+		err := utils.SendEmailUsingMailgun(recipientEmail, subject, mailTemplatePath, emailData)
 		if err != nil {
 			fmt.Printf("Failed to send confirmation email: %v \n", err)
 		} else {
