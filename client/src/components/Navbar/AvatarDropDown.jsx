@@ -18,6 +18,7 @@ const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
   };
 
   const handleLogout = () => {
+    setIsDropdownOpen(false); // Close the dropdown
     dispatch(logout());
     toast({
       title: "Logout successful",
@@ -25,9 +26,12 @@ const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
       duration: 2500,
       isClosable: true,
     });
-
     navigate("/signin", { replace: true });
     window.location.reload();
+  };
+
+  const handleMenuClick = () => {
+    setIsDropdownOpen(false); // Close the dropdown
   };
 
   useEffect(() => {
@@ -56,8 +60,16 @@ const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
           <Link
             to="/account/delivery-address"
             className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
+            onClick={handleMenuClick} // Close the dropdown on click
           >
             My Account
+          </Link>
+          <Link
+            to="/account/orders"
+            className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
+            onClick={handleMenuClick} // Close the dropdown on click
+          >
+            My Orders
           </Link>
           <button
             onClick={handleLogout}
