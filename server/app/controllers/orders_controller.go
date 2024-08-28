@@ -101,6 +101,7 @@ func CreateOrder(c *fiber.Ctx) error {
 			OrderID:       orderId,
 			ProductID:     item.ProductID,
 			ProductName:   item.ProductName,
+			ProductImage:  item.ProductImage,
 			Size:          item.Size,
 			Subcategory:   item.Subcategory,
 			Quantity:      item.Quantity,
