@@ -68,7 +68,7 @@ const ChangePassword = () => {
     };
 
     return (
-        <div className="w-full flex items-center justify-start ">
+        <div className="w-full flex items-center justify-start font-Poppins ">
             <form onSubmit={handlePasswordChange} className="bg-white p-6  w-full max-w-4xl">
                 <h2 className="text-2xl font-bold mb-6">Change Password</h2>
 
