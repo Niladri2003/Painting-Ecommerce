@@ -226,9 +226,9 @@ const OrdersList = () => {
                                 <Td>{order.total}</Td>
                                 <Td color={
                                     order.order_status === "pending" ? "yellow.600" :
-                                    order.order_status === "shipped" ? "blue.600" :
-                                    order.order_status === "delivered" ? "green.600" :
-                                    "red.600"
+                                        order.order_status === "shipped" ? "blue.600" :
+                                            order.order_status === "delivered" ? "green.600" :
+                                                "red.600"
                                 }>
                                     {order.order_status}
                                 </Td>
@@ -284,7 +284,13 @@ const OrdersList = () => {
                         )}
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" onClick={updateOrderStatus} mr={3}>
+                        <Button
+                            bgColor="black"
+                            color="white"
+                            _hover={{ bgColor: "gray.700" }} //arnab
+                            onClick={updateOrderStatus}
+                            mr={3}
+                        >
                             Update Status
                         </Button>
                         <Button onClick={closeModal}>Close</Button>
