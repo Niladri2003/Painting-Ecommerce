@@ -165,7 +165,7 @@ const Addresses = () => {
         loadAddresses();
     }, []);
     return (
-        <div className="h-[40rem] overflow-auto scrollbar-thin">
+        <div className="h-[40rem] overflow-auto scrollbar-thin font-Poppins">
             <div className="bg-gray-100 p-4 sticky top-0 z-10">
                 <h1 className="text-2xl font-bold mb-4">Your Addresses</h1>
                 <Button
