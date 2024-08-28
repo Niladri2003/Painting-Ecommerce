@@ -182,14 +182,12 @@ func CreateOrder(c *fiber.Ctx) error {
 		c.Status(500).JSON(fiber.Map{"error": true, "msg": "Failed to Clear cart"})
 	}
 
-
-		// Get User Details by Order ID
+	// Get User Details by Order ID
 	user, err := db.GetUserByID(claims.UserID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get user details"})
 	}
 
-	
 	emailData := struct {
 		Name        string
 		OrderId     string
@@ -273,30 +271,27 @@ func UploadOrderStatusToShipped(c *fiber.Ctx) error {
 		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Failed to set status to shipped for  order"})
 	}
 
-
 	user, err := db.GetUserByOrderId(orderID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get user details in order shipped controller"})
 	}
 
-    // Send a confirmation email to the contact
-	recipientName :=  user.FirstName + " " + user.LastName
+	// Send a confirmation email to the contact
+	recipientName := user.FirstName + " " + user.LastName
 	recipientEmail := user.Email
 	subject := "Your Order Has Shipped!"
 	mailTemplatePath := "templates/order_shipped.html"
 	emailData := struct {
-		Name           string
-		OrderId        string
+		Name    string
+		OrderId string
 	}{
-		Name:           recipientName,
-		OrderId:        orderID.String(),
-
+		Name:    recipientName,
+		OrderId: orderID.String(),
 	}
-	
 
 	// Launch a goroutine to send the email asynchronously
 	go func() {
-		err := utils.SendEmailUsingMailgun(recipientEmail,subject, mailTemplatePath,emailData)
+		err := utils.SendEmailUsingMailgun(recipientEmail, subject, mailTemplatePath, emailData)
 		if err != nil {
 			fmt.Printf("Failed to send confirmation email: %v \n", err)
 		} else {
@@ -338,36 +333,33 @@ func UploadOrderStatusToDelivered(c *fiber.Ctx) error {
 		return c.Status(fasthttp.StatusBadRequest).JSON(fiber.Map{"error": true, "msg": "Failed to set status to delivered for  order"})
 	}
 
-
 	user, err := db.GetUserByOrderId(orderID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "Failed to get user details in order Delivered controller"})
 	}
 
-    // Send a confirmation email to the contact
-	recipientName :=  user.FirstName + " " + user.LastName
+	// Send a confirmation email to the contact
+	recipientName := user.FirstName + " " + user.LastName
 	recipientEmail := user.Email
 	subject := "Your Order Has Been Delivered!"
 	mailTemplatePath := "templates/order_delivered.html"
 	emailData := struct {
-		Name           string
-		OrderId        string
+		Name    string
+		OrderId string
 	}{
-		Name:           recipientName,
-		OrderId:        orderID.String(),
-
+		Name:    recipientName,
+		OrderId: orderID.String(),
 	}
 
 	// Launch a goroutine to send the email asynchronously
 	go func() {
-		err := utils.SendEmailUsingMailgun(recipientEmail,subject, mailTemplatePath,emailData)
+		err := utils.SendEmailUsingMailgun(recipientEmail, subject, mailTemplatePath, emailData)
 		if err != nil {
 			fmt.Printf("Failed to send confirmation email: %v \n", err)
 		} else {
 			fmt.Println("Confirmation email sent successfully!")
 		}
 	}()
-
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "data": orderID, "msg": "Successfully delivered order"})
 
