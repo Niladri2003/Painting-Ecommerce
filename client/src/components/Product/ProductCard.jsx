@@ -11,7 +11,7 @@ const ProductCard = ({ product, showDiscountPercentage,showOriginalPrice }) => {
             <div className="product-card relative border rounded-lg p-4">
                 <div className="image-container">
                     {showDiscountPercentage && (
-                        <span className="discount-badge z-10 absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
+                        <span className="discount-badge z-10 absolute lg:top-2 top-2 right-2 bg-red-500 text-white lg:text-xs text-[10px] font-bold px-2 py-1 rounded">
                             {discountPercentage}% OFF
                         </span>
                     )}

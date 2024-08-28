@@ -17,19 +17,20 @@ const AccountPage = () => {
 
 
   return (
-      <div className="flex min-h-screen my-16 w-full lg:w-full lg:ml-4 lg:mr-4 md:w-4/5 bg-gray-100 flex-col md:flex-row">
+      <div className="flex min-h-screen my-16 w-full lg:w-full md:w-full lg:ml-4 lg:mr-4  bg-gray-100 flex-col md:flex-row">
         {/* Sidebar */}
-        <aside className="w-full  lg:w-[20%] md:w-1/3 bg-white shadow-md lg:border-r-2">
+        <aside className="w-full  lg:w-[20%]   bg-white shadow-md lg:border-r-2">
+          <p className={"p-2 text-[20px] w-full  font-bold"}>My Account</p>
           <div className="flex flex-col items-center p-6">
             <img
                 src={user?.profile_picture || defaultAvatar}
                 alt="User Avatar"
-                className="w-24 h-24 rounded-full"
+                className="lg:w-24 lg:h-24 w-24 h-24 md:w-20 md:h-20 rounded-full"
             />
-            <h2 className="mt-4 text-xl font-semibold">{user ? `${user.first_name} ${user.last_name}` : 'User'}</h2>
+            <h2 className="mt-4 lg:text-xl text-md font-semibold font-Poppins">{user ? `${user.first_name} ${user.last_name}` : 'User'}</h2>
           </div>
           <nav className="mt-6">
-            <ul>
+            <ul className={"font-Poppins"}>
               <li className="border-t border-gray-200">
                 <Link to={'change-password'}>
                 <button

@@ -5,8 +5,9 @@ import { useDispatch } from "react-redux";
 import { useToast } from "@chakra-ui/toast";
 import { setToken } from "../slices/authSlice";
 import { setUser } from "../slices/profileSlice";
-import { setCartId } from "../slices/cartSlice";
+import { setCartId, setTotalItems } from "../slices/cartSlice";
 import { BASEAPI } from "../utils/BASE_API";
+import Loader from "../components/Loader";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -32,10 +33,24 @@ const AuthCallback = () => {
               `https://api.dicebear.com/5.x/initials/svg?seed=${user_details.first_name} ${user_details.last_name}`,
           };
 
+
           // Dispatch to redux store if needed
           dispatch(setToken(access_token));
+          dispatch(setRefreshToken(refresh_token));
           dispatch(setUser(user));
           dispatch(setCartId(cart_id));
+
+
+          const { data } = await apiConnector(
+            "GET",
+            "/get-cart",
+            null,
+            null,
+            null,
+            true
+          );
+          const totalItems = data?.cart?.items?.length || 0;
+          dispatch(setTotalItems(totalItems));
 
           toast({
             title: "Login successful!",
@@ -43,6 +58,8 @@ const AuthCallback = () => {
             duration: 2500,
             isClosable: true,
           });
+
+
 
           // Redirect to home or dashboard
           navigate("/");
@@ -72,7 +89,7 @@ const AuthCallback = () => {
     fetchTokens();
   }, [navigate, dispatch, toast]);
 
-  return <div>Loading...</div>;
+  return <Loader/>;
 };
 
 export default AuthCallback;

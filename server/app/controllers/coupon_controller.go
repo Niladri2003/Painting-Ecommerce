@@ -96,18 +96,18 @@ func DeleteCoupon(c *fiber.Ctx) error {
 
 }
 func GetAllCoupon(c *fiber.Ctx) error {
-	claims, err := middleware.ExtractTokenMetadata(c)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
-	}
+	// claims, err := middleware.ExtractTokenMetadata(c)
+	// if err != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": "token invalid"})
+	// }
 
-	if time.Now().Unix() > claims.Expires {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
-	}
+	// if time.Now().Unix() > claims.Expires {
+	// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "token expired"})
+	// }
 
-	if claims.UserRole != "admin" {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only users can create order"})
-	}
+	// if claims.UserRole != "admin" {
+	// 	return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": true, "msg": "only users can create order"})
+	// }
 	db, err := database.OpenDbConnection()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": true, "msg": err.Error()})
@@ -118,6 +118,7 @@ func GetAllCoupon(c *fiber.Ctx) error {
 	}
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"error": false, "data": coupons})
 }
+
 func ChangeCouponStatus(c *fiber.Ctx) error {
 	type isActiveRequest struct {
 		IsActive string `json:"is_active"`
@@ -158,6 +159,7 @@ func ChangeCouponStatus(c *fiber.Ctx) error {
 	}
 	return c.Status(200).JSON(fiber.Map{"error": false, "msg": "coupon updated"})
 }
+
 func CouponApply(c *fiber.Ctx) error {
 	type CouponCode struct {
 		Code string `json:"code"`
@@ -187,7 +189,7 @@ func CouponApply(c *fiber.Ctx) error {
 	}
 	couponDetails, err := db.GetCouponDetailsByCouponCode(couponCode.Code)
 	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": true, "msg": err.Error()})
+		return c.Status(500).JSON(fiber.Map{"error": true, "msg": "Failed to get coupon details"})
 	}
 	// check coupon active status
 	if !couponDetails.IsActive {

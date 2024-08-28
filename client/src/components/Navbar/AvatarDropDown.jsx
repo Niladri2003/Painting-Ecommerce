@@ -18,6 +18,7 @@ const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
   };
 
   const handleLogout = () => {
+    setIsDropdownOpen(false); // Close the dropdown
     dispatch(logout());
     toast({
       title: "Logout successful",
@@ -25,9 +26,12 @@ const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
       duration: 2500,
       isClosable: true,
     });
-
     navigate("/signin", { replace: true });
     window.location.reload();
+  };
+
+  const handleMenuClick = () => {
+    setIsDropdownOpen(false); // Close the dropdown
   };
 
   useEffect(() => {
@@ -52,13 +56,26 @@ const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
         onClick={handleAvatarClick}
       />
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+       <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 font-Poppins">
           <Link
-            to="/account/delivery-address"
-            className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
+              to="/account"
+              className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
           >
             My Account
           </Link>
+          <Link
+            to="/account/orders"
+            className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
+          >
+            My Orders
+          </Link>
+          <Link
+              to="/account/delivery-address"
+              className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
+          >
+           Address
+          </Link>
+
           <button
             onClick={handleLogout}
             className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200 rounded-md flex items-center"
