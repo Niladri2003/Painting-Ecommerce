@@ -17,7 +17,8 @@ type OrderItemsQuery struct {
 
 // create OrderItem
 func (q *OrderItemsQuery) CreateOrderItem(order *models.OrderItem) error {
-	query := `INSERT INTO order_items (id, order_id, product_id,product_name, product_image,size, subcategory,quantity,quantity_price,price,status,created_at,updated_at) VALUES ($1, $2, $3, $4,$5,$6,$7,$8,$9,$10,$11,$12)`
+	fmt.Println("Proudct image inside createOrderItem query",order.ProductImage)
+	query := `INSERT INTO order_items (id, order_id, product_id,product_name, product_image,size, subcategory,quantity,quantity_price,price,status,created_at,updated_at) VALUES ($1, $2, $3, $4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`
 
 	// Send query to database.
 	_, err := q.Exec(query, order.ID, order.OrderID, order.ProductID, order.ProductName, order.ProductImage, order.Size, order.Subcategory, order.Quantity, order.QuantityPrice, order.Price, order.Status, order.CreatedAt, order.UpdatedAt)

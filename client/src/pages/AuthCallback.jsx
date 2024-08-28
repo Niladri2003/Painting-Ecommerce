@@ -5,16 +5,19 @@ import { useDispatch } from "react-redux";
 import { useToast } from "@chakra-ui/toast";
 import { setToken } from "../slices/authSlice";
 import { setUser } from "../slices/profileSlice";
-import { setCartId } from "../slices/cartSlice";
+import { setCartId, setTotalItems } from "../slices/cartSlice";
 import { BASEAPI } from "../utils/BASE_API";
+import Loader from "../components/Loader";
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchTokens = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${BASEAPI}/user/get-tokens`, {
           withCredentials: true, // Ensure cookies are sent with the request
@@ -34,8 +37,20 @@ const AuthCallback = () => {
 
           // Dispatch to redux store if needed
           dispatch(setToken(access_token));
+          dispatch(setRefreshToken(refresh_token));
           dispatch(setUser(user));
           dispatch(setCartId(cart_id));
+
+          const { data } = await apiConnector(
+            "GET",
+            "/get-cart",
+            null,
+            null,
+            null,
+            true
+          );
+          const totalItems = data?.cart?.items?.length || 0;
+          dispatch(setTotalItems(totalItems));
 
           toast({
             title: "Login successful!",
@@ -66,13 +81,15 @@ const AuthCallback = () => {
           isClosable: true,
         });
         navigate("/signin");
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchTokens();
   }, [navigate, dispatch, toast]);
 
-  return <div>Loading...</div>;
+  return isLoading ? <Loader /> : null;
 };
 
 export default AuthCallback;

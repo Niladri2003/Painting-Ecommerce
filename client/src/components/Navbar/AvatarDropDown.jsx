@@ -56,21 +56,26 @@ const AvatarDropdown = ({ userProfileImage, size = "sm" }) => {
         onClick={handleAvatarClick}
       />
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+       <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 font-Poppins">
           <Link
-            to="/account/delivery-address"
-            className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
-            onClick={handleMenuClick} // Close the dropdown on click
+              to="/account"
+              className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
           >
             My Account
           </Link>
           <Link
             to="/account/orders"
             className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
-            onClick={handleMenuClick} // Close the dropdown on click
           >
             My Orders
           </Link>
+          <Link
+              to="/account/delivery-address"
+              className="px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md flex items-center"
+          >
+           Address
+          </Link>
+
           <button
             onClick={handleLogout}
             className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200 rounded-md flex items-center"

@@ -251,6 +251,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			oi.id AS order_item_id,
 			oi.product_id,
 			COALESCE(oi.product_name, '') AS product_name, -- Handle NULL values for product_name
+			COALESCE(oi.product_image, '') AS product_image, -- Handle NULL values for product_image
 			COALESCE(oi.size, '') AS size,                -- Handle NULL values for size
 			COALESCE(oi.subcategory, '') AS subcategory,  -- Handle NULL values for subcategory
 			COALESCE(oi.quantity, 0) AS quantity,         -- Handle NULL values for quantity
@@ -323,6 +324,7 @@ func (q *OrderQueries) GetOrdersByUserID(userID uuid.UUID) ([]models.OrderWithIt
 			&orderItem.ID,
 			&orderItem.ProductID,
 			&orderItem.ProductName,
+			&orderItem.ProductImage,
 			&orderItem.Size,         // Handle NULLs for size
 			&orderItem.Subcategory,  // Handle NULLs for subcategory
 			&orderItemQuantity,      // Handle NULLs for quantity
@@ -846,6 +848,7 @@ func (q *OrderQueries) GetAllOrders() ([]models.OrderWithItems, error) {
 			oi.id AS order_item_id,
 			oi.product_id,
 			COALESCE(oi.product_name, '') AS product_name, -- Handle NULL values for product_name
+			COALESCE(oi.product_image, '') AS product_image, -- Handle NULL values for product_image
 			COALESCE(oi.size, '') AS size,                -- Handle NULL values for size
 			COALESCE(oi.subcategory, '') AS subcategory,  -- Handle NULL values for subcategory
 			COALESCE(oi.quantity, 0) AS quantity,         -- Handle NULL values for quantity
@@ -874,9 +877,10 @@ func (q *OrderQueries) GetAllOrders() ([]models.OrderWithItems, error) {
 		LEFT JOIN 
 			addresses a ON o.address_id = a.id AND a.set_as_default = true
 		ORDER BY 
-			o.created_at DESC, o.id ASC
+			o.created_at DESC
 	`
 
+	// , o.id ASC
 	// Execute the query
 	rows, err := q.DB.Query(query)
 	if err != nil {
@@ -928,6 +932,7 @@ func (q *OrderQueries) GetAllOrders() ([]models.OrderWithItems, error) {
 			&orderItem.ID,
 			&orderItem.ProductID,
 			&orderItem.ProductName,
+			&orderItem.ProductImage,
 			&orderItem.Size,         // Handle NULLs for size
 			&orderItem.Subcategory,  // Handle NULLs for subcategory
 			&orderItemQuantity,      // Handle NULLs for quantity
