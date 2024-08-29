@@ -23,7 +23,7 @@ const testimonials = [
     {
         quote:
             "I couldn't be happier with my shopping experience! The website is so easy to navigate, and the product selection is fantastic. I found exactly what I was looking for, and the checkout process was seamless. My order arrived quickly, and the items were even better than I expected. ",
-        name: "Charles Dickens",
+        name: "Niladri Adak",
         title: "A Tale of Two Cities",
         profile:ProfileImg,
     },
