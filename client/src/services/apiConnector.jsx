@@ -63,8 +63,12 @@ axiosInstance.interceptors.response.use(
             } catch (refreshError) {
                 isRefreshing = false;
                 // Handle the failure of token refresh, such as logging out the user
-                localStorage.removeItem('authToken');
                 localStorage.removeItem('refreshToken');
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("cart_id"); 
+                localStorage.removeItem("totalItems"); 
+                localStorage.removeItem("user");
+                
                 // Optionally redirect to the login page
                 window.location.href = '/signin';
                 return Promise.reject(refreshError);
