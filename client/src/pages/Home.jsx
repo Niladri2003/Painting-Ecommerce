@@ -15,6 +15,7 @@ import Loader from "../components/Loader.jsx";
 import OverlaySection from "../components/Home/OverlaySection.jsx";
 import ParallaxSection from "../components/Home/ParallaxSection.jsx";
 import HomeNewsLetter from "../components/Home/HomeNewsLetter.jsx";
+import ArtAdvisorySection from "../components/Home/ArtAdvisorySection.jsx";
 
 const Home = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -71,7 +72,7 @@ const Home = () => {
             {/* New Section: Features with icons, titles, and descriptions */}
             <section className="w-full py-12 bg-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8">
                         <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
                             <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>
@@ -105,11 +106,11 @@ const Home = () => {
             <OverlaySection />
 
 
-            <ParallaxSection className="mb-10"/>
+            <ParallaxSection className="mb-10 mt-10"/>
 
-            <HomeNewsLetter className="mt-10 "/>
+            {/* <HomeNewsLetter className="mt-10 "/> */}
 
-            <div className="container mx-auto my-16 p-4">
+            {/* <div className="container mx-auto my-16 p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div className="flex flex-col gap-4 items-center">
                         <div className="w-10 h-10">
@@ -175,7 +176,8 @@ const Home = () => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </div> */}
+            <ArtAdvisorySection/>
 
         </div>
     );

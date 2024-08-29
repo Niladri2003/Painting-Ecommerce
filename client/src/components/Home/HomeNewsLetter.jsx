@@ -3,7 +3,7 @@ import newsletterImg from "../../assets/Home/newsletter_img.png";
 
 const NewsletterSection = () => {
     return (
-        <div className="relative w-full flex justify-center items-center overflow-hidden bg-white">
+        <div className="relative w-full flex justify-center items-center overflow-hidden mt-[10rem]">
             {/* Images Container */}
             <div className="flex w-full lg:w-2/3 flex-wrap justify-center lg:justify-between"> {/* Adjusted for responsive behavior */}
                 <img
@@ -29,6 +29,7 @@ const NewsletterSection = () => {
 
                     {/* Right Side Form */}
                     <form className="flex flex-col items-center w-full lg:w-2/3 space-y-2">
+                    <label htmlFor="email" className='text-md font-medium w-full'>Email Address *</label>
                         <input
                             type="email"
                             placeholder="Enter your email"

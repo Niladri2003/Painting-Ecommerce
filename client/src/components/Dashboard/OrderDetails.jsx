@@ -22,9 +22,9 @@ const OrderDetails = () => {
         null,
         true
       );
-      await console.log("orders", data);
+      console.log("orders", data);
       setOrders(data);
-      await console.log("orders", orders);
+      console.log("orders", orders);
     } catch (error) {
       toast({
         title: "Error loading orders",
@@ -34,6 +34,21 @@ const OrderDetails = () => {
       });
     }
   };
+  const cancelOrder=async ()=>{
+    try{
+      const {data}=await apiConnector('POST',`/cancel-order/${currentOrders.order_id}`,null,null,null,true)
+      console.log(data);
+      toast({
+        title: data.msg || "Error loading orders",
+        status: "success",
+        duration: 2500,
+        isClosable: true,
+      });
+    }catch (e){
+      console.log(e)
+
+    }
+  }
   useEffect(() => {
     loadOrders();
   }, []);
@@ -47,6 +62,7 @@ const OrderDetails = () => {
       );
 
       setcurrentOrders(...filterOrder);
+      console.log(currentOrders.order_id)
     }
   }, [orders, params.orderTrack]);
 
@@ -73,10 +89,25 @@ const OrderDetails = () => {
         return "text-green-500";
       case "shipped":
         return "text-blue-500";
-      case "cancelled":
+      case "canceled":
         return "text-red-500";
+      case "pending":
+        return "text-orange-600";
       default:
         return "text-gray-500";
+    }
+  };
+  const getStatus = (status) => {
+    const data= status ? status: ""
+    switch (data.toLowerCase()) {
+      case "delivered":
+        return true;
+      case "shipped":
+        return true;
+      case "canceled":
+        return false
+      default:
+        return false;
     }
   };
   return (
@@ -85,7 +116,7 @@ const OrderDetails = () => {
         {/* full header */}
         <div>
           <div className="flex justify-between items-center font-Poppins">
-            <h2 className="capitalize text-xl font-bold">Order details</h2>
+            <h2 className="capitalize text-xl font-bold ">Order details</h2>
             <button className="capitalize bg-black text-white p-2 rounded-sm md:px-3 md:py-2" onClick={()=>{navigate(-1)}}>
               Back to orders
             </button>
@@ -116,7 +147,7 @@ const OrderDetails = () => {
               </div>
             </div>
             <div className={"flex flex-col gap-2"}>
-              <button className="capitalize bg-black text-white p-1 rounded-sm md:px-3 md:py-2">
+              <button className="capitalize bg-black text-white p-1 rounded-sm md:px-3 md:py-2" onClick={cancelOrder}  disabled={getStatus(currentOrders.order_status)}>
                 Cancle Order
               </button>
               <button onClick={()=>(alert("Coming soon"))} className="capitalize bg-black text-white p-1 rounded-sm md:px-3 md:py-2">
@@ -129,7 +160,7 @@ const OrderDetails = () => {
         {/* order items and order summary */}
         {/* order items  */}
         <div className="my-7 md:flex-row flex-col flex justify-between gap-10 font-Poppins">
-          <div className="my-5 w-full md:w-[65%] ">
+          <div className="my-5 w-full lg:w-[80%] md:w-[65%] ">
             <h2 className="capitalize text-xl font-bold">Order Items</h2>
             <hr className="mb-5 mt-2"/>
             <div className={"w-full  overscroll-x-auto"}>
@@ -186,7 +217,7 @@ const OrderDetails = () => {
 
                       </td>
                       <td className="p-2 border-b">
-                        <p className="font-medium">{currentOrders.order_status}</p>
+                        <p className={`${getStatusColor(currentOrders.order_status)} font-bold uppercase`}>{currentOrders.order_status}</p>
                       </td>
                       <td className="p-2 border-b">
                         <p className="font-medium">{cur.quantity}</p>
@@ -212,7 +243,7 @@ const OrderDetails = () => {
           </div>
 
           {/* order summary */}
-          <div className="border-2 w-full h-[50%] rounded-md md:w-[35%] p-5">
+          <div className="border-2 w-full lg:mt-14 lg:w-[25%] h-[50%] rounded-md md:w-[35%] p-5">
             <h2 className="capitalize text-xl font-bold">Order Summary</h2>
             <hr className="mb-5 mt-2"/>
             <div className="flex flex-col gap-[1rem]">
@@ -230,6 +261,11 @@ const OrderDetails = () => {
                   </div>
               ))}
             </div>
+
+            {/*<div className="flex justify-between mt-3">*/}
+            {/*  <p className="flex">Size+Subcategory</p>*/}
+            {/*  <p className="font-semibold flex">₹{currentOrders?.total}</p>*/}
+            {/*</div>*/}
             <hr className="my-5"/>
             <div className="flex justify-between">
               <p className="flex">Total</p>

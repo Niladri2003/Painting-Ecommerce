@@ -11,12 +11,14 @@ import {
     useToast
 } from "@chakra-ui/react";
 import { apiConnector } from "../../services/apiConnector.jsx";
+import Loader from "../Loader.jsx";
 
 const Addresses = () => {
     const toast = useToast();
     const [editAddress, setEditAddress] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [addresses, setAddresses] = useState([]);
+    const[loading,setLoading] = useState(false);
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -49,8 +51,9 @@ const Addresses = () => {
 
     const handleSaveAddress = async () => {
         try {
+            console.log(editAddress);
             const endpoint = editAddress
-                ? `/update-address`
+                ? `/update-address/${editAddress.id}`
                 : `/create-address`;
 
             const method = editAddress ? "PUT" : "POST";
@@ -113,6 +116,7 @@ const Addresses = () => {
 
     const handleDeleteAddress = async (id) => {
         try {
+            setLoading(true)
             await apiConnector('DELETE', `/delete-address/${id}`, null, null, null, true);
             await loadAddresses();
             toast({
@@ -121,6 +125,7 @@ const Addresses = () => {
                 duration: 2500,
                 isClosable: true,
             });
+            setLoading(false)
         } catch (error) {
             toast({
                 title: "Error deleting address",
@@ -128,6 +133,7 @@ const Addresses = () => {
                 duration: 3000,
                 isClosable: true,
             });
+            setLoading(false)
         }
     };
     const resetFormData = () => {
@@ -164,6 +170,9 @@ const Addresses = () => {
     useEffect(() => {
         loadAddresses();
     }, []);
+
+
+
     return (
         <div className="h-[40rem] overflow-auto scrollbar-thin font-Poppins">
             <div className="bg-gray-100 p-4 sticky top-0 z-10">

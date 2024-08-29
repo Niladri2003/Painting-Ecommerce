@@ -11,8 +11,10 @@ import { FaBookOpen } from "react-icons/fa";
 import { GiShoppingBag } from "react-icons/gi";
 import { FaShoppingCart } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
+import {BsBagHeart} from "react-icons/bs";
 
-const MobileMenu = ({ isOpen, toggleMenu, token, cartCount }) => {
+
+const MobileMenu = ({ isOpen, toggleMenu, token, cartCount}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
@@ -39,16 +41,17 @@ const MobileMenu = ({ isOpen, toggleMenu, token, cartCount }) => {
         isOpen ? "translate-x-0" : "translate-x-full"
       } md:hidden`}
     >
-      <div className="flex justify-end p-4">
+      <div className="flex flex-row justify-between p-4">
         <button onClick={toggleMenu} className="text-white">
-          <FaTimes size={24} />
+          <FaTimes size={24}/>
         </button>
+
       </div>
       <div className="flex flex-col mt-4 space-y-4">
         <Link
-          to="/"
-          onClick={() => {
-            handleActiveLink("/");
+            to="/"
+            onClick={() => {
+              handleActiveLink("/");
           }}
           className={`text-white hover:bg-gray-700 rounded-md py-2 text-sm font-medium flex items-center mx-3 group px-3
           ${activeLink == "/" && `text-white bg-gray-700`}

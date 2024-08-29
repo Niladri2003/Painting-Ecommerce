@@ -12,9 +12,9 @@ const Orders = () => {
     const loadOrders = async () => {
         try {
             const {data} =await apiConnector('GET','/get-all-orders',null,null,null,true)
-            await console.log("orders",data)
+            console.log("orders",data)
             setOrders(data);
-            await console.log("orders",orders)
+            console.log("orders",orders)
         } catch (error) {
             toast({
                 title: "Error loading orders",
