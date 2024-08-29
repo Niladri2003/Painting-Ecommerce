@@ -183,7 +183,7 @@ const Cart = () => {
             )}
           </div>
           <div className="w-full lg:w-[25%] pl-0 lg:pl-8">
-            <div className="flex-col flex justify-between h-full bg-gray-100 p-4 rounded-lg">
+            <div className="flex-col flex justify-between h-auto bg-gray-100 p-4 rounded-lg">
               <div className="flex flex-col items-start">
                 <h3 className="text-lg font-semibold mb-2">Order summary</h3>
                 <p className="text-gray-600 mb-2">
@@ -214,6 +214,8 @@ const Cart = () => {
             </div>
           </div>
         </div>
+
+        {/* coupon section */}
         <div className="mt-8">
           <div className="mb-4">
             {!appliedCoupon ? (
