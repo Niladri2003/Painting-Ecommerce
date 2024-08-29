@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import HomeHero from '../components/Home/HomeHero';
-import girl from "../assets/Contact/girl.jpg";
+import girl from "../assets/Contact/contact-us.png";
 import AOS from 'aos';
 import { useToast } from '@chakra-ui/react';  
 import 'aos/dist/aos.css';
