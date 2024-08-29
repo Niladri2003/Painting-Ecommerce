@@ -110,26 +110,47 @@
 
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { FaBars } from "react-icons/fa";
 import MobileMenu from "./MobileMenu";
 import NavItems from "./NavItems";
 import AvatarDropdown from "./AvatarDropDown";
 import Avatar from "../../assets/avatar/defaultAvatar.jpg";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent, DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay, Input, useDisclosure
+} from "@chakra-ui/react";
+import { BsBagHeart } from "react-icons/bs";
+import {removeFromFavorites} from "../../slices/favouriteSlice.jsx";
+
 
 const Navbar = () => {
   const { totalItems } = useSelector((state) => state.cart);
   const token = useSelector((state) => state.auth.token);
   const { user } = useSelector((state) => state.profile);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isModOpen, setModIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const btnRef = React.useRef()
+
+  const { favorites } = useSelector((state) => state.favourite);
+  const dispatch=useDispatch();
 
   const userProfileImage = user ? user.profile_picture : Avatar;
 
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+
+  const handleRemoveFavorite = (productId) => {
+    dispatch(removeFromFavorites(productId));
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -153,7 +174,7 @@ const Navbar = () => {
   }, [lastScrollY]);
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    setModIsOpen(!isModOpen);
   };
 
   return (
@@ -207,13 +228,66 @@ const Navbar = () => {
                   </span>
                 )}
               </Link>
+              <button ref={btnRef}  onClick={onOpen}>
+                <BsBagHeart color="white" size={25}/>
+              </button>
+              <Drawer
+                  isOpen={isOpen}
+                  placement='right'
+                  onClose={onClose}
+                  finalFocusRef={btnRef}
+              >
+                <DrawerOverlay />
+                <DrawerContent>
+                  <DrawerCloseButton />
+                  <DrawerHeader>Favourite items</DrawerHeader>
+
+                  <DrawerBody>
+
+                    {favorites.length > 0 ? (
+                        favorites.map((item) => (
+                            <div
+                                key={item.productId}
+                                className="flex justify-between items-center mb-4"
+                            >
+                              <div>
+                                <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="w-16 h-16 rounded-md"
+                                />
+                                <p>{item.name}</p>
+                                <p>₹{item.price}</p>
+                              </div>
+                              <Button
+                                  size="sm"
+                                  colorScheme="red"
+                                  onClick={() => handleRemoveFavorite(item.productId)}
+                              >
+                                Remove
+                              </Button>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No favorite items found</p>
+                    )}
+
+                  </DrawerBody>
+
+                  <DrawerFooter>
+                    <Button variant='outline' mr={3} onClick={onClose}>
+                      Cancel
+                    </Button>
+                  </DrawerFooter>
+                </DrawerContent>
+              </Drawer>
             </div>
           </div>
         </div>
       </nav>
 
       <MobileMenu
-        isOpen={isOpen}
+        isOpen={isModOpen}
         toggleMenu={toggleMenu}
         token={token}
         userProfileImage={userProfileImage}

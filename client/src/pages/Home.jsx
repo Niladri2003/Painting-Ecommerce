@@ -105,7 +105,7 @@ const Home = () => {
             <OverlaySection />
 
 
-            <ParallaxSection className="mb-10"/>
+            <ParallaxSection className="mb-10 mt-10"/>
 
             <HomeNewsLetter className="mt-10 "/>
 
