@@ -45,13 +45,13 @@ const AdminOrderDetails = () => {
         (cur) => cur.order_id == params.orderTrack
       );
 
-      setCurrentOrder(filterOrder);
+      setCurrentOrder(filterOrder[0]);
     }
   }, [orders, params.orderTrack]);
 
   useEffect(() => {
-    if (currentOrder && currentOrder[0].order_items) {
-      setOrderItems(currentOrder[0].order_items);
+    if (currentOrder && currentOrder.order_items) {
+      setOrderItems(currentOrder.order_items);
     }
   }, [currentOrder]);
   console.log("currect order",currentOrder);
@@ -128,11 +128,11 @@ const AdminOrderDetails = () => {
             </div>
             <div className="flex gap-[1rem]">
               <p className="font-semibold">Customer Name</p>
-              {/* <p>{`${currentOrder?.addresses[0]?.first_name} ${currentOrder?.addresses[0]?.last_name}`}</p> */}
+              <p>{`${currentOrder?.addresses[0]?.first_name} ${currentOrder?.addresses[0]?.last_name}`}</p>
             </div>
             <div className="flex gap-[1rem]">
               <p className="font-semibold">Shipping Address</p>
-              {/* <p>{`${currentOrder.addresses[0].street_address}, ${currentOrder.addresses[0].town_city}, ${currentOrder.addresses[0].state}, ${currentOrder.addresses[0].country}, ${currentOrder.addresses[0].pin_code}`}</p> */}
+              <p>{`${currentOrder.addresses[0].street_address}, ${currentOrder.addresses[0].town_city}, ${currentOrder.addresses[0].state}, ${currentOrder.addresses[0].country}, ${currentOrder.addresses[0].pin_code}`}</p>
             </div>
           </div>
           <button className="capitalize bg-black text-white p-1 rounded-sm md:px-3 md:py-2">
