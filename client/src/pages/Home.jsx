@@ -16,6 +16,8 @@ import OverlaySection from "../components/Home/OverlaySection.jsx";
 import ParallaxSection from "../components/Home/ParallaxSection.jsx";
 import HomeNewsLetter from "../components/Home/HomeNewsLetter.jsx";
 import ArtAdvisorySection from "../components/Home/ArtAdvisorySection.jsx";
+import {Testimonials} from "../components/TestiMonials/Testimonials.jsx";
+import {AppleCardsCarouselDemo} from "../components/Home/Apple-cards.jsx";
 
 const Home = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -33,7 +35,7 @@ const Home = () => {
         <Loader />
     ) : (
         <div className="w-full overflow-hidden">
-            <HomeHero />
+            <HomeHero/>
             <section className="w-full py-12 md:py-24 lg:py-32 bg-muted px-3">
                 <div className=" md:px-6 grid gap-8">
                     <div className="text-start space-y-4">
@@ -47,7 +49,7 @@ const Home = () => {
                     <div className="flex flex-col sm:flex-row gap-10">
                         {/*  */}
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full md:py-10">
-                            <FeatureProducts />
+                            <FeatureProducts/>
 
                         </div>
                         <div className="w-full h-[15rem] md:h-full md:w-3/5  grid place-items-center relative">
@@ -69,44 +71,101 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* New Section: Features with icons, titles, and descriptions */}
-            <section className="w-full py-12 bg-gray-200">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8">
-                        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
-                            <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>
-
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
-                            <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>
-                            {/* <p className="text-gray-600">Rest assured knowing that your privacy and data security are our top priorities, ensuring a safe space for your journey.</p> */}
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
-                            <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>
-                            {/* <p className="text-gray-600">Rest assured knowing that your privacy and data security are our top priorities, ensuring a safe space for your journey.</p> */}
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
-                            <img src={art_advisory} alt="Assistance" className="w-12 h-12 mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Homework Assistance</h3>
-                            {/* <p className="text-gray-600">Struggling with a tough assignment? EduBot can provide explanations, hints, and guidance to help you tackle your homework effectively.</p> */}
-                        </div>
-                        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
-                            <img src={return_icon} alt="Explorations" className="w-12 h-12 mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Subject Explorations</h3>
-                            {/* <p className="text-gray-600">Dive into various subjects, from mathematics and science to literature and history. Discover new topics and broaden your horizons.</p> */}
-                        </div>
-                    </div>
+            <div className={"flex flex-col w-full items-center justify-center"}>
+                <div className={" w-full flex flex-row justify-center items-center gap-7"}>
+                    <div className={"bg-black h-[2px] w-[50px]"}>{""}</div>
+                    <p className={"text-[24px] font-Poppins font-semibold"}>A One-Stop Art Store</p>
+                    <div className={"bg-black h-[2px] w-[50px]"}>{""}</div>
                 </div>
-            </section>
+                <div className={" w-full flex flex-row justify-center items-center gap-7"}>
+                    <p className={"font-Poppins text-gray-600"}>Welcome to Trivart</p>
+                </div>
+                <div className={" w-full flex flex-row justify-center items-center gap-7 mt-6"}>
+                    <p className={"font-Poppins max-w-[80%] text-center"}>The diversity of Indian culture is reflected
+                        in
+                        its indigenous art. From the divine beauty of Pichwai, the grandeur of Classical Indian
+                        Miniature artworks and the dotted excellence of Gond Paintings, each of these forms have a rich
+                        heritage. At Bimba, we celebrate these Indian art forms. Our Indian art collection is
+                        meticulously curated and elicits absolute joy and admiration at the sheer magnificence of
+                        India’s indigenous art at a mere glance.</p>
+                </div>
+
+            </div>
+            <div className={"flex flex-col w-full items-center justify-center mt-10 mb-10"}>
+                <div className={" w-full flex flex-row justify-center items-center gap-7"}>
+                    <div className={"bg-black h-[2px] w-[50px]"}>{""}</div>
+                    <p className={"text-[24px] font-Poppins font-semibold"}>Why Trivart</p>
+                    <div className={"bg-black h-[2px] w-[50px]"}>{""}</div>
+                </div>
+                <div className={" w-full flex flex-row justify-center items-center gap-7"}>
+                    <p className={"font-Poppins text-gray-600"}>Exquisite Fine Art Paintings & Decor</p>
+                </div>
+                <div className={" w-full flex flex-row justify-center items-center gap-7 mt-6"}>
+                    <p className={"font-Poppins max-w-[80%] text-center"}>The diversity of Indian culture is reflected
+                        in
+                        its indigenous art. From the divine beauty of Pichwai, the grandeur of Classical Indian
+                        Miniature artworks and the dotted excellence of Gond Paintings, each of these forms have a rich
+                        heritage. At Bimba, we celebrate these Indian art forms. Our Indian art collection is
+                        meticulously curated and elicits absolute joy and admiration at the sheer magnificence of
+                        India’s indigenous art at a mere glance.</p>
+                </div>
+
+            </div>
+            {/* New Section: Features with icons, titles, and descriptions */}
+            {/*<section className="w-full py-12 bg-gray-200">*/}
+            {/*    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">*/}
+            {/*        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8">*/}
+            {/*            <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">*/}
+            {/*                <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4"/>*/}
+            {/*                <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>*/}
+
+            {/*            </div>*/}
+            {/*            <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">*/}
+            {/*                <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4"/>*/}
+            {/*                <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>*/}
+            {/*                /!* <p className="text-gray-600">Rest assured knowing that your privacy and data security are our top priorities, ensuring a safe space for your journey.</p> *!/*/}
+            {/*            </div>*/}
+            {/*            <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">*/}
+            {/*                <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4"/>*/}
+            {/*                <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>*/}
+            {/*                /!* <p className="text-gray-600">Rest assured knowing that your privacy and data security are our top priorities, ensuring a safe space for your journey.</p> *!/*/}
+            {/*            </div>*/}
+            {/*            <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">*/}
+            {/*                <img src={art_advisory} alt="Assistance" className="w-12 h-12 mb-4"/>*/}
+            {/*                <h3 className="text-xl font-semibold mb-2">Homework Assistance</h3>*/}
+            {/*                /!* <p className="text-gray-600">Struggling with a tough assignment? EduBot can provide explanations, hints, and guidance to help you tackle your homework effectively.</p> *!/*/}
+            {/*            </div>*/}
+            {/*            <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">*/}
+            {/*                <img src={return_icon} alt="Explorations" className="w-12 h-12 mb-4"/>*/}
+            {/*                <h3 className="text-xl font-semibold mb-2">Subject Explorations</h3>*/}
+            {/*                /!* <p className="text-gray-600">Dive into various subjects, from mathematics and science to literature and history. Discover new topics and broaden your horizons.</p> *!/*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</section>*/}
+            <AppleCardsCarouselDemo/>
 
 
-            <OverlaySection />
+            <OverlaySection/>
 
 
             <ParallaxSection className="mb-10 mt-10"/>
+
+
+
+            <div className={"flex flex-col w-full items-center justify-center mt-10"}>
+                <div className={" w-full flex flex-row justify-center items-center gap-7"}>
+                    <div className={"bg-black h-[2px] w-[50px]"}>{""}</div>
+                    <p className={"text-[24px] font-Poppins font-semibold"}>Testimonials</p>
+                    <div className={"bg-black h-[2px] w-[50px]"}>{""}</div>
+                </div>
+                <div className={" w-full flex flex-row justify-center items-center gap-7"}>
+                    <p className={"font-Poppins text-gray-600"}>More than 1,00,000+ Happy Customers</p>
+                </div>
+
+            </div>
+            <Testimonials/>
+            <ArtAdvisorySection/>
 
             {/* <HomeNewsLetter className="mt-10 "/> */}
 
@@ -177,10 +236,10 @@ const Home = () => {
                     </div>
                 </div>
             </div> */}
-            <ArtAdvisorySection/>
 
-        </div>
-    );
-};
 
-export default Home;
+            </div>
+            );
+            };
+
+            export default Home;
