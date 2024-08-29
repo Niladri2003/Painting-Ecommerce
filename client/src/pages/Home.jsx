@@ -15,6 +15,7 @@ import Loader from "../components/Loader.jsx";
 import OverlaySection from "../components/Home/OverlaySection.jsx";
 import ParallaxSection from "../components/Home/ParallaxSection.jsx";
 import HomeNewsLetter from "../components/Home/HomeNewsLetter.jsx";
+import ArtAdvisorySection from "../components/Home/ArtAdvisorySection.jsx";
 
 const Home = () => {
     const navigate = useNavigate(); // Initialize useNavigate hook
@@ -107,9 +108,9 @@ const Home = () => {
 
             <ParallaxSection className="mb-10 mt-10"/>
 
-            <HomeNewsLetter className="mt-10 "/>
+            {/* <HomeNewsLetter className="mt-10 "/> */}
 
-            <div className="container mx-auto my-16 p-4">
+            {/* <div className="container mx-auto my-16 p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div className="flex flex-col gap-4 items-center">
                         <div className="w-10 h-10">
@@ -175,7 +176,8 @@ const Home = () => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </div> */}
+            <ArtAdvisorySection/>
 
         </div>
     );

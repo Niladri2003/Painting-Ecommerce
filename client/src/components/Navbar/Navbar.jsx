@@ -189,7 +189,7 @@ const Navbar = () => {
       {/* Navbar */}
       <nav
         className={`fixed w-full bg-black transition-transform duration-300 z-40 font-Poppins ${isVisible ? "translate-y-0" : "-translate-y-full"
-          } ${isHomePage ? "mt-10 md:mt-12" : ""}`}  // Added margin to make space for the banner
+          } ${isHomePage ? "mt-10 md:mt-[3.25rem]" : ""}`}  // Added margin to make space for the banner
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-3 h-16">
