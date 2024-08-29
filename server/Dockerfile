@@ -83,10 +83,12 @@ ENV SMTP_PORT=587
 ENV EMAIL_USERNAME=abhisheksantra99@gmail.com
 ENV EMAIL_PASSWORD=qggrtvpxbbqcautz
 #Google authentication
+ENV MAILGUN_DOMAIN=mail.foreverknots.studio
+ENV MAILGUN_API_KEY=a31321a8fccc68a3d913d308f99f829c-777a617d-8b32d708
 
 ENV GOOGLE_CLIENT_ID=687753841844-ssa190dj6dvp7ukbuqsps33lcijuc9bt.apps.googleusercontent.com
 ENV GOOGLE_CLIENT_SECRET=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
-ENV REDIRECT_URL=https://ecommerce.niladriadak.tech/api/v1/user/google/callback
+ENV REDIRECT_URL=https://testserver.niladriadak.tech/api/v1/user/google/callback
 ENV FRONTEND_URL=https://painting-ecommerce.vercel.app
 
 
