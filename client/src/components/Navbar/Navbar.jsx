@@ -181,14 +181,14 @@ const Navbar = () => {
     <>
       {/* Coupon Banner */}
       {isHomePage && (
-        <div className="w-full bg-blue-500 text-white text-xs md:text-lg  text-center p-3 fixed top-0 z-30">
-          <p>Use code <strong>SAVE10</strong> to get 10% off on your first purchase!</p>
+        <div className="w-full bg-blue-500 text-white text-xs md:text-lg  text-center p-3 fixed top-0 z-30 font-Poppins">
+          <p className={"font-Poppins"}>Use code <strong>SAVE10</strong> to get 10% off on your first purchase!</p>
         </div>
       )}
 
       {/* Navbar */}
       <nav
-        className={`fixed w-full bg-black transition-transform duration-300 z-40 ${isVisible ? "translate-y-0" : "-translate-y-full"
+        className={`fixed w-full bg-black transition-transform duration-300 z-40 font-Poppins ${isVisible ? "translate-y-0" : "-translate-y-full"
           } ${isHomePage ? "mt-10 md:mt-12" : ""}`}  // Added margin to make space for the banner
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -198,16 +198,20 @@ const Navbar = () => {
                 Trivart
               </Link>
             </div>
-            <div className="flex items-center md:hidden justify-end">
-              <button
-                onClick={toggleMenu}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <FaBars size={24} />
+            <div className="flex gap-2 items-center md:hidden justify-end">
+              <button ref={btnRef} onClick={onOpen} className={"pb-[4px]"}>
+                <BsBagHeart color="white" size={24}/>
               </button>
+              <button
+                  onClick={toggleMenu}
+                  className="text-gray-500 hover:text-gray-700"
+              >
+                <FaBars size={24}/>
+              </button>
+
             </div>
             <div className="hidden md:flex lg:flex col-start-1 col-end-2 row-start-1 place-items-center">
-              <NavItems handleNavItemClick={toggleMenu} />
+            <NavItems handleNavItemClick={toggleMenu} />
             </div>
             <div className="hidden md:flex items-center justify-center md:justify-end space-x-4">
               {token ? (
@@ -221,7 +225,7 @@ const Navbar = () => {
                 </Link>
               )}
               <Link to="/cart" className="relative">
-                <AiOutlineShoppingCart className="text-2xl text-white" />
+                <AiOutlineShoppingCart  className="text-2xl text-white" />
                 {totalItems > 0 && (
                   <span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center overflow-hidden rounded-full text-center text-xs font-bold bg-red-600 text-white">
                     {totalItems}
