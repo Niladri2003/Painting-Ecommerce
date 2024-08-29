@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Suspense, lazy } from "react";
+import Faq from "./pages/Faq.jsx";
 
 // Lazy-loaded components
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -69,6 +70,7 @@ function App() {
 
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/return-policy" element={<ReturnPolicy />} />
+          <Route path="/frequently-asked-question" element={<Faq/>} />
         </Routes>
         <Footer />
       </Suspense>
