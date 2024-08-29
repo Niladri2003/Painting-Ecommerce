@@ -71,7 +71,7 @@ const Home = () => {
             {/* New Section: Features with icons, titles, and descriptions */}
             <section className="w-full py-12 bg-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8">
                         <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center text-center">
                             <img src={cash_on_delivery} alt="Secure" className="w-12 h-12 mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Confidential and Secure</h3>

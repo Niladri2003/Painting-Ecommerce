@@ -425,6 +425,8 @@ const ProductCheckout = () => {
     setsubImages(e.target.src);
   };
 
+  
+
   return (
     <div className="min-h-screen flex flex-col w-full mb-5">
       <div className=" p-4 grid grid-cols-1 md:grid-cols-2 grid-rows-1 mt-16 lg:mt-24 px-4 lg:px-8 w-full max-w-screen-xl lg:gap-6 mx-auto">
@@ -484,7 +486,7 @@ const ProductCheckout = () => {
           <p className="text-md text-green-600">{discountPercentage}% off</p>
 
           {/* Size Selection */}
-          {/* <div className="mt-4">
+          <div className="mt-4">
             <label className="block text-gray-700 text-md font-bold mb-2">
               Size
             </label>
@@ -502,29 +504,25 @@ const ProductCheckout = () => {
                 </button>
               ))}
             </div>
-          </div> */}
+          </div>
 
-          
-          <div className="mt-4">
+
+          {/* <div className="mt-4">
             <label className="block text-gray-700 text-md font-bold mb-2">
               Size
             </label>
             <select
-              onChange={(e) => {
-                const selectedSize = product.data.sizes.find(size => size.id === parseInt(e.target.value));
-                setSelectedSize(selectedSize);
-              }}
+              onChange={handleSizeChange}
               className="block w-full md:w-1/2 lg:w-1/3 xl:w-1/4 px-4 py-2 mt-1 rounded-md border border-gray-300 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              value={selectedSize?.id || ''}
+              value={selectedSize}
             >
-              <option value="" disabled>Select a size</option>
               {product.data.sizes.map((size) => (
                 <option key={size.id} value={size.id}>
                   {size.size}
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
 
 
 
