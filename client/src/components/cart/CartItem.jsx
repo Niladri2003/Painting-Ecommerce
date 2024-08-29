@@ -92,7 +92,7 @@ export const CartItem = ({ item, refreshCart }) => {
     const handleQuantityChange = (change) => {
       setQuantity((prevQuantity) => {
         const newQuantity = prevQuantity + change;
-        if (newQuantity < 6 && newQuantity > 0) {
+        if (newQuantity < 999 && newQuantity > 0) {
           debouncedUpdateQuantity(item.id, newQuantity);
           return newQuantity;
         }

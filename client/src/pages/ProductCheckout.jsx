@@ -130,7 +130,7 @@ const ProductCheckout = () => {
   const handleQuantityChange = (change) => {
     setQuantity((prevQuantity) => {
       const newQuantity = prevQuantity + change;
-      if (newQuantity < 6 && newQuantity > 0) {
+      if (newQuantity < 999 && newQuantity > 0) {
         return newQuantity;
       }
       return prevQuantity;
@@ -173,7 +173,7 @@ const ProductCheckout = () => {
       if (existingItem) {
         // If the item is already in the cart, update its quantity
         const updatedQuantity = existingItem.quantity + quantity;
-        if (!(updatedQuantity < 6 && updatedQuantity > 0)) {
+        if (!(updatedQuantity < 999 && updatedQuantity > 0)) {
           toast({
             title: "Quantity Limit Reached",
             description:
@@ -287,7 +287,7 @@ const ProductCheckout = () => {
       if (existingItem) {
         // If the item is already in the cart, update its quantity
         const updatedQuantity = existingItem.quantity + quantity;
-        if (!(updatedQuantity < 6 && updatedQuantity > 0)) {
+        if (!(updatedQuantity < 999 && updatedQuantity > 0)) {
           toast({
             title: "Quantity Limit Reached",
             description:
