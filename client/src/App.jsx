@@ -51,7 +51,7 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
           </Route>
 
-          <Route path="/cart" element={<Cart />} />
+
           <Route path={"/product-list"} element={<ProductList />} />
 
           <Route
@@ -65,6 +65,7 @@ function App() {
               <Route path="order-details/:orderTrack" element={<OrderDetails/>}/>
 
             </Route>
+            <Route path="/cart" element={<Cart />} />
             <Route path="/buynow" element={<Buynow />} />
           </Route>
 
