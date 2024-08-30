@@ -9,8 +9,8 @@ import (
 	"os"
 	// "strconv"
 
-	"time"
 	"github.com/mailgun/mailgun-go/v4"
+	"time"
 )
 
 /*
@@ -64,54 +64,57 @@ func SendConfirmationEmail(recipientEmail, subject, mailTemplatePath string, tem
 
 	return nil
 }
-	*/
+*/
 
+var mg *mailgun.MailgunImpl
 
+func InitializeMailgun() {
+	domain := os.Getenv("MAILGUN_DOMAIN")
+	apiKey := os.Getenv("MAILGUN_API_KEY")
 
-
-	var mg *mailgun.MailgunImpl
-
-	func InitializeMailgun() {
-		domain := os.Getenv("MAILGUN_DOMAIN")
-		apiKey := os.Getenv("MAILGUN_API_KEY")
-
-		fmt.Printf("Initializing Mailgun with domain: %s\n", domain)
-		if domain == "" || apiKey == "" {
-			fmt.Println("MAILGUN_DOMAIN or MAILGUN_API_KEY is not set in environment variables")
-			return
-		}
-	
-		mg = mailgun.NewMailgun(domain, apiKey)
+	fmt.Printf("Initializing Mailgun with domain: %s\n", domain)
+	if domain == "" || apiKey == "" {
+		fmt.Println("MAILGUN_DOMAIN or MAILGUN_API_KEY is not set in environment variables")
+		return
 	}
-	
-	func SendEmailUsingMailgun(recipientEmail, subject, templateName string, templateData interface{}) error {
+
+	mg = mailgun.NewMailgun(domain, apiKey)
+}
+
+func SendEmailUsingMailgun(recipientEmail, subject, templateName string, templateData interface{}) error {
+	mail := os.Getenv("MAIL")
+
+	if mail == "true" {
 		from := fmt.Sprintf("TrivArt <mailgun@%s>", os.Getenv("MAILGUN_DOMAIN"))
-	
+
 		// Load and parse the email template
 		var body bytes.Buffer
 		tmpl, err := template.ParseFiles(templateName)
 		if err != nil {
 			return fmt.Errorf("error parsing template: %v", err)
 		}
-	
+
 		err = tmpl.Execute(&body, templateData)
 		if err != nil {
 			return fmt.Errorf("error executing template: %v", err)
 		}
-	
+
 		// Create a new message
 		message := mg.NewMessage(from, subject, "", recipientEmail)
 		message.SetHtml(body.String())
-	
+
 		// Set a 10-second timeout for the request
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 		defer cancel()
-	
+
 		// Send the email
 		_, _, err = mg.Send(ctx, message)
 		if err != nil {
 			return fmt.Errorf("error sending email: %v", err)
 		}
-	
-		return nil
+	} else {
+		fmt.Println("Mail bypass in dev mode")
 	}
+
+	return nil
+}
