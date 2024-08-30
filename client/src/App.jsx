@@ -32,7 +32,7 @@ const OrderDetails =lazy(()=>import("./components/Dashboard/OrderDetails.jsx"));
 function App() {
   const { user } = useSelector((state) => state.profile);
   return (
-    <div className="flex min-h-screen  items-center flex-col overflow-hidden">
+    <div className="flex min-h-screen  items-center flex-col overflow-hidden scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-gray-100">
       <Suspense fallback={<Loader />}>
         <Navbar />
         <ScrollTop />
