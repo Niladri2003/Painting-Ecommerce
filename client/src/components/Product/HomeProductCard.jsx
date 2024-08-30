@@ -10,7 +10,7 @@ const HomeProductCard = ({ product, showDiscountPercentage,showOriginalPrice }) 
 
     return (
         <Link to={`/product/${product.id}`}>
-            <div className="product-card relative  rounded-lg p-4">
+            <div className="product-card relative flex flex-col items-center rounded-lg p-4 ">
                 <div className="image-container">
                     {showDiscountPercentage && (
                         <span className="discount-badge z-10 absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">

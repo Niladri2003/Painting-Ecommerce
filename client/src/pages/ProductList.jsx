@@ -377,7 +377,7 @@ const ProductList = () => {
                                     <h4 className="text-sm font-Poppins mb-2">
                                         Subcategory
                                     </h4>
-                                    <div className="space-y-1 font-Poppins text-[13px] max-h-40 overflow-y-auto">
+                                    <div className="space-y-1 font-Poppins text-[13px]  overflow-y-auto">
                                         {subcategories.map((subcategory, index) => (
                                             <label
                                                 key={index}

@@ -48,11 +48,11 @@ const Home = () => {
                     </div>
                     <div className="flex flex-col sm:flex-row gap-10">
                         {/*  */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full md:py-10">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl md:py-10">
                             <FeatureProducts/>
 
                         </div>
-                        <div className="w-full h-[15rem] md:h-full md:w-3/5  grid place-items-center relative">
+                        <div className="w-full h-[15rem] md:h-full md:w-3/5  grid place-items-center relative py-1">
                             <img
                                 src={HeroImage}
                                 alt="Hero"

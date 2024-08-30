@@ -222,7 +222,7 @@ const Cart = () => {
               cartData?.items?.length > 0 && availableCoupons.length > 0 && (
                 <div className="mt-2">
                   <p className="text-gray-700 mb-2">Available Coupons:</p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="flex flex-col lg:w-[25%] gap-4 font-Poppins">
                     {availableCoupons?.map((coupon) => (
                       <div
                         key={coupon.id}
@@ -238,7 +238,7 @@ const Cart = () => {
                         </div>
                         <button
                           onClick={() => handleCouponClick(coupon)}
-                          className="bg-blue-500 text-white py-1 px-3 rounded-lg"
+                          className="bg-black text-white text-md px-5 py-2 rounded"
                         >
                           Apply
                         </button>

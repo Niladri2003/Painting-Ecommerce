@@ -32,7 +32,7 @@ const OrderDetails =lazy(()=>import("./components/Dashboard/OrderDetails.jsx"));
 function App() {
   const { user } = useSelector((state) => state.profile);
   return (
-    <div className="flex min-h-screen  items-center flex-col overflow-hidden">
+    <div className="flex min-h-screen  items-center flex-col overflow-hidden scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-gray-100">
       <Suspense fallback={<Loader />}>
         <Navbar />
         <ScrollTop />
@@ -51,7 +51,7 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
           </Route>
 
-          <Route path="/cart" element={<Cart />} />
+
           <Route path={"/product-list"} element={<ProductList />} />
 
           <Route
@@ -65,6 +65,7 @@ function App() {
               <Route path="order-details/:orderTrack" element={<OrderDetails/>}/>
 
             </Route>
+            <Route path="/cart" element={<Cart />} />
             <Route path="/buynow" element={<Buynow />} />
           </Route>
 
