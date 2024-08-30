@@ -71,7 +71,7 @@ export default function Contact() {
     return (
         <div>
             <HomeHero title='Contact Us' showShopNowButton={false} />
-            <div className="flex flex-col md:flex-row justify-between p-6 max-w-screen-xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between p-6 max-w-screen-xl mx-auto font-Poppins">
                 {/* Left Section: Contact Form */}
                 <div className="w-full md:w-1/3 p-4" data-aos="fade-right">
                     <h2 className="text-2xl font-semibold mb-4">Contact Us</h2>
@@ -100,7 +100,7 @@ export default function Contact() {
                             <label htmlFor="message" className="block text-sm font-medium">Message</label>
                             <textarea id="message" name="message" className="mt-1 p-2 w-full border rounded" value={formData.message} onChange={handleChange} required></textarea>
                         </div>
-                        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
+                        <button type="submit" className="bg-black text-white text-lg px-5 py-2 rounded">Submit</button>
                     </form>
                 </div>
 
