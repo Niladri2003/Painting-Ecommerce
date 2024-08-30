@@ -62,10 +62,10 @@ const Cart = () => {
         null,
         true
       );
-      // Access the `data` field in the response
+
       const { data } = response;
-      setAvailableCoupons(data.data || []); // Use data.data to access the coupons array
-      console.log("Available coupons:", data.data); // Log the coupons array
+      setAvailableCoupons(data.data || []); 
+      console.log("Available coupons:", data.data);
     } catch (error) {
       console.error("Error fetching coupons:", error);
       toast({
@@ -96,7 +96,7 @@ const Cart = () => {
         null,
         true
       );
-      setAppliedCoupon(couponCode); // Set the applied coupon code
+      setAppliedCoupon(couponCode); 
       refreshCart();
     } catch (error) {
       console.error("Error applying coupon:", error);
@@ -157,7 +157,7 @@ const Cart = () => {
       (acc, item) => acc + item.after_discount_total_price,
       0
     );
-    discount = cartData.discount_percentage
+    discount = appliedCoupon && cartData.discount_percentage
       ? (totalPrice * cartData.discount_percentage) / 100
       : 0;
     finalPrice = totalPrice - discount;
@@ -191,7 +191,7 @@ const Cart = () => {
                 </p>
                 {discount > 0 && (
                   <h2 className="text-lg mb-2">
-                    Discount: ₹{totalPrice - finalPrice}
+                    Discount: ₹{Math.floor(totalPrice - finalPrice)}
                   </h2>
                 )}
                 <h2 className={`text-xl font-bold mb-4`}>
@@ -219,7 +219,7 @@ const Cart = () => {
         <div className="mt-8">
           <div className="mb-4">
             {!appliedCoupon ? (
-              availableCoupons.length > 0 && (
+              cartData?.items?.length > 0 && availableCoupons.length > 0 && (
                 <div className="mt-2">
                   <p className="text-gray-700 mb-2">Available Coupons:</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

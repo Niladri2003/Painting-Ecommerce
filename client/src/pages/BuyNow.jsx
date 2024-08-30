@@ -256,7 +256,7 @@ const Buynow = () => {
         {cartData && (
           <div className="p-4 shadow-lg border lg:ml-6 border-black rounded-lg w-full sm:w-1/3">
             <div className="text-lg font-semibold mb-4">Order Summary</div>
-            <p className="flex justify-between mb-2">
+            <p className="flex font-semibold gap-2 mb-2">
               <span>Total Items:</span>
               <span>{cartData?.items?.length || 0}</span>
             </p>
@@ -265,8 +265,8 @@ const Buynow = () => {
             {/*    <span>₹200.00</span>*/}
             {/*</p>*/}
             {cartData.is_coupon_applied && (
-              <p className="flex justify-between mb-2">
-                <span>Coupon Applied:</span>
+              <p className="flex gap-2 mb-2">
+                <span className="font-semibold">Coupon Applied:</span>
                 <span>-₹{totalPrice - finalPrice}</span>
               </p>
             )}

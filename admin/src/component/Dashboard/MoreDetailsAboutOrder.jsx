@@ -62,7 +62,7 @@ const AdminOrderDetails = () => {
                 return "text-green-500";
             case "shipped":
                 return "text-blue-500";
-            case "cancelled":
+            case "canceled":
                 return "text-red-500";
             default:
                 return "text-gray-500";
