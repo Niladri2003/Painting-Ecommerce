@@ -35,11 +35,11 @@ const ProductCard = ({
     }
   };
   return (
-    <div className="product-card relative bg-zinc-200 h-[320px] md:h-[370px]  rounded-lg lg:p-8 p-6">
-      <div className="image-container ">
+    <div className="product-card relative bg-zinc-200 h-[310px] md:h-[370px] w-[180px] md:w-[240px] rounded-lg lg:p-8 p-5">
+      <div className="image-container">
         <span
           onClick={toggleFavorite}
-          className="discount-badge z-10 absolute lg:top-1 top-2 right-2  text-white lg:text-sm text-[10px] font-bold px-2 py-3 rounded-[100%]"
+          className="discount-badge z-10 absolute lg:top-1 top-1 right-0  text-white lg:text-sm text-[10px] font-bold px-2 py-3 rounded-[100%]"
         >
           {isFavorited ? (
             <FaHeart color={"black"} size={20} />
@@ -51,7 +51,7 @@ const ProductCard = ({
         <img
           src={product.images[0]?.image_url || "default-image.jpg"}
           alt={product.title}
-          className="rounded-t-lg hover:scale-[1.02] w-[150px] h-[150px] md:w-[200px] md:h-[200px] transition-transform duration-300"
+          className="rounded-t-lg hover:scale-[1.02] w-[130px] h-[130px] md:w-[200px] md:h-[200px] transition-transform duration-300"
         />
       </div>
 
