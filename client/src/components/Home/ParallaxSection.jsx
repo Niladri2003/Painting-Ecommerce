@@ -136,24 +136,24 @@ const ParallaxSection = () => {
       </div>
 
       {/* Parallax Effect */}
-      <div className="relative w-full h-full flex items-center justify-between px-4">
+      <div className="relative w-full h-full flex items-center  justify-evenly px-4">
         {/* Left Side Images */}
         <motion.div
           initial={{ x: "-100%", opacity: 0 }}
           animate={controlsLeft}
-          className="flex flex-col items-center space-y-20 md:space-y-6"
+          className="flex flex-col items-center space-y-20 md:space-y-32"
         >
           <motion.img
             src={parallax_img} // Replace with actual image path
             alt="Left Image 1"
-            className="w-[10.5rem] md:w-[20rem] lg:w-[25rem] h-auto flex-shrink-0"
+            className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9, rotate: -5 }}
           />
           <motion.img
             src={parallax_img} // Replace with actual image path
             alt="Left Image 2"
-            className="w-[10.5rem] md:w-[20rem] lg:w-[25rem] h-auto flex-shrink-0"
+            className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9, rotate: -5 }}
           />
@@ -163,19 +163,19 @@ const ParallaxSection = () => {
         <motion.div
           initial={{ x: "100%", opacity: 0 }}
           animate={controlsRight}
-          className="flex flex-col items-center space-y-20 md:space-y-6"
+          className="flex flex-col items-center space-y-20 md:space-y-32 "
         >
           <motion.img
             src={parallax_img} // Replace with actual image path
             alt="Right Image 1"
-            className="w-[10.5rem] md:w-[20rem] lg:w-[25rem] h-auto flex-shrink-0"
+            className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9, rotate: -5 }}
           />
           <motion.img
             src={parallax_img} // Replace with actual image path
             alt="Right Image 2"
-            className="w-[10.5rem] md:w-[20rem] lg:w-[25rem] h-auto flex-shrink-0"
+            className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9, rotate: -5 }}
           />
