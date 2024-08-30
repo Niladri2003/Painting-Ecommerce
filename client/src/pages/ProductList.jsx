@@ -39,6 +39,7 @@ const ProductList = () => {
                     false
                 );
                 const productsData = response.data.data;
+                console.log("product data",productsData)
                 setProducts(productsData);
                 setFilteredProducts(productsData);
                 extractFilterOptions(productsData);
@@ -55,22 +56,24 @@ const ProductList = () => {
 
     // Extract unique categories, subcategories, and sizes from products
     const extractFilterOptions = (productsData) => {
+        console.log(productsData)
         const uniqueCategories = [
-            ...new Set(productsData.map((p) => p.category.name)),
+            ...new Set(productsData?.map((p) => p?.category?.name)),
         ];
         const uniqueSubcategories = [
             ...new Set(
-                productsData.flatMap((p) =>
-                    p.sub_category.map((s) => s.subcategory)
+                productsData?.flatMap((p) =>
+                    p?.sub_category?.map((s) => s?.subcategory)
                 )
             ),
         ];
         const uniqueSizes = [
             ...new Set(
-                productsData.flatMap((p) => p.sizes.map((s) => s.size))
+                productsData?.flatMap((p) => p?.sizes?.map((s) => s?.size))
             ),
         ];
-
+        console.log("categories",uniqueCategories)
+        console.log("sub category",uniqueSubcategories)
         setCategories(uniqueCategories);
         setSubcategories(uniqueSubcategories);
         setSizes(uniqueSizes);

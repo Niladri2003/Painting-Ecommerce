@@ -20,7 +20,7 @@ const AccountPage = () => {
       <div className="flex min-h-screen my-16 w-full lg:w-full md:w-full lg:ml-4 lg:mr-4  bg-gray-100 flex-col md:flex-row">
         {/* Sidebar */}
         <aside className="w-full  lg:w-[20%]   bg-white shadow-md lg:border-r-2">
-          <p className={"p-2 text-[20px] w-full  font-bold"}>My Account</p>
+          <p className={"p-2 text-[20px] w-full  font-bold "}>My Account</p>
           <div className="flex flex-col items-center p-6">
             <img
                 src={user?.profile_picture || defaultAvatar}
