@@ -50,8 +50,8 @@ The frontend of this platform has this pages and functionality <br/>
    - Account:Delete your account
 -About ,Contact Us page have usuaal functionality as they required.
 
-Data Models and Database Schema: <br/>
-The back end of StudyNotion uses a range of data models and database schemas to manage data. Overall, the back-end of Trivart is designed to provide a robust and scalable solution for an Ecommerse platform, with a focus on security, reliability, and ease of use.
+## Data Models and Database Schema: <br/>
+The back end of Trivart uses a range of data models and database schemas to manage data. Overall, the back-end of Trivart is designed to provide a robust and scalable solution for an Ecommerse platform, with a focus on security, reliability, and ease of use.
 ![Screenshot from 2024-08-16 02-08-16](https://github.com/user-attachments/assets/48ce7ba0-ff35-4497-be21-90ccbed8d860)
 
 
