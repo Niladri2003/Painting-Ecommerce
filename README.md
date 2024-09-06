@@ -1,8 +1,8 @@
 
-# [Trivart](https://painting-ecommerce.vercel.app/)
+# <a href="https://painting-ecommerce.vercel.app/" target="_blank">Trivart</a>
 
-Trivart is a fully functional Ecommerse platform that enables user to create there account and browse different category of art items and order them. Managed by one Admin Where Admin can create product manage products subcategory. Check all the queries submitted by user from website. Manage the State(Shipped,Delivered,Cancelled) of Orders. Create and manage Tokens.
-This platfor is built using React,PostgrSql,Redis,GoLang.
+Trivart is a fully functional Ecommerse platform that enables user to create there account and browse different category of art items and order them. Managed by one Admin Where Admin can create product manage products subcategory. Check all the queries submitted by user from website. Manage the State(Shipped,Delivered,Cancelled) of Orders. Create and manage Coupons.
+This platform is built using React,PostgrSql,Redis,GoLang.
 
 Trivart aims to provide 
  A seamless and ineractive Ecommerse experience for Customers and Admins.
@@ -30,27 +30,27 @@ Here is the high-level diagram that illustrates the architecture of the Trivart 
 
 ### Frontend: <br/>
 Frontend is the part of the platform where user interacts with most. It is the face of the platform.
-The frontend of this platform has this pages and functionality
+The frontend of this platform has this pages and functionality <br/>
 
--HomePage: This page will have a brief introduction to the platform, as well as some featured products.
+- HomePage: This page will have a brief introduction to the platform, as well as some featured products.
 
-Shop Page- category wise some top products are listed here.User can browse the products and click view more for more items.
+- Shop Page- category wise some top products are listed here.User can browse the products and click view more for more items.
 
-Shop list: This is the page where all the products are listed and a filter is given in left side to filter and sort the products. All types of Filters are avilable to find your desired Product.
+- Shop list: This is the page where all the products are listed and a filter is given in left side to filter and sort the products. All types of Filters are avilable to find your desired Product.
 
-Product Details Page: Where you can look closely about the product add to cart, buy now,Set Quantity,Add to favourite.
+- Product Details Page: Where you can look closely about the product add to cart, buy now,Set Quantity,Add to favourite.
 
-Cart Page-Add or remove items from Cart, Coupon apply feature and checkout
+- Cart Page-Add or remove items from Cart, Coupon apply feature and checkout
 
-Order: Here if you have any default address that will be fetched automatically if not then it will ask you to add one. After that you can confirm Order.
-Account Section
-    Order: Manage orders
-    Address:Add, Update,Delete address,Set default
-    Password: Password Change
-    Account:Delete your account
-About ,Contact Us page have usuaal functionality as they required.
+- Order: Here if you have any default address that will be fetched automatically if not then it will ask you to add one. After that you can confirm Order.
+- Account Section <br/>
+   - Order: Manage orders
+   - Address:Add, Update,Delete address,Set default
+   - Password: Password Change
+   - Account:Delete your account
+-About ,Contact Us page have usuaal functionality as they required.
 
-Data Models and Database Schema:
+Data Models and Database Schema: <br/>
 The back end of StudyNotion uses a range of data models and database schemas to manage data. Overall, the back-end of Trivart is designed to provide a robust and scalable solution for an Ecommerse platform, with a focus on security, reliability, and ease of use.
 ![Screenshot from 2024-08-16 02-08-16](https://github.com/user-attachments/assets/48ce7ba0-ff35-4497-be21-90ccbed8d860)
 
@@ -64,11 +64,11 @@ Deployment:
 The Deployment process for the Trivart will involve hosting the service in various cloud platform.Frontend can be deployed in vercel.The backend Requires more care we already created a docker-compose file you just need to run that file to up and run the backend. Deployment process is written here with most detailed way.We implemented a script for easy backups from psql directly push that to github repo you can find that folder here.
 - [Deployment & Contribution Guide](https://github.com/Niladri2003/Painting-Ecommerce/tree/main/server#readme)
 
-Future Enhancements:
-User Analytics Collection: User activiy tracking in the website.
-Product Perfomance Tracking:Most viewd , Most bought, Most Clicked products.
-Elastic Search: Implementation for fast and user centric search feature.
-Verification: For non google Signups we will use Otp.
+### Future Enhancements:<br/>
+- User Analytics Collection: User activiy tracking in the website.
+- Product Perfomance Tracking: Most viewd , Most bought, Most Clicked products.
+- Elastic Search: Implementation for fast and user centric search feature.
+- Verification:  For non google Signups we will use Otp.
 ## Technologies Used
 - **Programming Languages:** 
   - <img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" width="16"> JavaScript
