@@ -34,6 +34,8 @@ services:
       DB_PASSWORD: password
       DB_NAME: postgres
       DB_SSL_MODE: disable
+    env_file:
+      - .env
 
     networks:
       - my_network
