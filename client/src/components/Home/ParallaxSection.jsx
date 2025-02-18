@@ -144,14 +144,14 @@ const ParallaxSection = () => {
           className="flex flex-col items-center space-y-20 md:space-y-32"
         >
           <motion.img
-            src={parallax_img} // Replace with actual image path
+            src={"https://images.unsplash.com/photo-1594136976553-38699ae9047c?q=80&w=1948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"} // Replace with actual image path
             alt="Left Image 1"
             className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9, rotate: -5 }}
           />
           <motion.img
-            src={parallax_img} // Replace with actual image path
+            src={"https://images.unsplash.com/photo-1584446922442-7ac6b8c118f3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTh8fHBhaW50aW5nfGVufDB8fDB8fHww"} // Replace with actual image path
             alt="Left Image 2"
             className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
@@ -166,14 +166,14 @@ const ParallaxSection = () => {
           className="flex flex-col items-center space-y-20 md:space-y-32 "
         >
           <motion.img
-            src={parallax_img} // Replace with actual image path
+            src={"https://images.unsplash.com/photo-1599503613556-0f18b122d281?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzJ8fHBhaW50aW5nfGVufDB8fDB8fHww"} // Replace with actual image path
             alt="Right Image 1"
             className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
             whileTap={{ scale: 0.9, rotate: -5 }}
           />
           <motion.img
-            src={parallax_img} // Replace with actual image path
+            src={"https://images.unsplash.com/photo-1579783901467-31b604eac7a8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTA0fHxwYWludGluZ3xlbnwwfHwwfHx8MA%3D%3D"} // Replace with actual image path
             alt="Right Image 2"
             className="w-[10.5rem] md:w-[20rem] lg:w-[23rem] h-auto flex-shrink-0 rounded-lg"
             whileHover={{ scale: 1.1, rotate: 5 }}
