@@ -1,19 +1,58 @@
-import React from 'react'
-
 const DescriptionAboveTheRelatedProduct = () => {
     return (
-        <div className='w-full text-justify'>
-            <p><b>Palanquin pledge</b> -The Bride's journey from the <b>Trivart</b> Paintings Collection is produced on Premium Museum Grade Canvas and Hahnemuhle Fine Art Media. This beautiful Madhubani Painting Art Print product is made with a matte finish and premium quality with vibrant colors. These Madhubani Miniature Paintings Art Prints are produced with the most extreme shading precision and using the most advanced giclee printing technique in the world. We use the same standard that the various museums and art galleries use across the globe to recreate the Madhubani Miniature Paintings Art Prints. These Madhubani Paintings are perfect for you if you're a Madhubani or Indian Culture Lover or if you want to add a Traditional Look to your space. The vibrancy of colors and the unique detailing of every Madhubani Painting Art Print makes them the best in so many ways. This Madhubani Art Print will add charm to any room in your home. These Madhubani Painting Art Prints can be the perfect gift to your friends, colleagues, or family as they sync in very well in your Bedroom, living room, lobby, Balcony, Bathroom, etc. <br /><br /><br />
+        <div className="w-full max-w-4xl mx-auto p-6 lg:p-8 text-justify text-gray-700 leading-relaxed">
+            {/* Title */}
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Palanquin Pledge – The Bride’s Journey
+            </h2>
 
+            {/* Description */}
+            <p>
+                The <span className="font-semibold text-gray-900">Trivart Paintings Collection</span> is produced on
+                **Premium Museum Grade Canvas** and **Hahnemuhle Fine Art Media**. This **beautiful Madhubani Painting Art Print**
+                is made with a **matte finish**, **vibrant colors**, and **premium quality**.
+            </p>
 
-                <b>Care Instructions:</b> Must be protected from direct sunlight, extreme temperature, dust, and moisture to ensure long life.<br /><br /><br />
+            <p className="mt-3">
+                These Madhubani Miniature Paintings Art Prints are produced using the **most advanced giclée printing technique**
+                in the world, ensuring **extreme shading precision**. We follow the same **museum-grade standards** used by
+                **global art galleries** to recreate these **Madhubani Miniature Paintings Art Prints**.
+            </p>
 
-                <b>OUR USP:</b> The Final Madhubani Art Painting Print looks exactly like the shown image courtesy of our exceptional printing technique. Additionally, Our Canvas Prints come with a protective spray and varnish to protect the canvas from dust, moisture, and fingerprints.
-                Our Fine Art & Museum Prints have a life of more than 150+ years. We also offer a 100% money-back guarantee if you feel that our prints are not up to the mark.
+            <p className="mt-3">
+                If you’re a **Madhubani or Indian Culture Lover**, or if you want to add a **traditional touch** to your space,
+                these paintings are perfect for you. Their **vibrant colors and intricate detailing** make them a **stunning
+                addition** to any room.
+            </p>
 
+            <p className="mt-3">
+                These Madhubani Painting Art Prints make for an **ideal gift** for your friends, colleagues, or family.
+                They blend beautifully in **bedrooms, living rooms, lobbies, balconies, and even bathrooms**.
+            </p>
+
+            {/* Care Instructions */}
+            <h3 className="text-lg font-semibold text-gray-900 mt-6">Care Instructions:</h3>
+            <p className="mt-2">
+                To ensure a **long lifespan**, these art prints must be **protected from direct sunlight, extreme temperatures,
+                dust, and moisture**.
+            </p>
+
+            {/* USP */}
+            <h3 className="text-lg font-semibold text-gray-900 mt-6">Our Unique Selling Proposition (USP):</h3>
+            <p className="mt-2">
+                Our **Madhubani Art Painting Prints** look **exactly like the shown image**, thanks to our **exceptional
+                printing technique**.
+            </p>
+            <p className="mt-3">
+                Additionally, our **Canvas Prints** come with a **protective spray and varnish** to **guard against dust, moisture,
+                and fingerprints**.
+            </p>
+            <p className="mt-3">
+                Our **Fine Art & Museum Prints** have a **lifespan of more than 150 years**, ensuring that your artwork remains
+                timeless. Plus, we offer a **100% money-back guarantee** if you feel our prints do not meet your expectations.
             </p>
         </div>
-    )
-}
+    );
+};
 
-export default DescriptionAboveTheRelatedProduct
+export default DescriptionAboveTheRelatedProduct;

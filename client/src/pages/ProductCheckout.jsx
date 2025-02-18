@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {useParams, useNavigate, Link} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { apiConnector } from "../services/apiConnector.jsx";
@@ -10,6 +10,8 @@ import truck from "../assets/product-checkout-page/truck.png"
 import box from "../assets/product-checkout-page/box.png"
 import DescriptionAboveTheRelatedProduct from "../components/productCheckout/DescriptionAboveTheRelatedProduct.jsx";
 import ShowCase from "../components/productCheckout/ShowCase.jsx";
+import { motion } from 'framer-motion';
+import { ArrowRight } from "lucide-react";
 
 const ProductCheckout = () => {
   const { cartId } = useSelector((state) => state.cart); // Access cart_id from Redux state
@@ -692,13 +694,34 @@ const ProductCheckout = () => {
 
 
         <ShowCase />
+        <div className="bg-white py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-2xl font-bold text-gray-900">Related Artworks</h2>
+              <Link to={`/product-list`}>
+              <button className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 transition-colors">
+                View All
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              </Link>
+            </div>
 
+            <motion.div
+                className="grid md:grid-cols-3 gap-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+            >
+              <RelatedProducts
+                  relatedProducts={product.related_products}
+                  handleNavigate={handleNavigate}
+                  handleImgClick={handleImgClick}
+              />
+            </motion.div>
+          </div>
+        </div>
         {/* related product section start */}
-        <RelatedProducts
-          relatedProducts={product.related_products}
-          handleNavigate={handleNavigate}
-          handleImgClick={handleImgClick}
-        />
+
         {/* end related product section */}
       </div>
     </div>

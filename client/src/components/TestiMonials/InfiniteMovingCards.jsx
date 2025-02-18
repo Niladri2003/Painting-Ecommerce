@@ -75,14 +75,14 @@ export const InfiniteMovingCards = ({
                 )}
             >
                 {items.map((item, idx) => (
-                    <div className="w-[350px] px-8 py-6 md:w-[450px] max-w-full border text-card-foreground shadow-sm p-6 bg-muted rounded-lg" data-v0-t="card">
+                    <div key={idx} className="w-[350px] px-8 py-6 md:w-[450px] max-w-full border text-card-foreground shadow-sm p-6 bg-muted rounded-lg" data-v0-t="card">
                         <div className="flex items-center gap-4 mb-4">
                                 <span className="relative flex h-16 w-16 shrink-0 overflow-hidden rounded-full">
                                   <img className="aspect-square h-full w-full" src={item.profile} alt="Testimonial"/>
                                 </span>
                             <div>
                                 <p className="text-lg font-medium text-primary-foreground">{item.name}</p>
-                                <p className="text-sm text-muted-foreground">Married in 2022</p>
+
                             </div>
                         </div>
                         <p className="font-Jost font-[400]">

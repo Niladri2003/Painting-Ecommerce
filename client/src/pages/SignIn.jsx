@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FcGoogle } from "react-icons/fc";
-import { useDispatch } from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import { useToast } from "@chakra-ui/toast";
 import { BASEAPI } from "../utils/BASE_API";
 import { setLoading, setRefreshToken, setToken } from "../slices/authSlice";
@@ -12,6 +12,8 @@ import { apiConnector } from "../services/apiConnector.jsx";
 
 const SignIn = () => {
   const dispatch = useDispatch();
+  const isloading = useSelector((state) => state.auth.loading);
+  console.log(isloading);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -163,10 +165,11 @@ const SignIn = () => {
               required
             />
             <button
-              type="submit"
-              className="block w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition duration-300"
+                type="submit"
+                className="block w-full bg-gray-800 text-white py-3 rounded-lg hover:bg-gray-900 transition duration-300"
+                disabled={isloading}
             >
-              Continue
+              {isloading ? "Loading..." : "Continue"}
             </button>
 
             <button

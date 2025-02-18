@@ -48,13 +48,12 @@ const Home = () => {
                     </div>
                     <div className="flex flex-col sm:flex-row gap-10">
                         {/*  */}
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl md:py-10">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4  md:py-10">
                             <FeatureProducts/>
-
                         </div>
                         <div className="w-full h-[15rem] md:h-full md:w-3/5  grid place-items-center relative py-1">
                             <img
-                                src={HeroImage}
+                                src={"https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?q=80&w=1968&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
                                 alt="Hero"
                                 className="w-full h-full rounded-[10px] object-fill "
                             />

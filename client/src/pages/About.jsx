@@ -1,82 +1,124 @@
-import React from 'react';
-import Navbar from '../components/Navbar/Navbar';
-import Footer from '../components/footer/Footer';
+
 import aboutImage from '../assets/about-us/side_img.jpg';
 import HomeHero from '../components/Home/HomeHero';
 import philosophyImage from "../assets/about-us/bottom_img.jpg"
 import { FaRegHandshake } from 'react-icons/fa6';
 import { AiFillSafetyCertificate } from 'react-icons/ai';
 import { TbTruckDelivery } from 'react-icons/tb';
+import { motion } from 'framer-motion';
 
 
 const AboutUs = () => {
+  const fadeIn = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  };
   return (
     <div className="min-h-screen flex flex-col">
       <HomeHero title='About Us' showShopNowButton={false} />
+      <motion.div
+          className="container mx-auto px-4 py-16"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+      >
+        <motion.h1
+            className="text-5xl font-bold text-center mb-6 bg-gradient-to-r from-indigo-600 to-rose-600 text-transparent bg-clip-text"
+            {...fadeIn}
+        >
+          About Our Gallery
+        </motion.h1>
 
-      <div className="flex flex-col md:flex-row items-center justify-center flex-grow p-6 max-w-screen-xl mx-auto">
+        <motion.p
+            className="text-xl text-gray-600 text-center max-w-2xl mx-auto"
+            {...fadeIn}
+            transition={{ delay: 0.2 }}
+        >
+          Discover a world where creativity knows no bounds. We curate exceptional artworks
+          from emerging and established artists worldwide.
+        </motion.p>
+      </motion.div>
+      <div className="flex flex-col md:flex-row items-center justify-between flex-grow p-8 max-w-screen-xl mx-auto gap-10">
+
         {/* Image Section */}
-
-        <div className="w-full md:w-1/2 p-4">
+        <div className="w-full md:w-1/2">
           <img
-            src={aboutImage}
-            alt="Cultural Art"
-            className="w-full h-auto object-cover rounded-lg shadow-lg"
+              src={"https://images.unsplash.com/photo-1579783901586-d88db74b4fe4?q=80&w=1948&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
+              alt="Cultural Art"
+              className="w-full h-auto object-cover rounded-xl shadow-lg transition-transform duration-300 hover:scale-105"
           />
         </div>
 
         {/* Text Section */}
-        <div className="w-full md:w-1/2 p-4 text-center md:text-left">
+        <div className="w-full md:w-1/2 space-y-6 text-center md:text-left">
 
-
-          <section className="mb-4">
-            <h2 className="text-xl font-semibold mb-2">About Trivart</h2>
-            <p className="text-gray-700">
-              Trivart is your premier destination for exquisite paintings that celebrate the rich cultural heritage of India. Based in Talapatra, Kuchipuri, Odisha, Trivart is more than just an art gallery—it's a tribute to the timeless traditions and artistic expressions of our region.
+          {/* About Section */}
+          <section className="bg-white bg-opacity-80 p-6 rounded-lg shadow-md">
+            <h2 className="text-3xl font-bold mb-3 text-gray-900">About Trivart</h2>
+            <p className="text-gray-700 leading-relaxed">
+              <span className="font-semibold text-blue-600">Trivart</span> is your premier destination for exquisite paintings that celebrate the **rich cultural heritage** of India.
+              Based in **Talapatra, Kuchipuri, Odisha**, Trivart is more than just an art gallery—it's a tribute to the **timeless traditions** and artistic expressions of our region.
             </p>
           </section>
 
-          <section className="mb-4">
-            <h2 className="text-xl font-semibold mb-2">Our Collection</h2>
-            <p className="text-gray-700">
-              We specialize in showcasing an array of traditional Indian paintings, with a focus on the vibrant and intricate styles native to Odisha. From the delicate strokes of Pattachitra to the soulful depictions in tribal and folk art, our collection is a curated journey through the artistic spirit of India.
+          {/* Collection Section */}
+          <section className="bg-white bg-opacity-80 p-6 rounded-lg shadow-md">
+            <h2 className="text-3xl font-bold mb-3 text-gray-900">Our Collection</h2>
+            <p className="text-gray-700 leading-relaxed">
+              We specialize in **showcasing an array of traditional Indian paintings**, focusing on the vibrant and intricate styles native to **Odisha**.
+              From the delicate strokes of **Pattachitra** to the soulful depictions in **tribal and folk art**, our collection takes you on a journey through the artistic spirit of India.
             </p>
           </section>
 
-          <section className="mb-4">
-            <h2 className="text-xl font-semibold mb-2">Our Mission</h2>
-            <p className="text-gray-700">
-              At Trivart, we are passionate about preserving and promoting these cultural art forms, offering art lovers and collectors the opportunity to bring a piece of India’s rich artistic legacy into their homes. Join us in celebrating the beauty of tradition through art.
+          {/* Mission Section */}
+          <section className="bg-white bg-opacity-80 p-6 rounded-lg shadow-md">
+            <h2 className="text-3xl font-bold mb-3 text-gray-900">Our Mission</h2>
+            <p className="text-gray-700 leading-relaxed">
+              At <span className="font-semibold text-blue-600">Trivart</span>, we are passionate about **preserving and promoting** these cultural art forms. We offer art lovers and collectors the opportunity to bring a piece of **India’s rich artistic legacy** into their homes.
+              Join us in celebrating the **beauty of tradition through art.**
             </p>
           </section>
+
         </div>
       </div>
 
+
       <section className="relative w-full">
+        {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <img
-            src={philosophyImage}
-            alt="Philosophy Background"
-            className="w-full p-10 h-full object-cover"
+              src={philosophyImage}
+              alt="Philosophy Background"
+              className="w-full h-full object-cover brightness-50"
           />
-          <div className="absolute inset-0 bg-transparent opacity-50"></div> {/* Dark overlay for better text readability */}
         </div>
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto p-6 md:p-16 flex justify-center items-center">
-          <div className="bg-  bg-opacity-90 p-6 md:p-12 rounded-lg shadow-lg text-white">
-            <div className="text-3xl md:text-4xl font-bold mb-4 flex justify-center">Our Philosophy</div>
-            <p className="text-lg md:text-xl mb-4 font-bold">
-              At Trivart, we believe that art is not just a visual experience but a profound connection to culture, history, and emotion. Our mission is to preserve and promote the rich artistic heritage of India, bringing traditional and cultural art forms to the forefront of modern appreciation.
+        {/* Content Container */}
+        <div className="relative z-10 flex justify-center items-center min-h-screen px-6 py-12">
+          <div className="bg-white bg-opacity-10 backdrop-blur-lg rounded-lg shadow-lg text-white p-8 md:p-14 max-w-3xl">
+
+            {/* Section Title */}
+            <h2 className="text-center text-3xl md:text-5xl font-bold mb-6 tracking-wide">
+              Our Philosophy
+            </h2>
+
+            {/* Philosophy Text */}
+            <p className="text-lg md:text-xl mb-5 leading-relaxed">
+              At <span className="font-semibold text-yellow-300">Trivart</span>, we believe that art is not just a visual experience but a profound connection to culture, history, and emotion. Our mission is to preserve and promote the rich artistic heritage of India, bringing traditional and cultural art forms to the forefront of modern appreciation.
             </p>
-            <p className="text-lg md:text-xl mb-4 font-bold">
-              We view each painting not merely as a product but as a story—a narrative that captures the essence of the artists' heritage and the culture they represent. By curating a collection that honors the past while resonating with contemporary art lovers, we strive to create a bridge between generations.
+
+            <p className="text-lg md:text-xl mb-5 leading-relaxed">
+              Every painting tells a story—a narrative that captures the essence of the artist’s heritage and the culture they represent. By curating a collection that honors the past while resonating with contemporary art lovers, we strive to bridge generations through art.
             </p>
-            <p className="text-lg md:text-xl font-bold">
-              At the heart of Trivart is a commitment to integrity, quality, and cultural preservation. We believe in the power of art to transcend boundaries, inspire creativity, and enrich lives, making it accessible to everyone who seeks to connect with the deeper meanings behind each brushstroke.
+
+            <p className="text-lg md:text-xl leading-relaxed">
+              Integrity, quality, and cultural preservation lie at the heart of <span className="font-semibold text-yellow-300">Trivart</span>. We believe in the power of art to transcend boundaries, inspire creativity, and enrich lives—making it accessible to all who seek its deeper meaning.
             </p>
           </div>
         </div>
       </section>
+
 
       <div className="p-6 bg-gray-100">
         <div className="max-w-7xl mx-auto px-6">

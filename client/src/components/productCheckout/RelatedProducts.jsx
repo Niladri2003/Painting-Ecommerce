@@ -9,7 +9,7 @@ const RelatedProducts = ({ relatedProducts, handleNavigate, handleImgClick }) =>
     <div className="w-full col-span-full row-span-2">
       <div>
         <div className="w-full">
-          <h2 className="text-center text-4xl py-5">Related Products</h2>
+          {/*<h2 className="text-center text-4xl py-5">Related Products</h2>*/}
         </div>
         <div className="w-[100%] flex gap-7 border-r-0 border-l-0 py-2 overflow-x-auto p-2 pt-2">
           {relatedProducts.map((cur, index) => (

@@ -1,109 +1,71 @@
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  addToFavorites,
-  removeFromFavorites,
-} from "../../slices/favouriteSlice.jsx";
+import { addToFavorites, removeFromFavorites } from "../../slices/favouriteSlice.jsx";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-const ProductCard = ({
-  product,
-  showDiscountPercentage,
-  showOriginalPrice,
-}) => {
-  // Calculate discount percentage
+
+const ProductCard = ({ product, showDiscountPercentage, showOriginalPrice }) => {
   const dispatch = useDispatch();
   const favorites = useSelector((state) => state.favourite.favorites || []);
-  console.log(favorites);
+
   const discountPercentage = Math.round(
-    ((product.original_price - product.discounted_price) /
-      product.original_price) *
-      100
+      ((product.original_price - product.discounted_price) / product.original_price) * 100
   );
+
   const isFavorited = favorites.some((fav) => fav.productId === product.id);
+
   const toggleFavorite = () => {
     if (isFavorited) {
       dispatch(removeFromFavorites(product.id));
     } else {
       dispatch(
-        addToFavorites({
-          productId: product.id,
-          name: product.title,
-          image: product.images[0]?.image_url || "default-image.jpg",
-          price: product.discounted_price,
-        })
+          addToFavorites({
+            productId: product.id,
+            name: product.title,
+            image: product.images[0]?.image_url || "default-image.jpg",
+            price: product.discounted_price,
+          })
       );
     }
   };
+
   return (
-    <div className="product-card relative bg-zinc-200 h-[320px] md:h-[370px]  rounded-lg lg:p-8 p-6">
-      <div className="image-container ">
-        <span
-          onClick={toggleFavorite}
-          className="discount-badge z-10 absolute lg:top-1 top-2 right-2  text-white lg:text-sm text-[10px] font-bold px-2 py-3 rounded-[100%]"
+      <div className="relative bg-white rounded-lg shadow-md p-4 transition-transform duration-300 hover:scale-105 hover:shadow-lg w-[200px] md:w-[250px]">
+        {/* Favorite Button */}
+        <button
+            onClick={toggleFavorite}
+            className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white shadow-md hover:bg-gray-200 transition duration-200"
         >
-          {isFavorited ? (
-            <FaHeart color={"black"} size={20} />
-          ) : (
-            <FaRegHeart color={"black"} size={20} />
-          )}
-        </span>
+          {isFavorited ? <FaHeart className="text-red-500 text-xl" /> : <FaRegHeart className="text-gray-600 text-xl" />}
+        </button>
 
-        <img
-          src={product.images[0]?.image_url || "default-image.jpg"}
-          alt={product.title}
-          className="rounded-t-lg hover:scale-[1.02] w-[150px] h-[150px] md:w-[200px] md:h-[200px] transition-transform duration-300"
-        />
-      </div>
-
-      <Link to={`/product/${product.id}`}>
-        <div className="product-details mt-4 font-Poppins flex flex-row justify-between items-center">
-          <div className={"flex flex-col"}>
-            <h3 className="text-lg">{product.title}</h3>
-            {/*<p className="text-gray-600">{product.description}</p>*/}
-            {showOriginalPrice && (
-              <p className="line-through text-red-600">
-                ₹{product.original_price}
-              </p>
-            )}
-            <div className={"flex flex-row gap-2 items-center"}>
-              {" "}
-              <p className="text-gray-800 font-semibold">
-                ₹{product.discounted_price}
-              </p>
-              {discountPercentage > 0 && (
-                <p
-                  className={
-                    " text-red-600 font-Poppins lg:text-md text-[10px]"
-                  }
-                >
-                  {discountPercentage}% Off
-                </p>
-              )}
-            </div>
+        {/* Image Section */}
+        <Link to={`/product/${product.id}`} className="block">
+          <div className="w-full h-[180px] md:h-[220px] flex justify-center items-center">
+            <img
+                src={product.images[0]?.image_url || "default-image.jpg"}
+                alt={product.title}
+                className="w-full h-full object-cover rounded-lg transition-transform duration-300 hover:scale-110"
+            />
           </div>
-          <span onClick={toggleFavorite}></span>
-          {/*<span*/}
-          {/*    className="discount-badge  text-white bg-re lg:text-sm text-[10px] font-bold px-2 py-2 rounded">*/}
-          {/*        {discountPercentage}%*/}
-          {/*    </span>*/}
-          {/* Sizes and sub-categories can be added here */}
-          {/*<div className="sizes mt-2">*/}
-          {/*    {product.sizes.map(size => (*/}
-          {/*        <span key={size.id} className="text-sm border px-2 py-1 rounded mr-2">*/}
-          {/*            {size.size} (+₹{size.charge})*/}
-          {/*        </span>*/}
-          {/*    ))}*/}
-          {/*</div>*/}
-          {/*<div className="sub-categories mt-2">*/}
-          {/*    {product.sub_category.map(subCat => (*/}
-          {/*        <span key={subCat.id} className="text-sm border px-2 py-1 rounded mr-2">*/}
-          {/*            {subCat.subcategory} (+₹{subCat.charge})*/}
-          {/*        </span>*/}
-          {/*    ))}*/}
-          {/*</div>*/}
+        </Link>
+
+        {/* Product Details */}
+        <div className="mt-3 text-center">
+          <h3 className="text-md font-medium truncate">{product.title}</h3>
+
+          {/* Price & Discount */}
+          <div className="flex justify-center items-center mt-1 gap-2">
+            {showOriginalPrice && (
+                <p className="line-through text-sm text-red-500">₹{product.original_price}</p>
+            )}
+            <p className="text-lg font-semibold text-gray-800">₹{product.discounted_price}</p>
+          </div>
+
+          {showDiscountPercentage && discountPercentage > 0 && (
+              <p className="text-xs text-red-600 font-medium mt-1">{discountPercentage}% Off</p>
+          )}
         </div>
-      </Link>
-    </div>
+      </div>
   );
 };
 

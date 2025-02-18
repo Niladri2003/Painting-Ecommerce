@@ -195,20 +195,19 @@ const ProductList = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row lg:mt-24 mt-14 w-full lg:p-10">
-            {/* Sidebar for large screens */}
-            <div className="hidden lg:block w-[20%] p-4 shadow-md rounded-lg">
-                <h2 className="text-xl font-Poppins text-[20px] leading-[28px]">
-                    Categories
-                </h2>
-                <div className="h-[1px] bg-draw-color mt-[2px]"/>
-                <ul className="font-Poppins text-[16px] flex flex-col gap-1 lg:mt-2">
+        <div className="flex flex-col lg:flex-row lg:mt-12 mt-14 w-full lg:p-10">
+            {/* Sidebar (Visible on Large Screens) */}
+            <aside className="hidden lg:block w-[20%] p-5 bg-gray-100 shadow-md rounded-lg">
+                <h2 className="text-xl font-semibold mb-3">Categories</h2>
+                <ul className="text-md flex flex-col gap-2">
                     {categories.map((category, index) => (
                         <li
                             key={index}
                             onClick={() => handleCategoryChange(category)}
-                            className={`cursor-pointer ${
-                                filters.category === category ? "font-bold" : ""
+                            className={`cursor-pointer p-2 rounded-md transition ${
+                                filters.category === category
+                                    ? "bg-gray-300 font-bold"
+                                    : "hover:bg-gray-200"
                             }`}
                         >
                             {category}
@@ -217,126 +216,97 @@ const ProductList = () => {
                 </ul>
 
                 {/* Price Filter */}
-                <h3 className="text-md font-Poppins mt-10">Filter by</h3>
-                <div className="h-[1px] bg-draw-color mt-[10px]"/>
-                <div className="mt-2">
-                    <div className="flex flex-col justify-start">
-                        <label
-                            htmlFor="price-range"
-                            className="block mb-2 text-md font-medium text-gray-900"
-                        >
-                            Price
-                        </label>
-                        <input
-                            id="price-range"
-                            type="range"
-                            min="0"
-                            max="5000"
-                            step="100"
-                            value={filters.priceRange}
-                            onChange={(e) =>
-                                handlePriceChange(Number(e.target.value))
-                            }
-                            className="w-[70%] h-1 rounded-lg appearance-none cursor-pointer bg-gray-500"
-                        />
-                        <div className={"text-sm"}>Up to ₹{filters.priceRange}</div>
-                    </div>
-                </div>
-
+                <h3 className="text-lg font-semibold mt-6">Filter by</h3>
+                <label className="block mt-2 text-md">Price</label>
+                <input
+                    id="price-range"
+                    type="range"
+                    min="0"
+                    max="5000"
+                    step="100"
+                    value={filters.priceRange}
+                    onChange={(e) => handlePriceChange(Number(e.target.value))}
+                    className="w-full cursor-pointer bg-gray-400"
+                />
+                <p className="text-sm mt-1 text-gray-700">Up to ₹{filters.priceRange}</p>
 
                 {/* Subcategory Filter */}
-                <div className="mt-2">
-                    <h4 className="text-md font-Poppins mb-2">Subcategory</h4>
-                    <div className="space-y-1 font-Poppins text-[13px] max-h-40 overflow-y-auto">
-                        {subcategories.map((subcategory, index) => (
-                            <label
-                                key={index}
-                                className="flex items-center space-x-2"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={filters.subcategories.includes(
-                                        subcategory
-                                    )}
-                                    onChange={() =>
-                                        handleSubcategoryChange(subcategory)
-                                    }
-                                />
-                                <span>{subcategory}</span>
-                            </label>
-                        ))}
-                    </div>
+                <h4 className="text-md font-semibold mt-6">Subcategory</h4>
+                <div className="max-h-32 overflow-y-auto">
+                    {subcategories.map((subcategory, index) => (
+                        <label key={index} className="flex items-center gap-2 mt-1">
+                            <input
+                                type="checkbox"
+                                checked={filters.subcategories.includes(subcategory)}
+                                onChange={() => handleSubcategoryChange(subcategory)}
+                            />
+                            <span>{subcategory}</span>
+                        </label>
+                    ))}
                 </div>
 
                 {/* Size Filter */}
-                <div className="mt-2">
-                    <h4 className="text-sm font-Poppins">Size</h4>
-                    <div className="space-y-1 font-Poppins text-[13px]">
-                        {sizes.map((size, index) => (
-                            <label
-                                key={index}
-                                className="flex items-center space-x-2"
-                            >
-                                <input
-                                    type="checkbox"
-                                    checked={filters.sizes.includes(size)}
-                                    onChange={() => handleSizeChange(size)}
-                                />
-                                <span>{size}</span>
-                            </label>
-                        ))}
-                    </div>
+                <h4 className="text-md font-semibold mt-6">Size</h4>
+                <div>
+                    {sizes.map((size, index) => (
+                        <label key={index} className="flex items-center gap-2 mt-1">
+                            <input
+                                type="checkbox"
+                                checked={filters.sizes.includes(size)}
+                                onChange={() => handleSizeChange(size)}
+                            />
+                            <span>{size}</span>
+                        </label>
+                    ))}
                 </div>
-            </div>
+            </aside>
 
-            {/* Main Content Area */}
-            <div className="flex flex-col w-full lg:w-3/4 lg:p-4 mt-2 p-2">
-                {/* Filters button for small screens */}
-                <div className="block lg:hidden space-x-[4px] mb-4 w-[100%]">
+            {/* Main Content */}
+            <main className="flex flex-col w-full lg:w-3/4 lg:p-4 mt-4 p-2">
+                {/* Mobile Filter & Sort Buttons */}
+                <div className="block lg:hidden flex justify-between space-x-4 mb-4">
                     <button
                         onClick={toggleSidebar}
-                        className=" w-[48%] text-black border border-black p-2 rounded-lg"
+                        className="w-1/2 bg-gray-800 text-white p-2 rounded-md"
                     >
                         Filters
                     </button>
-                    <button
-
-                        className=" w-[48%] text-black border border-black p-2 rounded-lg"
+                    <select
+                        id="sort"
+                        value={sortOption}
+                        onChange={handleSortChange}
+                        className="w-1/2 bg-white border p-2 rounded-md"
                     >
-                        <select id="sort" value={sortOption} onChange={handleSortChange} className=" bg-white font-Poppins rounded text-sm">
-                            <option value="">Sort by</option>
-                            <option value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
-                            <option value="price-low-high">Price: Low to High</option>
-                            <option value="price-high-low">Price: High to Low</option>
-                        </select>
-                    </button>
+                        <option value="">Sort by</option>
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="price-low-high">Price: Low to High</option>
+                        <option value="price-high-low">Price: High to Low</option>
+                    </select>
                 </div>
 
-                {/* Sidebar modal for small screens */}
+                {/* Sidebar Modal (For Small Screens) */}
                 {isSidebarOpen && (
                     <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-40 flex justify-end">
-                        <div className="bg-white w-60 h-full p-4">
+                        <div className="bg-white w-64 h-full p-5 shadow-lg">
                             <button
                                 onClick={toggleSidebar}
-                                className="text-white text-sm font-Poppins p-2 rounded-md mb-4 bg-red-600"
+                                className="bg-red-500 text-white px-4 py-2 rounded-md mb-4"
                             >
                                 Close
                             </button>
-                            <h2 className="text-xl font-bold mb-4">Filters</h2>
+                            <h2 className="text-xl font-bold mb-3">Filters</h2>
                             <div>
-                                {/* Categories */}
-                                <h2 className="text-xl font-Poppins text-[20px] leading-[28px]">
-                                    Categories
-                                </h2>
-                                <div className="h-[1px] bg-draw-color mt-[2px]"/>
-                                <ul className="font-Poppins text-[16px] flex flex-col gap-1 lg:mt-2">
+                                <h3 className="text-lg font-semibold mb-2">Categories</h3>
+                                <ul className="text-md flex flex-col gap-2">
                                     {categories.map((category, index) => (
                                         <li
                                             key={index}
                                             onClick={() => handleCategoryChange(category)}
-                                            className={`cursor-pointer ${
-                                                filters.category === category ? "font-bold" : ""
+                                            className={`cursor-pointer p-2 rounded-md transition ${
+                                                filters.category === category
+                                                    ? "bg-gray-300 font-bold"
+                                                    : "hover:bg-gray-200"
                                             }`}
                                         >
                                             {category}
@@ -345,162 +315,90 @@ const ProductList = () => {
                                 </ul>
 
                                 {/* Price Filter */}
-                                <h3 className="text-md font-Poppins mt-5">Filter by</h3>
-                                <div className="mt-2">
-                                    <div className="flex flex-col justify-start">
-                                        <label
-                                            htmlFor="price-range"
-                                            className="block mb-2 text-sm font-medium text-gray-900"
-                                        >
-                                            Price
-                                        </label>
-                                        <input
-                                            id="price-range"
-                                            type="range"
-                                            min="0"
-                                            max="5000"
-                                            step="100"
-                                            value={filters.priceRange}
-                                            onChange={(e) =>
-                                                handlePriceChange(Number(e.target.value))
-                                            }
-                                            className="w-[70%] h-1 rounded-lg appearance-none cursor-pointer bg-gray-500"
-                                        />
-                                        <div className={"text-sm mt-1"}>Up to ₹{filters.priceRange}</div>
-                                    </div>
-                                </div>
-
-                                <div className="h-[1px] bg-draw-color mt-[20px]"/>
-
-                                {/* Subcategory Filter */}
-                                <div className="mt-2">
-                                    <h4 className="text-sm font-Poppins mb-2">
-                                        Subcategory
-                                    </h4>
-                                    <div className="space-y-1 font-Poppins text-[13px]  overflow-y-auto">
-                                        {subcategories.map((subcategory, index) => (
-                                            <label
-                                                key={index}
-                                                className="flex items-center space-x-2"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={filters.subcategories.includes(
-                                                        subcategory
-                                                    )}
-                                                    onChange={() =>
-                                                        handleSubcategoryChange(subcategory)
-                                                    }
-                                                />
-                                                <span>{subcategory}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Size Filter */}
-                                <div className="mt-2">
-                                    <h4 className="text-sm font-Poppins">Size</h4>
-                                    <div className="space-y-1 font-Poppins text-[13px]">
-                                        {sizes.map((size, index) => (
-                                            <label
-                                                key={index}
-                                                className="flex items-center space-x-2"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    checked={filters.sizes.includes(size)}
-                                                    onChange={() => handleSizeChange(size)}
-                                                />
-                                                <span>{size}</span>
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
+                                <h4 className="text-md font-semibold mt-5">Price</h4>
+                                <input
+                                    id="price-range"
+                                    type="range"
+                                    min="0"
+                                    max="5000"
+                                    step="100"
+                                    value={filters.priceRange}
+                                    onChange={(e) => handlePriceChange(Number(e.target.value))}
+                                    className="w-full cursor-pointer bg-gray-400"
+                                />
+                                <p className="text-sm mt-1 text-gray-700">
+                                    Up to ₹{filters.priceRange}
+                                </p>
                             </div>
                         </div>
                     </div>
                 )}
 
-                {/* Product List */}
-                <div className="flex flex-col w-full lg:p-4">
-                    <div className="flex justify-between items-center">
-                        {filters.category ? (
-                            <p className="lg:text-[40px] text-[20px] font-Poppins">
-                                {filters.category}
-                            </p>
-                        ) : (
-                            <p className="lg:text-[40px] text-[20px] font-Poppins">All Products</p>
-                        )}
+                {/* Header */}
+                <div className="flex justify-between items-center">
+                    <p className="text-2xl font-semibold">
+                        {filters.category ? filters.category : "All Products"}
+                    </p>
+                    <select
+                        id="sort"
+                        value={sortOption}
+                        onChange={handleSortChange}
+                        className="hidden lg:block border bg-white p-2 rounded-md"
+                    >
+                        <option value="">Sort by</option>
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="price-low-high">Price: Low to High</option>
+                        <option value="price-high-low">Price: High to Low</option>
+                    </select>
+                </div>
 
-                        {/* Clear Filters Button */}
-                        <div className={"lg:block hidden"} ><select id="sort" value={sortOption} onChange={handleSortChange}  className=" border bg-white font-Poppins p-2 rounded">
-                            <option value="">Sort by</option>
-                            <option value="newest">Newest</option>
-                            <option value="oldest">Oldest</option>
-                            <option value="price-low-high">Price: Low to High</option>
-                            <option value="price-high-low">Price: High to Low</option>
-                        </select></div>
-                    </div>
+                {/* Applied Filters Display */}
+                <div className="mt-4 flex flex-wrap gap-2">
+                    {filters.category && (
+                        <span className="bg-gray-300 px-3 py-1 rounded">Category: {filters.category}</span>
+                    )}
+                    {filters.subcategories.map((subcategory, index) => (
+                        <span key={index} className="bg-gray-300 px-3 py-1 rounded">
+              {subcategory}
+            </span>
+                    ))}
+                    {filters.sizes.map((size, index) => (
+                        <span key={index} className="bg-gray-300 px-3 py-1 rounded">{size}</span>
+                    ))}
+                    {filters.priceRange < 5000 && (
+                        <span className="bg-gray-300 px-3 py-1 rounded">
+              Price: Up to ₹{filters.priceRange}
+            </span>
+                    )}
+                    <button onClick={clearFilters} className="text-sm bg-red-500 text-white px-2 py-1 rounded">
+                        Clear filters
+                    </button>
+                </div>
 
-                    {/* Applied Filters Display */}
-                    <div className="lg:mt-4 lg:mb-0 mb-4">
-                        {filters.category || filters.subcategories.length > 0 || filters.sizes.length > 0 || filters.priceRange < 5000 ? (
-                            <div className="flex gap-2 flex-wrap font-Poppins text-[12px]">
-                            {filters.category && (
-                                    <span className="bg-gray-200 p-2 rounded">
-                                    Category: {filters.category}
-                                </span>
-                                )}
-                                {filters.subcategories.map((subcategory, index) => (
-                                    <span key={index} className="bg-gray-200 p-2 rounded">
-                                    Subcategory: {subcategory}
-                                </span>
-                                ))}
-                                {filters.sizes.map((size, index) => (
-                                    <span key={index} className="bg-gray-200 p-2 rounded">
-                                    Size: {size}
-                                </span>
-                                ))}
-                                {filters.priceRange < 5000 && (
-                                    <span className="bg-gray-200 p-2 rounded">
-                                    Price: Up to ₹{filters.priceRange}
-                                </span>
-                                )}
-                                <button
-                                    onClick={clearFilters}
-                                    className="text-sm bg-red-500 text-white px-2 py-1 rounded "
-                                >
-                                    Clear filter
-                                </button>
-                            </div>
-
-                        ) : null}
-                    </div>
-
+                {/* Product Grid */}
+                {/*<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">*/}
                     {loading ? (
-                        <div className="flex justify-center items-center h-full">
-                            <p>Loading products...</p>
+                        <div className="flex justify-center items-center w-full h-[50vh]">
+                            <p className="text-lg font-semibold text-gray-600">Loading products...</p>
                         </div>
                     ) : error ? (
-                        <div className="flex justify-center items-center h-full">
-                            <p className="text-red-500">{error}</p>
-                        </div>
-                    ) : filteredProducts.length > 0 ? (
-                        <div
-                            className="product-listing font-Poppins lg:mt-10 flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                            {filteredProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} showDiscountPercentage={true}
-                                             showOriginalPrice={true}/>
-                            ))}
-                        </div>
+                        <p className="text-center text-red-500">{error}</p>
                     ) : (
-                        <div className="flex justify-center items-center h-full">
-                            <p>No products found. Adjust your filters.</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+                            {filteredProducts.length > 0 ? (
+                                filteredProducts.map((product) => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))
+                            ) : (
+                                <p className="text-center text-gray-600 w-full col-span-full">No products found.</p>
+                            )}
                         </div>
                     )}
-                </div>
-            </div>
+
+                {/*</div>*/}
+
+            </main>
         </div>
     );
 };

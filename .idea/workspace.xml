@@ -5,10 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="669b40aa-e277-412b-928f-9191906cc537" name="Changes" comment="Home Page and Navbar Created">
-      <change afterPath="$PROJECT_DIR$/server/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/client/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/Product/ProductCard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/Product/ProductCard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/TestiMonials/InfiniteMovingCards.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/TestiMonials/InfiniteMovingCards.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/TestiMonials/Testimonials.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/TestiMonials/Testimonials.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/productCheckout/DescriptionAboveTheRelatedProduct.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/productCheckout/DescriptionAboveTheRelatedProduct.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/productCheckout/RelatedProducts.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/productCheckout/RelatedProducts.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/components/productCheckout/ShowCase.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/components/productCheckout/ShowCase.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/About.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/About.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/pages/Contact.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Contact.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/server/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/ExtraProducts.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/ExtraProducts.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/FeatureProducts.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/FeatureProducts.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/Home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/ProductCheckout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/ProductCheckout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/ProductList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/ProductList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/pages/SignIn.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/pages/SignIn.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/utils/BASE_API.js" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/utils/BASE_API.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app/controllers/auth_controller.go" beforeDir="false" afterPath="$PROJECT_DIR$/server/app/controllers/auth_controller.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,23 +53,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/niladri/Desktop/studynotion-edtech-project-main/Frontend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/niladri/Desktop/studynotion-edtech-project-main/Frontend",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
+    ]
   }
-}</component>
+}]]></component>
+  <component name="ReactDesignerToolWindowState">
+    <option name="myId2Visible">
+      <map>
+        <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
+        <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
+      </map>
+    </option>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-WS-241.18034.50" />
+        <option value="bundled-js-predefined-d6986cc7102b-76f8388c3a79-JavaScript-WS-243.24978.60" />
       </set>
     </attachedChunks>
   </component>
@@ -69,6 +98,7 @@
       <workItem from="1722281469486" duration="742000" />
       <workItem from="1722796474841" duration="2219000" />
       <workItem from="1722873923387" duration="73000" />
+      <workItem from="1739857955881" duration="8224000" />
     </task>
     <task id="LOCAL-00001" summary="Home Page and Navbar Created">
       <option name="closed" value="true" />
